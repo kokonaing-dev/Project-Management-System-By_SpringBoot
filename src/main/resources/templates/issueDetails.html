@@ -1,0 +1,45 @@
+<div>
+    <p><strong>Project:</strong> [[${issue.project.projectName}]]</p>
+    <p><strong>Subject:</strong> [[${issue.subject}]]</p>
+    <p><strong>Description:</strong> [[${issue.description}]]</p>
+    <p><strong>Status:</strong> [[${issue.issueStatus}]]</p>
+    <p><strong>Priority:</strong> [[${issue.priority}]]</p>
+    <p><strong>Plan Start Date:</strong> [[${issue.planStartDate}]]</p>
+    <p><strong>Plan Due Date:</strong> [[${issue.planDueDate}]]</p>
+
+    <!-- Display attachment file names -->
+    <p><strong>Attachments:</strong></p>
+<!--    <span th:if="${issue.attachmentFileNames != null}">-->
+<!--        <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">-->
+<!--            <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>-->
+<!--            <span th:if="${!iterStat.last}">, </span>-->
+<!--        </span>-->
+<!--    </span>-->
+
+
+    <!-- Display attachment file names with download links -->
+    <span th:if="${issue.attachmentFileNames != null}">
+    <ul>
+        <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">
+            <li>
+                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>
+            </li>
+        </span>
+    </ul>
+</span>
+
+
+    <!-- Display users' photos and names -->
+    <p><strong>Members:</strong></p>
+    <div>
+        <span th:each="user : ${issue.users}" th:if="${!#lists.isEmpty(issue.users)}">
+            <!-- Display user photo -->
+            <img th:src="${user.photosImagePath}" th:alt="${user.username}" style="height: 50px; width: 50px;" class="rounded-circle avatar-xs mr-3">
+            <!-- Display user name -->
+            <span th:text="${user.username}" class="me-3"></span>
+        </span>
+        <span th:if="${#lists.isEmpty(issue.users)}">No users associated with this issue</span>
+    </div>
+
+    <!-- Add more details as needed -->
+</div>

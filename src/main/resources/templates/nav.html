@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.thymeleaf.org ">
+<head>
+	<meta charset="ISO-8859-1">
+	<title></title>
+	<meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+	    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+</head>
+<body>
+	<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <a class="navbar-brand" href="#">PMS</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav mr-auto">
+                    <!-- First Column in Navbar -->
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/systemAdminDashboard" data-toggle="tooltip" data-placement="bottom"
+                            title="Dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="tooltip" data-placement="bottom" title="Projects">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="tooltip" data-placement="bottom" title="Recently Viewed">Recently
+                            Viewed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="tooltip" data-placement="bottom" title="Filters">Filters</a>
+                    </li>
+                    <li class="nav-item add-project-dropdown">
+                        <a class="nav-link dropdown-toggle button" href="#" id="addProjectDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" 
+                            data-placement="bottom" title="Add Project">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                        <div class="dropdown-content" aria-labelledby="addProjectDropdown">
+                            <a id="top" class="dropdown-item" href="#"><i class="fas fa-folder-plus mr-2"></i>Add Project</a>
+                            <a id="middle" class="dropdown-item" href="#"><i class="fas fa-bug mr-2"></i>Add Issues</a>
+                            <a id="bottom" class="dropdown-item" href="#"><i class="fas fa-user-plus mr-2"></i>Add Members</a>
+                        </div>
+                    </li>
+                </ul>
+            
+                <ul class="navbar-nav ml-auto">
+                    <!-- Second Column in Navbar -->
+                    <li class="nav-item mr-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control rounded-pill" placeholder="Search" aria-label="Search"
+                                aria-describedby="search-addon">
+                        </div>
+                    </li>
+                    <li class="nav-item position-relative mr-2">
+                        <a class="nav-link" href="#" data-toggle="tooltip" data-placement="bottom" title="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge badge-danger badge-pill badge-notification position-absolute">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mr-2">
+                        <a class="nav-link" href="#" data-toggle="tooltip" data-placement="bottom" title="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown paste-button">
+                        <a class="nav-link dropdown-toggle button" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" data-placement="bottom"
+                            title="Profile">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <div class="dropdown-content" aria-labelledby="navbarDropdown">
+                            <a id="top" class="dropdown-item" href="/userProfile"><i class="fas fa-user-circle mr-2"></i>Profile</a>
+                            <a id="middle" class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i>Settings</a>
+                            <a id="bottom" class="dropdown-item" href="#"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                        </div>
+                    </li>
+                    <li class="nav-item vl"></li>
+                    <li class="nav-item col-4">
+                        <i class="fas fa-project-diagram" data-toggle="tooltip" data-placement="bottom" title="Project"></i>
+                        <span class="">OJT</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</body>
+</html>

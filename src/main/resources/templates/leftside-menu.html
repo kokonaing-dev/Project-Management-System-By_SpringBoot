@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.thymeleaf.org ">
+
+<head>
+      <meta charset="utf-8" />
+      <title>Dashboard </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+      <meta content="Coderthemes" name="author" />
+
+      <!-- App favicon -->
+      <link rel="shortcut icon" href="/images/favicon.ico">
+
+      <!-- Daterangepicker css -->
+      <link rel="stylesheet" href="/libs/daterangepicker/daterangepicker.css">
+
+      <!-- Vector Map css -->
+      <link rel="stylesheet" href="/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css">
+
+      <!-- Theme Config Js -->
+      <script src="/js/config.js"></script>
+
+      <!-- App css -->
+      <link href="/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+      <!-- Icons css -->
+      <link href="/css/icons.min.css" rel="stylesheet" type="text/css" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+</head>
+<body>
+    <div class="leftside-menu" th:fragment="leftside-menu">
+
+    <!-- Brand Logo Light -->
+    <a href="/dashboard" class="logo logo-light">
+        <span class="logo-lg">
+            <img src="/images/logo.png" alt="logo">
+        </span>
+        <span class="logo-sm">
+            <img src="/images/logo-sm.png" alt="small logo">
+        </span>
+    </a>
+
+    <!-- Brand Logo Dark -->
+    <a href="/dashboard" class="logo logo-dark">
+        <span class="logo-lg">
+            <img src="/images/logo-dark.png" alt="dark logo">
+        </span>
+        <span class="logo-sm">
+            <img src="/images/logo-sm.png" alt="small logo">
+        </span>
+    </a>
+
+    <!-- Sidebar Hover Menu Toggle Button -->
+    <div class="button-sm-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="Show Full Sidebar">
+      <i class="ri-checkbox-blank-circle-line align-middle"></i>
+    </div>
+
+    <!-- Full Sidebar Menu Close Button -->
+    <div class="button-close-fullsidebar">
+      <i class="ri-close-fill align-middle"></i>
+    </div>
+
+    <!-- Sidebar -left -->
+    <div class="h-100" id="leftside-menu-container" data-simplebar>
+      <!-- Leftbar User -->
+
+
+      <!--- Sidemenu -->
+      <ul class="side-nav">
+
+            <li class="side-nav-title mt-1"> Main</li>
+
+
+            <li class="side-nav-item">
+                <a href="/dashboard" class="side-nav-link">
+                    <i class="ri-dashboard-2-fill"></i>
+                    <!--            <span class="badge bg-success float-end">9+</span>-->
+                    <span> Dashboard </span>
+                </a>
+            </li>
+            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">
+              <a href="/userList" class="side-nav-link">
+                  <i class="ri-admin-fill"></i>
+                  <span> User List </span>
+              </a>
+            </li>
+          <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_PROJECT_MANAGER'')')}">
+              <a href="/userList" class="side-nav-link">
+                  <i class="ri-admin-fill"></i>
+                  <span> User List </span>
+              </a>
+          </li>
+
+<!--            <li class="side-nav-item">-->
+<!--              <a href="/apps-chat" class="side-nav-link">-->
+<!--                  <i class="ri-chat-voice-fill"></i>-->
+<!--                  <span> Chat </span>-->
+<!--              </a>-->
+<!--            </li>-->
+<!--  --Start for project ----- -->
+<!--        Check if the user has ROLE_SYSTEM_ADMIN role-->
+<!--            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">-->
+<!--                <a href="/project-list" class="side-nav-link">-->
+<!--                    <i class="ri-briefcase-5-fill"></i>-->
+<!--                    <span>Projects</span>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--&lt;!&ndash;        Check if the user has ROLE_PROJECT_MANAGER role&ndash;&gt;-->
+<!--            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_PROJECT_MANAGER'') or hasRole(''ROLE_MEMBER'')')}">-->
+<!--                <a href="/project-list" class="side-nav-link">-->
+<!--                    <i class="ri-briefcase-5-fill"></i>-->
+<!--                    <span>Projects</span>-->
+<!--                </a>-->
+<!--            </li>-->
+<!-- ------End for project --- -->
+
+
+
+<!--  --Start for tasks ----- -->
+            <!-- Check if the user has ROLE_SYSTEM_ADMIN role-->
+            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">
+              <a href="/tasks" class="side-nav-link">
+                  <i class="ri-list-check-3"></i>
+                  <span>Issues</span>
+              </a>
+            </li>
+            <!-- Check if the user has ROLE_PROJECT_MANAGER role -->
+            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_PROJECT_MANAGER'')')}">
+              <a href="/tasks" class="side-nav-link">
+                  <i class="ri-list-check-3"></i>
+                  <span>Issues</span>
+              </a>
+            </li>
+            <!-- Check if the user has ROLE_MEMBER role-->
+            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+              <a href="/tasks" class="side-nav-link">
+                  <i class="ri-list-check-3"></i>
+                  <span>Issues</span>
+              </a>
+            </li>
+
+<!--     ==================-->
+            <li class="side-nav-item">
+              <a href="/board" class="side-nav-link">
+                <i class="ri-clipboard-fill"></i>
+                <span> Board </span>
+              </a>
+            </li>
+
+
+<!--          <li class="side-nav-item">-->
+<!--              <a href="/displayBarGraph" class="side-nav-link">-->
+<!--                  &nbsp;<span class="material-symbols-outlined">bar_chart</span>-->
+<!--                  <span> Chart </span>-->
+<!--              </a>-->
+<!--          </li>-->
+<!--    ==================-->
+          <li class="side-nav-item"  th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">
+              <a href="/setting" class="side-nav-link">
+                  <i class="ri-settings-5-fill"></i>
+                  <span> Setting </span>
+              </a>
+          </li>
+          <li class="side-nav-item"  th:if="${#authorization.expression('hasRole(''ROLE_PROJECT_MANAGER'')')}">
+              <a href="/setting" class="side-nav-link">
+                  <i class="ri-settings-5-fill"></i>
+                  <span> Setting </span>
+              </a>
+          </li>
+
+
+
+
+      </ul>
+      <!--- End Sidemenu -->
+
+      <div class="clearfix"></div>
+    </div>
+</div>
+    <!-- Vendor js -->
+    <script src="/js/vendor.min.js"></script>
+
+    <!-- Daterangepicker js -->
+    <script src="/libs/daterangepicker/moment.min.js"></script>
+    <script src="/libs/daterangepicker/daterangepicker.js"></script>
+
+    <!-- Apex Charts js -->
+    <script src="/libs/apexcharts/apexcharts.min.js"></script>
+
+    <!-- Vector Map js -->
+    <script src="/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js"></script>
+
+    <!-- Dashboard App js -->
+    <script src="/js/pages/demo.dashboard.js"></script>
+
+    <!-- App js -->
+    <script src="/js/app.min.js"></script>
+
+</body>
+</html>

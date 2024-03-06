@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.thymeleaf.org ">
+
+    
+<!-- Mirrored from coderthemes.com/ubold/layouts/default/project-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:28:44 GMT -->
+<head>
+        <meta charset="utf-8" />
+        <title>Project Listing | Ubold - Responsive Bootstrap 5 Admin Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/images/favicon.ico">
+
+        <!-- Theme Config Js -->
+        <script src="/js/config.js"></script>
+
+        <!-- Bootstrap css -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+        <!-- App css -->
+        <link href="/css/app.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Icons css -->
+        <link href="/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+
+        <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Favicon-->
+
+        <!-- Add this to your HTML file, preferably in the <head> section -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+        <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+
+        <!-- DataTables CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- DataTables JavaScript -->
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <style>
+        /* Basic styling for the project card */
+        .project-card {
+            position: relative;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect */
+        .project-card:hover {
+            background-color: #4cbd9b;
+            color: white;
+        }
+
+        /* Styling for project details */
+        .project-details {
+            margin-bottom: 5px;
+        }
+
+        /* Styling for action buttons */
+        .action-buttons {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            display: none; /* Initially hide the buttons */
+        }
+
+        .project-card:hover .action-buttons {
+            display: block; /* Show buttons on hover */
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+        <!-- Begin page -->
+        <div id="wrapper">
+
+            <!-- ========== Topbar Start ========== -->
+            <div th:insert="~{/top-bar :: top-bar}">  </div>
+            <!-- ========== Topbar End ========== -->
+
+            <!-- ========== Left Sidebar Start ========== -->
+            <div th:insert="~{/leftside-menu :: leftside-menu}"> </div>
+            <!-- ========== Left Sidebar End ========== -->
+
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+
+            <div class="content-page">
+
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                                    <h3 class="page-title fw-bold">Projects List</h3>
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+<!--                                        <li class="breadcrumb-item"><a href="/project-detail">Projects</a></li>-->
+                                        <li class="breadcrumb-item active">Projects List</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <button type="button" th:unless="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}" class="btn btn btn-dark w-sm-100 rounded-pill waves-effect waves-light mb-3" data-bs-toggle="modal" data-bs-target="#createproject">
+                                    <i class="ri-add-circle-fill"></i>
+                                    Create Project
+                                </button>
+                            </div>
+
+                        </div>
+                        <!-- end row-->
+
+                        <div class="row">
+                            <div class="col-6 project-card" th:each="project : ${projectList}">
+                                <img src="/pj.png" style="width: 50px; height: 50px;"  alt="photo"/>
+                                <span th:text="${project.projectName}"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div th:each="project : ${projects}" class="col-lg-3">
+                                <div class="card project-box">
+                                    <div class="card-body">
+                                        <div class="dropdown float-end">
+                                            <a href="#" class="dropdown-toggle card-drop arrow-none" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="ri-more-fill m-0 text-muted h3"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" onclick="populateModal('${project.id}', '${project.projectName}', '${project.projectStartDate}', '${project.projectEndDate}')"><i class="ri-edit-fill text-success"></i> <span>Edit</span></a>
+                                                <a class="dropdown-item" th:href="@{'/projects/delete/' + ${project.id}}"><i class="ri-delete-bin-fill text-danger"></i> <span>Delete</span></a>
+                                                <a class="dropdown-item" href="#"><i class="ri-user-add-fill text-primary"></i> <span>Add Members</span> </a>
+                                            </div>
+                                        </div> <!-- end dropdown -->
+
+                                        <!-- Title-->
+                                        <h4 class="mt-0"><a th:href="@{'/project-detail/' + ${project.id}}" class="text-dark" th:text="${project.projectName}">New Admin Design</a></h4>
+                                        <p class="mb-1">
+                                            <span class="pe-2" th:text="${project.id}"></span>
+                                            <span class="pe-2 project-start-date" th:text="${project.projectStartDate}"></span>
+                                            <span class="pe-2 project-end-date" th:text="${project.projectEndDate}"></span>
+                                            <div class="row g-2 pt-4">
+                                                <div class="col-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="ri-bug-line"></i>
+                                                        <span class="ms-2"><b th:text="${#lists.size(project.issues)}"></b>  Tasks</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="ri-calendar-schedule-line"></i>
+                                                        <span class="ms-2 date-difference"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="ri-group-line"></i>
+                                                        <span class="ms-2" th:text="${#lists.size(project.users)}">Members</span>
+                                                    </div>
+                                                </div>
+<!--                                                <div class="col-6">-->
+<!--                                                    <div class="d-flex align-items-center">-->
+<!--                                                        <i class="ri-chat-1-line"></i>-->
+<!--                                                        <span class="ms-2"></span>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+                                            </div>
+                                        </p>
+                                    </div>
+                                </div> <!-- end card box-->
+                            </div><!-- end col-->
+                        </div>
+                        <!-- end row -->
+
+
+                        <!-- Create Project-->
+                        <div class="modal fade" id="createproject" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title  fw-bold" id="createprojectlLabel"> Create Project</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="createProjectForm" th:object="${project}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="projectName" class="form-label">Project Name</label>
+                                                <input type="text" class="form-control" id="projectName" th:field="*{projectName}" placeholder="Enter Project Name">
+                                                <div id="projectNameError" class="text-danger"></div><!-- Error message for project name -->
+                                            </div>
+
+                                            <div class="deadline-form">
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col">
+                                                        <label for="projectStartDate" class="form-label">Project Start Date</label>
+                                                        <input type="date" class="form-control" id="projectStartDate" th:field="*{projectStartDate}">
+                                                        <div id="projectStartDateError" class="text-danger"></div><!-- Error message for project start date -->
+                                                    </div>
+
+                                                    <div class="col">
+                                                        <label for="projectEndDate" class="form-label">Project End Date</label>
+                                                        <input type="date" class="form-control" id="projectEndDate" th:field="*{projectEndDate}">
+                                                        <div id="projectEndDateError" class="text-danger"></div><!-- Error message for project end date -->
+                                                    </div>
+                                                    <div id="projectDateError" class="text-danger"></div>
+                                                </div>
+
+
+                                                <div class="row g-3 mb-3">
+
+                                                    <div class="col-sm-12">
+                                                        <!-- Hidden field to carry the logged-in user's ID -->
+                                                        <input type="hidden" name="loggedInUserId" th:value="${loggedInUser.id}">
+
+                                                        <label  class="form-label">Task Assign Person</label>
+                                                        <select name="countries" id="countries" multiple>
+                                                            <!-- <option selected disabled>Choose Person</option> -->
+
+                                                            <!-- Loop through projectManagersAndMembers -->
+                                                            <option th:each="user : ${projectManagersAndMembers}"
+                                                                    th:value="${user.id}"
+                                                                    th:text="${user.username} + ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'MANAGER' : 'Member'}) + '</span>'">
+                                                            </option>
+
+                                                            <!-- Loop through members -->
+                                                            <option th:each="user : ${members}"
+                                                                    th:value="${user.id}"
+                                                                    th:text="${user.username} + ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'MANAGER' : 'Member'}) + '</span>'">
+                                                            </option>
+                                                        </select>
+<!--                                                        <select name="countries" id="countries" multiple>-->
+<!--&lt;!&ndash;                                                                <option selected disabled>Choose Person</option>&ndash;&gt;-->
+<!--                                                            <option-->
+<!--                                                                    th:each="user : ${projectManagersAndMembers}"-->
+<!--                                                                    th:value="${user.id}" th:text="${user.username}">-->
+<!--                                                            </option>-->
+<!--                                                            <option-->
+<!--                                                                    th:each="user : ${members}"-->
+<!--                                                                    th:value="${user.id}" th:text="${user.username}">-->
+<!--                                                            </option>-->
+<!--                                                        </select>-->
+                                                        <div id="assignPersonError" class="text-danger"></div><!-- Error message for assignee selection -->
+                                                        <script>
+                                                            new MultiSelectTag('countries', {
+                                                                rounded: true,    // default true
+                                                                shadow: true,      // default false
+                                                                placeholder: 'Search',  // default Search...
+                                                                tagColor: {
+                                                                    textColor: '#327b2c',
+                                                                    borderColor: '#92e681',
+                                                                    bgColor: '#eaffe6',
+                                                                },
+                                                                onChange: function(values) {
+                                                                    console.log(values)
+                                                                }
+                                                            })
+                                                        </script>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Create</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Update Project -->
+                        <div class="modal fade" id="updateproject" tabindex="-1" role="dialog" aria-labelledby="updateprojectLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title fw-bold" id="updateprojectLabel">Update Project</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="updateProjectForm" th:action="@{/projects/update}" method="post">
+                                        <div class="modal-body">
+                                            <!-- Project ID (hidden field) -->
+                                            <input type="hidden" id="projectId" name="projectId" th:value="${project.id}" />
+
+                                            <!-- Project Name -->
+                                            <div class="mb-3">
+                                                <label for="updateProjectName" class="form-label">Project Name</label>
+                                                <input type="text" class="form-control" id="updateProjectName" name="updateProjectName" th:value="${project.projectName}" >
+                                            </div>
+
+                                            <!-- Project Start Date -->
+                                            <div class="mb-3">
+                                                <label for="updateProjectStartDate" class="form-label">Project Start Date</label>
+                                                <input type="date" class="form-control" id="updateProjectStartDate" name="updateProjectStartDate" th:value="${#dates.format(project.projectStartDate, 'yyyy-MM-dd')}">
+                                            </div>
+
+                                            <!-- Project End Date -->
+                                            <div class="mb-3">
+                                                <label for="updateProjectEndDate" class="form-label">Project End Date</label>
+                                                <input type="date" class="form-control" id="updateProjectEndDate" name="updateProjectEndDate" th:value="${#dates.format(project.projectEndDate, 'yyyy-MM-dd')}" >
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div> <!-- container -->
+
+                </div> <!-- content -->
+
+                <!-- Footer Start -->
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div><script>document.write(new Date().getFullYear())</script> © PMS - <a href="https://coderthemes.com/" target="_blank">G-3</a></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-none d-md-flex gap-4 align-item-center justify-content-md-end footer-links">
+                                    <a href="javascript: void(0);">About</a>
+                                    <a href="javascript: void(0);">Support</a>
+                                    <a href="javascript: void(0);">Contact Us</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <!-- end Footer -->
+
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+
+
+        </div>
+        <!-- END wrapper -->
+
+        <script>
+            function populateModal(id, name, startDate, endDate) {
+                // Set the project details in the modal fields
+                document.getElementById('projectId').value = id;
+                document.getElementById('updateProjectName').value = name;
+                document.getElementById('updateProjectStartDate').value = startDate;
+                document.getElementById('updateProjectEndDate').value = endDate;
+
+                // Show the modal
+                $('#updateproject').modal('show');
+            }
+
+            const validateField = (fieldValue, errorMessageElement, errorMessage) => {
+                if (fieldValue === '') {
+                    errorMessageElement.innerText = errorMessage;
+                    return false;
+                }
+                errorMessageElement.innerText = ''; // Clear error message
+                return true;
+            };
+            document.getElementById('createProjectForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Extract form data
+                const formData = new FormData(this);
+
+                // Validate project name
+                const projectName = formData.get('projectName').trim();
+                const projectNameValid = validateField(projectName, document.getElementById('projectNameError'), 'Project name is required');
+
+
+                // Validate project start date
+                const startDate = formData.get('projectStartDate').trim();
+                const startDateValid = validateField(startDate, document.getElementById('projectStartDateError'), 'Project start date is required');
+
+                // Validate project end date
+                const endDate = formData.get('projectEndDate').trim();
+                const endDateValid = validateField(endDate, document.getElementById('projectEndDateError'), 'Project end date is required');
+
+                // Check if project start date is after end date
+                let dateRangeValid = true;
+                if (startDateValid && endDateValid && startDate !== '' && endDate !== '') {
+                    const startDateObj = new Date(startDate);
+                    const endDateObj = new Date(endDate);
+                    dateRangeValid = startDateObj <= endDateObj;
+                    document.getElementById('projectStartDateError').innerText = dateRangeValid ? '' : 'Project start date cannot be after project end date';
+                }
+
+                // Get the value of the loggedInUserId hidden field
+                const loggedInUserId = formData.get('loggedInUserId');
+                console.log('Logged In User ID:', loggedInUserId);
+                // Append to formData
+                formData.append('loggedInUserId', loggedInUserId);
+
+                // Check if at least one assignee is selected
+                const selectedUsers = document.getElementById('countries').selectedOptions;
+                const assigneeValid = selectedUsers.length > 0;
+                document.getElementById('assignPersonError').innerText = assigneeValid ? '' : 'At least one assignee must be selected';
+
+                // Stop form submission if any validation fails
+                if (!projectNameValid || !startDateValid || !endDateValid || !dateRangeValid || !assigneeValid) {
+                    return;
+                }
+
+
+                // Clear previous error messages
+                // document.getElementById('projectNameError').innerText = '';
+                // document.getElementById('assignPersonError').innerText = '';
+
+
+                // Add selected user IDs to form data
+                // const selectedUsers = document.getElementById('countries').selectedOptions;
+                const userIds = Array.from(selectedUsers).map(option => option.value);
+                formData.append('userIds', userIds.join(','));
+
+                // Make POST request using Fetch API
+                fetch('/project/create', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(errorMessage => {
+                                if (errorMessage === 'Project with the same name already exists') {
+                                    throw new Error('ProjectExistsError'); // Custom error for project name duplication
+                                } else {
+                                    throw new Error(errorMessage); // Regular error handling
+                                }
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle success response from the server
+                        console.log('Success:', data);
+
+                        // Show SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Project Created Successfully',
+                            text: 'Your project has been created successfully!',
+                            showConfirmButton: true,
+                            // timer: 2000 // Close alert after 2 seconds
+                        }).then(() => {
+                            //     // Reload the page after clicking OK
+                            window.location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error:', error);
+                        if (error.message === 'ProjectExistsError') {
+                            // Show specific error message for project name duplication
+                            document.getElementById('projectNameError').innerText = 'Project with the same name already exists';
+                        } else {
+                            // Show generic error message
+                            error.json().then(data => {
+                                document.getElementById('projectNameError').innerText = data.message || 'An error occurred';
+                            }).catch(() => {
+                                document.getElementById('projectNameError').innerText = 'An error occurred';
+                            });
+                        }
+                        // Clear the field value after showing the error
+                        document.getElementById('projectName').value = '';
+                    });
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var projectBoxes = document.querySelectorAll('.project-box');
+
+                projectBoxes.forEach(function (projectBox) {
+                    var startDateElement = projectBox.querySelector('.project-start-date');
+                    var endDateElement = projectBox.querySelector('.project-end-date');
+                    var dateDifferenceElement = projectBox.querySelector('.date-difference');
+
+                    // Extract start date and end date from the corresponding elements
+                    var startDate = new Date(startDateElement.innerText);
+                    var endDate = new Date(endDateElement.innerText);
+
+                    // Calculate the time difference and days difference
+                    var timeDiff = endDate - startDate;
+                    var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+                    // Display the result in months or days
+                    if (daysDiff >= 30) {
+                        var monthsDiff = Math.floor(daysDiff / 30);
+                        dateDifferenceElement.innerText = monthsDiff + (monthsDiff === 1 ? ' Month' : ' Months');
+                    } else {
+                        dateDifferenceElement.innerText = daysDiff + (daysDiff === 1 ? ' Day' : ' Days');
+                    }
+                });
+            });
+
+            function confirmDelete(projectId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You will not be able to recover this project!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Use template literals for string interpolation
+                        $.ajax({
+                            url: `/projects/delete/${projectId}`, // Use template literals for dynamic URL
+                            type: 'GET',
+                            success: function(data) {
+                                console.log('Success:', data);
+
+                                // Show success message
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Project Deleted Successfully',
+                                    text: 'Your project has been deleted successfully!',
+                                    showConfirmButton: true
+                                }).then(() => {
+                                    // Optionally, remove the deleted project card from the UI
+                                    // $(`#project-${projectId}`).remove();
+                                    // Alternatively, you can reload the page after clicking OK
+                                    // window.location.reload();
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error deleting project:', error);
+                                // Show error message
+                                Swal.fire(
+                                    'Error!',
+                                    'Failed to delete the project.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            }
+
+            // JavaScript to handle form submission for updating project details
+            $('#updateProjectForm').submit(function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Get form data
+                var projectId = $('#projectId').val();
+                var projectName = $('#updateProjectName').val();
+                var projectStartDate = $('#updateProjectStartDate').val();
+                var projectEndDate = $('#updateProjectEndDate').val();
+
+                // Ajax request to update project details
+                $.ajax({
+                    url: '/projects/update/' + projectId,
+                    type: 'POST',
+                    data: {
+                        projectName: projectName,
+                        projectStartDate: projectStartDate,
+                        projectEndDate: projectEndDate
+                    },
+                    success: function(data) {
+                        // Handle success response
+                        console.log('Project updated successfully:', data);
+                        // Reload the page or update the project details in the UI
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error('Error updating project:', error);
+                        // Display error message to the user
+                        alert('Error updating project. Please try again.');
+                    }
+                });
+            });
+
+            $(document).ready(function() {
+                $('#projectTable').DataTable();
+            });
+
+
+        </script>
+
+
+
+        <!-- Vendor js -->
+        <script src="/js/vendor.min.js"></script>
+
+        <!-- App js -->
+        <script src="/js/app.min.js"></script>
+
+</body>
+
+<!-- Mirrored from coderthemes.com/ubold/layouts/default/project-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:28:44 GMT -->
+</html>

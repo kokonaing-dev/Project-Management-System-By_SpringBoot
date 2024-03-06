@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Project Management System</title>
+    <link rel="stylesheet" href="search.css">
+    <style>
+        /* Custom CSS for hover effects and font size */
+        .navbar-nav .nav-link {
+            font-size: 14px;
+            /* Adjust the font size */
+        }
+
+        .navbar-nav .nav-link:hover {
+            background: #adcced !important;
+            color: #fff !important;
+            border-radius: 10px;
+        }
+
+        
+    </style>
+</head>
+
+<body>
+    <!-- <div class="container-fluid"> -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid row">
+            <!-- First Column in Navbar -->
+            <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link" href="#" data-toggle="tooltip" data-placement="bottom"
+                    title="Dashboard">Dashboard</a>
+                <a class="nav-item nav-link" href="#" data-toggle="tooltip" data-placement="bottom"
+                    title="Projects">Projects</a>
+                <a class="nav-item nav-link" href="#" data-toggle="tooltip" data-placement="bottom"
+                    title="Recently Viewed">Recently
+                    Viewed</a>
+                <a class="nav-item nav-link" href="#" data-toggle="tooltip" data-placement="bottom"
+                    title="Filters">Filters</a>
+                <a class="nav-item nav-link" href="#" data-toggle="tooltip" data-placement="bottom"
+                    title="Add Project"><i class="fas fa-plus"></i></a> <!-- Project Plus Icon -->
+            </div>
+
+            <!-- Second Column in Navbar -->
+            <div class="navbar-nav col-7 d-flex">
+                <!-- Search Bar with Pill Style -->
+                <div class="input-group justify-content-end mr-3">
+                    <div class="group ">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+                            <g>
+                                <path
+                                    d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z">
+                                </path>
+                            </g>
+                        </svg>
+                        <input class="input" type="search" placeholder="Search" />
+                    </div>
+
+                </div>
+
+                <!-- Notification Icon -->
+                <a class="nav-item nav-link" href="#" data-toggle="tooltip" data-placement="bottom"
+                    title="Notifications"><i class="fas fa-bell"></i></a>
+
+                <!-- Help Icon -->
+                <a class="nav-item nav-link" href="#" data-toggle="tooltip" data-placement="bottom" title="Help"><i
+                        class="fas fa-question-circle"></i></a>
+
+                <!-- Profile Icon with Dropdown -->
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip"
+                        data-placement="bottom" title="Profile"><i class="fas fa-user"></i></a>
+                    <div class="dropdown-menu rounded-tooltip" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item " href="#">Profile</a>
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Logout</a>
+                    </div>
+                </div>
+
+                <!-- Vertical Line Break -->
+                <div class="vl"></div>
+
+                <!-- Project Icon and Name -->
+                <div class="nav-item col-2">
+                    <i class="fas fa-project-diagram" data-toggle="tooltip" data-placement="bottom" title="Project"></i>
+                    <span class="">OJT-11</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- </div> -->
+    <!-- Your content goes here -->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+       $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+</body>
+
+</html>

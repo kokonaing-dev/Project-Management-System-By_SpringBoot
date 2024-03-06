@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.w3.org/1999/html"
+      xsi:schemaLocation="http://www.thymeleaf.org ">
+<head>
+        <meta charset="utf-8" />
+        <title>Profile </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/images/favicon.ico">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <link rel="stylesheet" href="photostyle.css">
+
+    <link rel="stylesheet" href="customSelect.css">
+    <link rel="stylesheet" href="iconHover.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Theme Config Js -->
+        <script src="/js/config.js"></script>
+
+        <!-- App css -->
+        <link href="/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+
+        <!-- Icons css -->
+        <link href="/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+
+    <body>
+        <!-- Begin page -->
+        <div class="wrapper">
+
+
+            <!-- ========== Topbar Start ========== -->
+            <div th:insert="~{/top-bar :: top-bar}">  </div>
+            <!-- ========== Topbar End ========== -->
+
+            <!-- ========== Left Sidebar Start ========== -->
+            <div th:insert="~{/leftside-menu :: leftside-menu}"> </div>
+            <!-- ========== Left Sidebar End ========== -->
+
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+
+            <div class="content-page">
+                <div class="content">
+                    
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">     
+                                    <h4 class="page-title">Profile</h4>
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+<!--                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>-->
+                                        <li class="breadcrumb-item active">Profile</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-5">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <form th:action="@{/user/save/{id}(id=${loggedInUser != null ? loggedInUser.id : ''})}" method="post" enctype="multipart/form-data">
+                                            <div class="wrapper2">
+                                                <h2>Profile Photo</h2>
+                                                <div class="image">
+                                                    <img th:src="${loggedInUser.photosImagePath}"  alt="photo" style="width: 50px; height: 50px;"/>
+                                                    <label for="file-path">
+                                                        <span class="material-symbols-rounded">
+                                                            photo_camera
+                                                        </span>
+                                                    </label>
+                                                    <input type="file" name="image" accept="image/jpeg, image/png, image/jpg" id="file-path" class="user-file">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>
+                                        </form>
+
+                                        <!-- User's Name and Role -->
+                                        <h4 class="mb-1 mt-2"><span class="ms-2"><span class="ms-2 ">
+                                            <span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span></span></span></h4>
+                                            <p class="text-muted"><span th:each="authority : ${loggedInUser.authorities}" th:text="${#strings.replace(#strings.substring(authority.authority, 5), '_', ' ')}"></span>
+                                            </p>
+
+                                        <div class="text-start mt-3">
+                                            <p class="text-muted mb-2"><strong>Full Name :</strong> <span class="ms-2"><span class="ms-2 ">
+                                                <span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span></span></span></p>
+
+                                            <p class="text-muted mb-2"><strong>Email :</strong> <span class="ms-2 "><span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.email : 'Not Logged In'}"></span>
+                                            </span></p>
+
+                                        </div>
+
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card -->
+
+                            </div> <!-- end col-->
+
+                            <div class="col-xl-8 col-lg-7">
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
+                                            <li class="nav-item">
+                                                <a href="#project" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-start rounded-0 active">
+                                                    Project
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="#settings" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-end rounded-0">
+                                                    Settings
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="project">
+    
+                                                <h5 class="text-uppercase mb-3"><i class="ri-briefcase-line me-1"></i>
+                                                    Projects</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-centered table-hover table-borderless mb-0">
+                                                        <thead class="border-top border-bottom bg-light-subtle border-light">
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>Project Name</th>
+                                                                <th>Start Date</th>
+                                                                <th>Due Date</th>
+                                                                <th>No. Of Issues</th>
+                                                                <th>Issue Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!-- Iterate over each project in the projectList -->
+                                                        <tr th:each="project : ${projectList}">
+                                                            <td th:text="${project.id}"></td>
+                                                            <td th:text="${project.projectName}"></td>
+                                                            <td th:text="${project.projectStartDate}"></td>
+                                                            <td th:text="${project.projectEndDate}"></td>
+                                                            <td th:text="${project.numberOfIssues}"></td>
+                                                            <td>
+                                                                <div class="wrapper2">
+                                                                    <div class="icon view">
+                                                                        <div class="tooltip">
+                                                                            View
+                                                                        </div>
+                                                                        <span><i class="fa-solid fa-eye"></i></span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+    
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+
+
+
+    
+                                            </div> <!-- end tab-pane -->
+                                            <!-- end about me section content -->
+    
+
+    
+                                            <div class="tab-pane" id="settings">
+                                                    <h5 class="mb-4 text-uppercase"><i class="ri-contacts-book-2-line me-1"></i> Personal Info</h5>
+                                                    <form id="profileForm">
+                                                        <div class="row">
+                                                            <!-- Hidden input field for logged-in user's ID -->
+                                                            <input type="hidden" id="userId" name="userId" th:value="${loggedInUser != null ? loggedInUser.id : ''}">
+                                                            <div class="col-md-6">
+                                                                <div class="mb-3">
+                                                                    <label for="username" class="form-label">Username</label>
+                                                                    <input type="text" class="form-control" id="username" placeholder="Enter your name" th:value="${loggedInUser != null ? loggedInUser.username : ''}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="mb-3">
+                                                                    <label for="email" class="form-label">Email Address</label>
+                                                                    <input type="email" class="form-control" id="email" placeholder="Enter your email" th:value="${loggedInUser != null ? loggedInUser.email : ''}">
+                                                                    <!--                                                                <span class="form-text text-muted"><small>If you want to change email please <a href="javascript: void(0);">click</a> here.</small></span>-->
+                                                                </div>
+                                                            </div>
+                                                            <div class="text-end">
+                                                                <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>
+                                                            </div>
+                                                            <!-- end col -->
+                                                        </div>
+                                                    </form> <!-- end row -->
+
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="accordion accordion-flush mb-3" id="changeEmailPasswordAccordion">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="emailPasswordHeading">
+                                                                        <button class="accordion-button collapsed text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#emailPasswordCollapse" aria-expanded="false" aria-controls="emailPasswordCollapse">
+                                                                            Change Password
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="emailPasswordCollapse" class="accordion-collapse collapse" aria-labelledby="emailPasswordHeading" data-bs-parent="#changeEmailPasswordAccordion">
+                                                                        <div class="accordion-body">
+                                                                            <form th:action="@{/updatePassword/{id}(id=${loggedInUser != null ? loggedInUser.id : ''})}" method="post" id="passwordForm">
+                                                                                <div class="row g-2">
+                                                                                    <div class="col-lg-4">
+                                                                                        <div>
+                                                                                            <label for="currentPassword" class="form-label">Old Password*</label>
+                                                                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword"  placeholder="Enter current password">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-4">
+                                                                                        <div>
+                                                                                            <label for="newPassword" class="form-label">New Password*</label>
+                                                                                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" onkeyup='check();'>
+                                                                                            <span id="errormessage"></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-4">
+                                                                                        <div>
+                                                                                            <label for="re_typeNewPassword" class="form-label">Confirm Password*</label>
+                                                                                            <input type="password" class="form-control" id="re_typeNewPassword" name="re_typeNewPassword" placeholder="Confirm password" onkeyup='check();'>
+                                                                                            <span id="message"></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-12">
+                                                                                        <div class="mb-3">
+                                                                                            <a href="/auth-recoverpw" class="link-primary text-decoration-underline">Forgot Password ?</a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-12">
+                                                                                        <div class="text-end">
+                                                                                            <button type="submit" id="signupbtn" class="btn btn-success">Change Password</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!--end row-->
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div> <!-- end col -->
+                                                    </div> <!-- end row -->
+                                                    
+
+                                                    <!-- Success Modal -->
+                                                    <div id="success-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-sm">
+                                                            <div class="modal-content">
+                                                                <div class="modal-body">
+                                                                    <h5 class="modal-title" id="successModalLabel">Profile Updated Successfully!</h5>
+                                                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+<!--                                                </form>-->
+                                            </div>
+                                            <!-- end settings content-->
+    
+                                        </div> <!-- end tab-content -->
+                                    </div> <!-- end card body -->
+                                </div> <!-- end card -->
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row-->
+
+                    </div>
+                    <!-- container -->
+
+                </div>
+                <!-- content -->
+
+
+
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+
+        </div>
+        <!-- END wrapper -->
+
+        <!-- Theme Settings -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
+            <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
+                <h5 class="text-white m-0">Theme Settings</h5>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body p-0">
+                <div data-simplebar class="h-100">
+                    <div class="card mb-0 p-3">
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+                        </div>
+
+                        <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical" class="form-check-input">
+                                <label class="form-check-label" for="customizer-layout01">Vertical</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal" class="form-check-input">
+                                <label class="form-check-label" for="customizer-layout02">Horizontal</label>
+                            </div>
+                        </div>
+
+                        <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
+
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light" value="light">
+                                <label class="form-check-label" for="layout-color-light">Light</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark" value="dark">
+                                <label class="form-check-label" for="layout-color-dark">Dark</label>
+                            </div>
+                        </div>
+
+                        <div id="layout-width">
+                            <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
+
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-fluid" value="fluid">
+                                    <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
+                                </div>
+
+                                <div id="layout-boxed">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-boxed" value="boxed">
+                                        <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
+                                    </div>
+                                </div>
+
+                                <div id="layout-detached">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="data-layout-mode" id="data-layout-detached" value="detached">
+                                        <label class="form-check-label" for="data-layout-detached">Detached</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-light" value="light">
+                                <label class="form-check-label" for="topbar-color-light">Light</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-dark" value="dark">
+                                <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-brand" value="brand">
+                                <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
+
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-light" value="light">
+                                    <label class="form-check-label" for="leftbar-color-light">Light</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-dark" value="dark">
+                                    <label class="form-check-label" for="leftbar-color-dark">Dark</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-brand" value="brand">
+                                    <label class="form-check-label" for="leftbar-color-brand">Brand</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="sidebar-size">
+                            <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
+
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-default" value="default">
+                                    <label class="form-check-label" for="leftbar-size-default">Default</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-compact" value="compact">
+                                    <label class="form-check-label" for="leftbar-size-compact">Compact</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small" value="condensed">
+                                    <label class="form-check-label" for="leftbar-size-small">Condensed</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small-hover" value="sm-hover">
+                                    <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-full" value="full">
+                                    <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-fullscreen" value="fullscreen">
+                                    <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="layout-position">
+                            <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
+
+                            <div class="btn-group checkbox" role="group">
+                                <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed" value="fixed">
+                                <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
+
+                                <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-scrollable" value="scrollable">
+                                <label class="btn btn-soft-primary w-sm ms-0" for="layout-position-scrollable">Scrollable</label>
+                            </div>
+                        </div>
+
+                        <div id="sidebar-user">
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" name="sidebar-user" id="sidebaruser-check">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="offcanvas-footer border-top p-3 text-center">
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
+                    </div>
+                    <div class="col-6">
+                        <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <!-- Vendor js -->
+        <script src="/js/vendor.min.js"></script>
+
+        <!-- App js -->
+        <script src="/js/app.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+        <script>
+            document.getElementById('signupbtn').addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent form submission
+
+                var formData = new FormData(document.getElementById('passwordForm'));
+
+                fetch(document.getElementById('passwordForm').action, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text(); // Read response as plain text
+                    })
+                    .then(data => {
+                        // Handle success response
+                        console.log(data);
+                        // Show SweetAlert on success
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data, // Assuming the response contains a success message
+                            showConfirmButton: true,
+                        }).then((result) => {
+                            // Reload the page after the user clicks "OK"
+                            if (result.isConfirmed || result.isDismissed) {
+                                window.location.reload();
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('There was a problem with your fetch operation:', error);
+                        // Show SweetAlert on error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred. Please try again.'
+                        });
+                    });
+            });
+        </script>
+
+
+
+        <script>
+            $(document).ready(function() {
+                $('#profileForm').submit(function(e) {
+                    e.preventDefault();
+
+                    var name = $('#username').val();
+                    var email = $('#email').val();
+                    var userId = $('#userId').val();
+
+                    var formData = new FormData();
+                    formData.append('username', name);
+                    formData.append('email', email);
+                    formData.append('userId', userId);
+
+                    $.ajax({
+                        url: '/updateProfile/' + userId,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            // Show SweetAlert2 success alert
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Profile updated successfully',
+                            }).then((result) => {
+                                // Redirect or perform any other action after the user clicks the OK button
+                                if (result.isConfirmed) {
+                                    window.location.href = '/pages-profile'; // Redirect to profile page
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error updating profile:', error);
+                            // Handle error response here
+                        }
+                    });
+                });
+            });
+        </script>
+
+
+        <script>
+            let newPasswordTimeout; // Variable to hold the timeout for delaying the Not Matching message
+
+            $('#newPassword, #re_typeNewPassword').on('keyup', function () {
+                clearTimeout(newPasswordTimeout); // Clear the previous timeout
+                newPasswordTimeout = setTimeout(() => check(), 500); // Set a new timeout after typing stops
+            });
+
+            function check() {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const re_typeNewPassword = document.getElementById('re_typeNewPassword').value;
+
+                // Clear previous messages
+                $('#message').html('').css('color', 'red');
+                $('#errormessage').html('').css('color', 'red');
+
+                // Check for current password and new password equality
+                if (currentPassword === newPassword) {
+                    $('#errormessage').html('New password must be different from current password.').css('color', 'red');
+                }
+
+                // Check for new password length
+                if (newPassword.length < 6) {
+                    $('#errormessage').html('New password must be at least 6 characters.').css('color', 'red');
+                }
+
+                // Check if re-typed new password matches
+                if (re_typeNewPassword !== newPassword && re_typeNewPassword.length > 0) {
+                    $('#message').html('New password does not match. Enter new password again here.').css('color', 'red');
+                }
+
+                // Enable or disable the button based on conditions
+                document.getElementById('signupbtn').disabled =
+                    currentPassword === newPassword || newPassword.length < 6 || re_typeNewPassword !== newPassword;
+
+                // Clear the message if conditions are met
+                if (currentPassword !== newPassword && newPassword.length >= 6 && re_typeNewPassword === newPassword) {
+                    $('#message').html('').css('color', 'green');
+                }
+            }
+        </script>
+
+
+        <script>
+            const profilePic = document.querySelector(".image img");
+            const userFile = document.querySelector(".user-file");
+
+            userFile.onchange = function () {
+                profilePic.src = URL.createObjectURL(userFile.files[0]);
+            }
+        </script>
+
+
+        <!-- Include jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Include SweetAlert2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </body>
+
+<!-- Mirrored from coderthemes.com/jidox/layouts/pages-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:00:43 GMT -->
+</html>

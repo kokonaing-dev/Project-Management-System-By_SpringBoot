@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PMS</title>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
+
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+
+    <!-- Quill css -->
+    <link href="/libs/quill/quill.core.css" rel="stylesheet" type="text/css"/>
+    <link href="/libs/quill/quill.bubble.css" rel="stylesheet" type="text/css"/>
+    <link href="/libs/quill/quill.snow.css" rel="stylesheet" type="text/css"/>
+
+    <!-- Theme Config Js -->
+    <script src="/js/config.js"></script>
+
+    <!-- App css -->
+    <link href="/css/app.min.css" rel="stylesheet" type="text/css" id="app-style"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <!-- Icons css -->
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.css"
+          integrity="sha512-n1PBkhxQLVIma0hnm731gu/40gByOeBjlm5Z/PgwNxhJnyW1wYG8v7gPJDT6jpk0cMHfL8vUGUVjz3t4gXyZYQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <style>
+
+        /* Style the alert box */
+        .alert {
+            position: relative;
+            padding: 20px;
+            margin-bottom: 15px;
+            opacity: 1;
+            border-radius: 10px;
+            display: none; /* Initially hide the alert box */
+        }
+
+        /* Style the success alert box */
+        .alert-success {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+
+
+        /* Style the close button */
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Begin page -->
+<div class="wrapper">
+
+
+    <!-- ========== Topbar Start ========== -->
+    <div th:insert="~{/top-bar :: top-bar}"></div>
+    <!-- ========== Topbar End ========== -->
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:insert="~{/leftside-menu :: leftside-menu}"></div>
+    <!-- ========== Left Sidebar End ========== -->
+
+    <!-- ============================================================== -->
+    <!-- Start Page Content here -->
+    <!-- ============================================================== -->
+
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Start Content-->
+            <div class="container-fluid">
+
+                <div class="modal fade" id="projectModal" tabindex="-1" role="dialog"
+                     aria-labelledby="NewTaskModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px;">
+                        <div class="modal-content" style="background-color:#eeeef1;color: black;">
+                            <div class="modal-header" style="padding: 20px 30px;">
+                                <h4 class="modal-title">Select a Project</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="height: 300px; padding: 0 30px;">
+                                <form class="p-2" enctype="multipart/form-data" id="projectForm" th:object="${project}">
+                                    <select class="js-example-basic-single form-control" id="projectSelect"
+                                            th:field="*{projectName}">
+                                        <option value="" id="defaultOption">Select Project</option>
+                                        <option th:each="project : ${projectList}" th:value="${project.id}"
+                                                th:text="${project.projectName}"></option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+                <!-- Include jQuery library -->
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        $('.js-example-basic-single').select2();
+                    });
+                </script>
+                <script>
+                    $(document).ready(function () {
+                        // Hide the default option when the document is ready
+                        $('#defaultOption').hide();
+
+                        // Variable to store selected project ID
+                        var projectId; // Rename the variable to projectId
+
+                        // When an option is selected
+                        $('#projectSelect').on('change', function () {
+                            // Get the selected project name and ID
+                            var selectedProjectName = $(this).find(':selected').text();
+                            var selectedProjectId = $(this).val();
+
+                            // Populate users based on the selected project
+                            populateUsers(selectedProjectId);
+
+                            console.log("IDDDDDDDDDD" + selectedProjectId);
+
+                            // Set the selected project name as the title of the next modal
+                            $('#add-new-task-modal .modal-title').text(selectedProjectName);
+
+                            // Set the project ID in the hidden input field
+                            $('#projectId').val(selectedProjectId);
+
+                            // Close current modal
+                            $('#projectModal').modal('hide');
+
+                            // Open next modal
+                            $('#add-new-task-modal').modal('show');
+
+                            // Prevent the default option from being shown again
+                            $('#defaultOption').hide();
+                        });
+
+                        // Function to populate users based on selected project ID
+                        function populateUsers(selectedProjectId) {
+                            // Make AJAX request to fetch users for the selected project
+                            $.ajax({
+                                url: '/user/fetch_users', // URL to the controller endpoint for fetching users
+                                method: 'GET',
+                                data: {projectId: selectedProjectId}, // Pass the project ID
+                                success: function (response) {
+                                    // Clear existing options
+                                    $('#userSelect').empty();
+                                    // Add default option
+                                    $('#userSelect').append('<option value="">Select User</option>');
+
+                                    // Check if the response is an array or a single object
+                                    if (Array.isArray(response)) {
+                                        // If it's an array, iterate over it and add options
+                                        response.forEach(function (user) {
+                                            $('#userSelect').append('<option value="' + user.id + '">' + user.username + '</option>');
+                                        });
+                                    } else if (response.id !== undefined) {
+                                        // If it's a single object, wrap it inside an array and add the option
+                                        $('#userSelect').append('<option value="' + response.id + '">' + response.username + '</option>');
+                                    } else {
+                                        console.error('Invalid response format:', response);
+                                    }
+                                }
+                                ,
+                                error: function (xhr, status, error) {
+                                    console.error('Failed to fetch users:', error);
+                                    // Show error message using SweetAlert
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'Failed to fetch users. Please try again later.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                            });
+                        }
+
+                    });
+                </script>
+
+                <div class="row">
+                    <div class="col-xxl-12">
+                        <div class="page-title-box justify-content-between d-flex align-items-lg-center flex-lg-row flex-column">
+                            <h4 class="page-title">Tasks</h4>
+                            <div class="app-search">
+                                <form>
+                                    <a th:unless="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}"
+                                       href="#" data-bs-toggle="modal" data-bs-target="#projectModal"
+                                       class="btn btn-success btn-sm ms-3">
+                                        <i class="ri-add-circle-fill"></i>
+                                        Add New Issue
+                                    </a>
+
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- tasks panel -->
+                        <div class="mt-2">
+                            <h5 class="m-0 pb-2">
+                                <a class="text-dark" data-bs-toggle="collapse" href="#todayTasks" role="button"
+                                   aria-expanded="false" aria-controls="todayTasks">
+                                    <i class='ri-arrow-down-s-line fs-18'></i>Today <span
+                                        class="text-muted">(</span><span class="text-muted"
+                                                                         th:text="${todayIssuesCount}"></span><span
+                                        class="text-muted">)</span>
+                                </a>
+                            </h5>
+
+                            <div class="collapse show mb-2" id="todayTasks">
+                                <div class="card mb-0">
+                                    <div class="card-body">
+                                        <!-- task -->
+                                        <div class="table-responsive">
+                                            <div class="row justify-content-sm-between">
+                                                <table id="today-tasks" class="table table-striped nowrap" style="width:100%">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Project</th>
+                                                        <th>Issue Type</th>
+                                                        <th>Subject</th>
+                                                        <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Due Date</th>
+                                                        <th>Details</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="issue : ${todayIssues}">
+                                                        <td th:text="${issue.id}"></td>
+                                                        <td th:text="${issue.project.projectName}"></td>
+                                                        <td>
+                                                            <span th:switch="${issue.issueType.issueName}"
+                                                                  style="font-size: 17px;">
+                                                                <span th:case="'Task'"
+                                                                      class="badge bg-success-subtle text-success p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Bug'"
+                                                                      class="badge bg-danger-subtle text-danger p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Request'"
+                                                                      class="badge bg-info-subtle text-info p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Add more cases for other issue names -->
+                                                                <span th:case="*"
+                                                                      class="badge bg-warning-subtle text-warning p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Default case: In case none of the specified cases match -->
+                                                            </span>
+                                                        </td>
+
+                                                        <td th:text="${issue.subject}"></td>
+
+                                                        <td>
+                                                            <select class="issueStatusDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="OPEN"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 0}">
+                                                                    OPEN
+                                                                </option>
+                                                                <option value="IN_PROGRESS"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 1}">
+                                                                    IN_PROGRESS
+                                                                </option>
+                                                                <option value="SOLVED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 2}">
+                                                                    SOLVED
+                                                                </option>
+                                                                <option value="PENDING"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 3}">
+                                                                    PENDING
+                                                                </option>
+                                                                <option value="CLOSED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
+                                                                    CLOSED
+                                                                </option>
+                                                            </select>
+                                                        </td>
+
+                                                        <td>
+                                                            <select class="priorityDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="HIGH"
+                                                                        th:selected="${issue.priority.ordinal() == 0}">
+                                                                    HIGH
+                                                                </option>
+                                                                <option value="MEDIUM"
+                                                                        th:selected="${issue.priority.ordinal() == 1}">
+                                                                    MEDIUM
+                                                                </option>
+                                                                <option value="LOW"
+                                                                        th:selected="${issue.priority.ordinal() == 2}">
+                                                                    LOW
+                                                                </option>
+                                                            </select>
+                                                        </td>
+
+                                                        <td th:text="${issue.actualEndDate}"></td>
+
+                                                        <td>
+                                                            <a href="#" th:id="'moreInfo_' + ${issue.id}"
+                                                               class="btn btn-info more-info"
+                                                               th:data-issue-id="${issue.id}">More<i
+                                                                    class="fa-solid fa-angles-right"></i>
+                                                            </a>
+                                                        </td>
+
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- end task -->
+
+                                    </div> <!-- end card-body-->
+                                </div> <!-- end card -->
+                            </div> <!-- end .collapse-->
+                        </div> <!-- end .mt-2-->
+
+                        <div class="modal fade" id="issueModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Issue Details</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Issue information will be populated here -->
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script th:inline="javascript">
+                            $(document).ready(function () {
+                                $('.more-info').click(function (e) {
+                                    e.preventDefault();
+                                    var issueId = $(this).data('issue-id');
+                                    console.log("Issue Fetch...." + issueId);
+                                    $.ajax({
+                                        url: '/getIssueInfo', // URL to fetch issue information
+                                        type: 'GET',
+                                        data: {issueId: issueId},
+                                        success: function (response) {
+                                            $('#issueModal .modal-body').html(response);
+                                            $('#issueModal').modal('show');
+                                        },
+                                        error: function () {
+                                            alert('Error fetching issue information');
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+
+
+                        <!-- Add a div to display the alert message -->
+                        <div id="priorityAlertBox" class="alert alert-success">
+                            <span class="close-button">&times;</span>
+                            Priority updated successfully
+                        </div>
+
+
+                        <!-- Add a div to display the alert message -->
+                        <div id="issueStatusAlertBox" class="alert alert-success">
+                            <span class="close-button">&times;</span>
+                            Issue Status updated successfully
+                        </div>
+
+                        <!-- upcoming tasks -->
+                        <div class="mt-4">
+
+                            <h5 class="m-0 pb-2">
+                                <a class="text-dark" data-bs-toggle="collapse" href="#upcomingTasks" role="button"
+                                   aria-expanded="false" aria-controls="upcomingTasks">
+                                    <i class='ri-arrow-down-s-line fs-18'></i>Upcoming <span class="text-muted">(</span><span
+                                        class="text-muted" th:text="${upcomingIssuesCount}"></span><span
+                                        class="text-muted">)</span>
+                                </a>
+                            </h5>
+
+                            <div class="collapse show" id="upcomingTasks">
+                                <div class="card mb-0">
+                                    <div class="card-body">
+                                        <!-- task -->
+                                        <div class="table-responsive">
+                                            <div class="row justify-content-sm-between">
+                                                <table id="upcoming-tasks" class="table table-striped nowrap" style="width:100%">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Project</th>
+                                                        <th>Issue Type</th>
+                                                        <th>Subject</th>
+                                                        <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Due Date</th>
+                                                        <th>Details</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="issue : ${upcomingIssues}">
+                                                        <td th:text="${issue.id}"></td>
+                                                        <td th:text="${issue.project.projectName}"></td>
+                                                        <td>
+                                                            <span th:switch="${issue.issueType.issueName}"
+                                                                  style="font-size: 17px;">
+                                                                <span th:case="'Task'"
+                                                                      class="badge bg-success-subtle text-success p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Bug'"
+                                                                      class="badge bg-danger-subtle text-danger p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Request'"
+                                                                      class="badge bg-info-subtle text-info p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Add more cases for other issue names -->
+                                                                <span th:case="*"
+                                                                      class="badge bg-warning-subtle text-warning p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Default case: In case none of the specified cases match -->
+                                                            </span>
+                                                        </td>
+
+                                                        <td th:text="${issue.subject}"></td>
+
+                                                        <td>
+                                                            <select class="issueStatusDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="OPEN"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 0}">
+                                                                    OPEN
+                                                                </option>
+                                                                <option value="IN_PROGRESS"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 1}">
+                                                                    IN_PROGRESS
+                                                                </option>
+                                                                <option value="SOLVED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 2}">
+                                                                    SOLVED
+                                                                </option>
+                                                                <option value="PENDING"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 3}">
+                                                                    PENDING
+                                                                </option>
+                                                                <option value="CLOSED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
+                                                                    CLOSED
+                                                                </option>
+                                                            </select>
+                                                        </td>
+
+                                                        <td>
+                                                            <select class="priorityDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="HIGH"
+                                                                        th:selected="${issue.priority.ordinal() == 0}">
+                                                                    HIGH
+                                                                </option>
+                                                                <option value="MEDIUM"
+                                                                        th:selected="${issue.priority.ordinal() == 1}">
+                                                                    MEDIUM
+                                                                </option>
+                                                                <option value="LOW"
+                                                                        th:selected="${issue.priority.ordinal() == 2}">
+                                                                    LOW
+                                                                </option>
+                                                            </select>
+                                                        </td>
+
+                                                        <td th:text="${issue.actualEndDate}"></td>
+
+                                                        <td>
+                                                            <a href="#" th:id="'moreInfo_' + ${issue.id}"
+                                                               class="btn btn-info more-info"
+                                                               th:data-issue-id="${issue.id}">More<i
+                                                                    class="fa-solid fa-angles-right"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- end task -->
+
+                                    </div> <!-- end card-body-->
+                                </div> <!-- end card -->
+                            </div> <!-- end collapse-->
+                        </div>
+                        <!-- end upcoming tasks -->
+
+                        <!-- start other tasks -->
+                        <div class="mt-4 mb-4">
+                            <h5 class="m-0 pb-2">
+                                <a class="text-dark" data-bs-toggle="collapse" href="#overdueTasks" role="button"
+                                   aria-expanded="false" aria-controls="overdueTasks">
+                                    <i class='ri-arrow-down-s-line fs-18'></i>OverDue Tasks <span
+                                        class="text-muted">(</span><span class="text-muted"
+                                                                         th:text="${overdueTasksCount}"></span><span
+                                        class="text-muted">)</span>
+                                </a>
+                            </h5>
+
+                            <div class="collapse show" id="overdueTasks">
+                                <div class="card mb-0">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <div class="row justify-content-sm-between">
+                                                <table id="overdue-tasks" class="display nowrap" style="width:100%">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Project</th>
+                                                        <th>Issue Type</th>
+                                                         <th>Subject</th>
+                                                        <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Due Date</th>
+                                                        <th>Details</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="issue : ${overdueTasks}"
+                                                        th:if="${#lists.size(issue.users) > 1}">
+                                                        <td th:text="${issue.id}"></td>
+                                                        <td th:text="${issue.project.projectName}"></td>
+                                                        <td>
+                                                            <span th:switch="${issue.issueType.issueName}"
+                                                                  style="font-size: 17px;">
+                                                                <span th:case="'Task'"
+                                                                      class="badge bg-success-subtle text-success p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Bug'"
+                                                                      class="badge bg-danger-subtle text-danger p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Request'"
+                                                                      class="badge bg-info-subtle text-info p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Add more cases for other issue names -->
+                                                                <span th:case="*"
+                                                                      class="badge bg-warning-subtle text-warning p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Default case: In case none of the specified cases match -->
+                                                            </span>
+                                                        </td>
+
+                                                        <td th:text="${issue.subject}"></td>
+
+                                                        <td>
+                                                            <select class="issueStatusDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="OPEN"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 0}">
+                                                                    OPEN
+                                                                </option>
+                                                                <option value="IN_PROGRESS"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 1}">
+                                                                    IN_PROGRESS
+                                                                </option>
+                                                                <option value="SOLVED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 2}">
+                                                                    SOLVED
+                                                                </option>
+                                                                <option value="PENDING"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 3}">
+                                                                    PENDING
+                                                                </option>
+                                                                <option value="CLOSED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
+                                                                    CLOSED
+                                                                </option>
+                                                            </select>
+                                                        </td>
+
+                                                        <td>
+                                                            <select class="priorityDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="HIGH"
+                                                                        th:selected="${issue.priority.ordinal() == 0}">
+                                                                    HIGH
+                                                                </option>
+                                                                <option value="MEDIUM"
+                                                                        th:selected="${issue.priority.ordinal() == 1}">
+                                                                    MEDIUM
+                                                                </option>
+                                                                <option value="LOW"
+                                                                        th:selected="${issue.priority.ordinal() == 2}">
+                                                                    LOW
+                                                                </option>
+                                                            </select>
+                                                        </td>
+
+
+                                                        <td>
+                                                            <input type="date" class="form-control start-date"
+                                                                   th:id="${issue.id}"
+                                                                   th:value="${issue.actualStartDate}"/>
+                                                        </td>
+
+                                                        <td>
+                                                            <input type="date" class="form-control end-date"
+                                                                   th:id="${issue.id}"
+                                                                   th:value="${issue.actualEndDate}"/>
+                                                        </td>
+
+
+                                                        <td>
+                                                            <a href="#" th:id="'moreInfo_' + ${issue.id}"
+                                                               class="btn btn-info more-info"
+                                                               th:data-issue-id="${issue.id}">More<i
+                                                                    class="fa-solid fa-angles-right"></i>
+                                                            </a>
+                                                        </td>
+
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div> <!-- end card-body-->
+                                    </div> <!-- end card -->
+                                </div>
+                            </div>
+
+
+                            <!-- start stack members -->
+                            <div class="mt-4 mb-4">
+                                <h5 class="m-0 pb-2">
+                                    <a class="text-dark" data-bs-toggle="collapse" href="#stackMembers" role="button"
+                                       aria-expanded="false" aria-controls="stackMembers">
+                                        <i class='ri-arrow-down-s-line fs-18'></i>Stack Members <span
+                                            class="text-muted">(</span><span class="text-muted"></span><span
+                                            class="text-muted">)</span>
+                                    </a>
+                                </h5>
+                                <div class="collapse show" id="stackMembers">
+                                    <div class="card mb-0">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <div class="row justify-content-sm-between">
+                                                    <table id="stack-members" class="display nowrap" style="width:100%">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>No</th>
+                                                            <th>Project</th>
+                                                            <th>Issue Type</th>
+                                                            <th>Subject</th>
+                                                            <th>Assignee</th>
+                                                            <th>Status</th>
+                                                            <th>Due Date</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr th:each="issue : ${issues}">
+                                                            <td th:text="${issue.id}"></td>
+                                                            <td th:text="${issue.project.projectName}"></td>
+                                                            <!-- <td th:text="${projectIssueCounts[issue.project]}"></td>-->
+                                                            <td>
+                                                                    <span th:switch="${issue.issueType.issueName}"
+                                                                          style="font-size: 17px;">
+                                                                        <span th:case="'Task'"
+                                                                              class="badge bg-success-subtle text-success p-1"
+                                                                              th:text="${issue.issueType.issueName}"></span>
+                                                                        <span th:case="'Bug'"
+                                                                              class="badge bg-danger-subtle text-danger p-1"
+                                                                              th:text="${issue.issueType.issueName}"></span>
+                                                                        <span th:case="'Request'"
+                                                                              class="badge bg-info-subtle text-info p-1"
+                                                                              th:text="${issue.issueType.issueName}"></span>
+                                                                        <!-- Add more cases for other issue names -->
+                                                                        <span th:case="*"
+                                                                              class="badge bg-warning-subtle text-warning p-1"
+                                                                              th:text="${issue.issueType.issueName}"></span>
+                                                                        <!-- Default case: In case none of the specified cases match -->
+                                                                    </span>
+                                                            </td>
+
+                                                            <td th:text="${issue.subject}"></td>
+
+                                                            <td>
+                                                                <span th:each="user, iterStat : ${issue.users}">
+                                                                    <span th:text="${user.username}"></span>
+                                                                    <span th:if="${!iterStat.last}">, </span>
+                                                                </span>
+                                                            </td>
+
+
+                                                            <td th:text="${issue.issueStatus}"></td>
+
+                                                            <td th:text="${issue.actualEndDate}"></td>
+
+
+<!--                                                            <td>-->
+<!--                                                                <span th:if="${issue.attachmentFileNames != null}">-->
+<!--                                                                    <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">-->
+<!--                                                                        <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>-->
+<!--                                                                        <span th:if="${!iterStat.last}">, </span>-->
+<!--                                                                    </span>-->
+<!--                                                                </span>-->
+<!--                                                            </td>-->
+
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- start solved tasks -->
+                            <div class="mt-4 mb-4">
+                                <h5 class="m-0 pb-2">
+                                    <a class="text-dark" data-bs-toggle="collapse" href="#solvedTasks" role="button"
+                                       aria-expanded="false" aria-controls="solvedTasks">
+                                        <i class='ri-arrow-down-s-line fs-18'></i>Solved Tasks <span
+                                            class="text-muted">(</span><span class="text-muted"></span><span
+                                            class="text-muted">)</span>
+                                    </a>
+                                </h5>
+                                <div class="collapse show" id="solvedTasks">
+                                    <div class="card mb-0">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <div class="row justify-content-sm-between">
+                                                    <table id="example" class="display nowrap" style="width:100%">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>No</th>
+                                                            <th>Project</th>
+                                                            <th>Issue Type</th>
+                                                            <th>Subject</th>
+                                                            <th>Status</th>
+                                                            <th>Priority</th>
+                                                            <th>Due Date</th>
+                                                            <th>Details</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr th:each="issue : ${overdueTasks}"
+                                                            th:if="${#lists.size(issue.users) > 1}">
+                                                            <td th:text="${issue.id}"></td>
+                                                            <td th:text="${issue.project.projectName}"></td>
+                                                            <td>
+                                                            <span th:switch="${issue.issueType.issueName}"
+                                                                  style="font-size: 17px;">
+                                                                <span th:case="'Task'"
+                                                                      class="badge bg-success-subtle text-success p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Bug'"
+                                                                      class="badge bg-danger-subtle text-danger p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <span th:case="'Request'"
+                                                                      class="badge bg-info-subtle text-info p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Add more cases for other issue names -->
+                                                                <span th:case="*"
+                                                                      class="badge bg-warning-subtle text-warning p-1"
+                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                <!-- Default case: In case none of the specified cases match -->
+                                                            </span>
+                                                            </td>
+
+                                                            <td th:text="${issue.subject}"></td>
+
+                                                            <td th:text="${issue.status}"></td>
+
+                                                            <td th:text="${issue.priority}"></td>
+
+                                                            <td>
+                                                                <input type="date" class="form-control start-date"
+                                                                       th:id="${issue.id}"
+                                                                       th:value="${issue.actualStartDate}"/>
+                                                            </td>
+
+                                                            <td>
+                                                                <input type="date" class="form-control end-date"
+                                                                       th:id="${issue.id}"
+                                                                       th:value="${issue.actualEndDate}"/>
+                                                            </td>
+
+
+                                                            <td>
+                                                                <a href="#" th:id="'moreInfo_' + ${issue.id}"
+                                                                   class="btn btn-info more-info"
+                                                                   th:data-issue-id="${issue.id}">More<i
+                                                                        class="fa-solid fa-angles-right"></i>
+                                                                </a>
+                                                            </td>
+
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                            <script>
+                                $(document).ready(function () {
+                                    // Event listener for priority dropdown change
+                                    $('.priorityDropdown').change(function () {
+                                        const selectedPriority = $(this).val(); // Get the selected priority
+                                        const issueId = $(this).attr('id'); // Get the issue ID from data attribute
+
+                                        console.log(selectedPriority);
+                                        console.log(issueId);
+
+                                        // Send AJAX request to update the priority
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: '/issue/updatePriority', // Replace with your Spring Boot endpoint
+                                            contentType: 'application/json',
+                                            data: JSON.stringify({issueId: issueId, newPriority: selectedPriority}),
+                                            success: function (response) {
+                                                // Display the alert box with fade-in effect
+                                                $('#priorityAlertBox').fadeIn();
+
+                                                // Hide the alert box after 3 seconds with fade-out effect
+                                                setTimeout(function () {
+                                                    $('#priorityAlertBox').fadeOut();
+                                                }, 3000); // 3 seconds in milliseconds
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.error('Error updating Priority:', error);
+                                            }
+                                        });
+                                    });
+                                    // Event listener for close button
+                                    $('#priorityAlertBox .close-button').click(function () {
+                                        // Hide the alert box
+                                        $('#priorityAlertBox').fadeOut();
+                                    });
+                                });
+                            </script>
+
+
+                            <script>
+                                $(document).ready(function () {
+                                    // Event listener for dropdown change
+                                    $('.issueStatusDropdown').change(function () {
+                                        const selectedStatus = $(this).val(); // Get the selected status
+                                        const issueId = $(this).attr('id'); // Get the issue ID from data attribute
+
+                                        console.log(selectedStatus);
+                                        console.log(issueId);
+
+                                        // Send AJAX request to update the issueStatus
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: '/issue/updateIssueStatus', // Replace with your Spring Boot endpoint
+                                            contentType: 'application/json',
+                                            data: JSON.stringify({issueId: issueId, newIssueStatus: selectedStatus}),
+                                            success: function (response) {
+                                                // Display the alert box with fade-in effect
+                                                $('#issueStatusAlertBox').fadeIn();
+
+                                                // Hide the alert box after 3 seconds with fade-out effect
+                                                setTimeout(function () {
+                                                    $('#issueStatusAlertBox').fadeOut();
+                                                }, 3000); // 3 seconds in milliseconds
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.error('Error updating IssueStatus:', error);
+                                            }
+                                        });
+                                    });
+                                    // Event listener for close button
+                                    $('#issueStatusAlertBox .close-button').click(function () {
+                                        // Hide the alert box
+                                        $('#issueStatusAlertBox').fadeOut();
+                                    });
+                                });
+                            </script>
+
+
+                        </div> <!-- end col -->
+                    </div>
+                    <!-- end row-->
+
+
+                </div> <!-- container -->
+            </div><!-- content -->
+        </div>
+
+
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+
+    </div>
+    <!-- END wrapper -->
+
+    <!-- Theme Settings -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
+        <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
+            <h5 class="text-white m-0">Theme Settings</h5>
+            <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body p-0">
+            <div data-simplebar class="h-100">
+                <div class="card mb-0 p-3">
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+                    </div>
+
+                    <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical"
+                                   class="form-check-input">
+                            <label class="form-check-label" for="customizer-layout01">Vertical</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal"
+                                   class="form-check-input">
+                            <label class="form-check-label" for="customizer-layout02">Horizontal</label>
+                        </div>
+                    </div>
+
+                    <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light"
+                                   value="light">
+                            <label class="form-check-label" for="layout-color-light">Light</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark"
+                                   value="dark">
+                            <label class="form-check-label" for="layout-color-dark">Dark</label>
+                        </div>
+                    </div>
+
+                    <div id="layout-width">
+                        <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
+
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                       id="layout-mode-fluid" value="fluid">
+                                <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
+                            </div>
+
+                            <div id="layout-boxed">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                           id="layout-mode-boxed" value="boxed">
+                                    <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
+                                </div>
+                            </div>
+
+                            <div id="layout-detached">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                           id="data-layout-detached" value="detached">
+                                    <label class="form-check-label" for="data-layout-detached">Detached</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                                   id="topbar-color-light" value="light">
+                            <label class="form-check-label" for="topbar-color-light">Light</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                                   id="topbar-color-dark" value="dark">
+                            <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                                   id="topbar-color-brand" value="brand">
+                            <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
+
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                       id="leftbar-color-light" value="light">
+                                <label class="form-check-label" for="leftbar-color-light">Light</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                       id="leftbar-color-dark" value="dark">
+                                <label class="form-check-label" for="leftbar-color-dark">Dark</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                       id="leftbar-color-brand" value="brand">
+                                <label class="form-check-label" for="leftbar-color-brand">Brand</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sidebar-size">
+                        <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
+
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                       id="leftbar-size-default" value="default">
+                                <label class="form-check-label" for="leftbar-size-default">Default</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                       id="leftbar-size-compact" value="compact">
+                                <label class="form-check-label" for="leftbar-size-compact">Compact</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                       id="leftbar-size-small" value="condensed">
+                                <label class="form-check-label" for="leftbar-size-small">Condensed</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                       id="leftbar-size-small-hover" value="sm-hover">
+                                <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                       id="leftbar-size-full" value="full">
+                                <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                       id="leftbar-size-fullscreen" value="fullscreen">
+                                <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="layout-position">
+                        <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
+
+                        <div class="btn-group checkbox" role="group">
+                            <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed"
+                                   value="fixed">
+                            <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
+
+                            <input type="radio" class="btn-check" name="data-layout-position"
+                                   id="layout-position-scrollable" value="scrollable">
+                            <label class="btn btn-soft-primary w-sm ms-0"
+                                   for="layout-position-scrollable">Scrollable</label>
+                        </div>
+                    </div>
+
+                    <div id="sidebar-user">
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
+                            <div class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input" name="sidebar-user"
+                                       id="sidebaruser-check">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="offcanvas-footer border-top p-3 text-center">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
+                </div>
+                <div class="col-6">
+                    <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  Add new task modal -->
+    <div class="modal fade task-modal-content" id="add-new-task-modal" tabindex="-1" role="dialog"
+         aria-labelledby="NewTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1070px;">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#007bff; color: #fff; padding: 20px 30px;">
+                    <h4 class="modal-title" id="NewTaskModalLabel">Create New Task</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="background-color:#eeeef1;color: black; padding: 0 30px;">
+                    <form class="p-2" id="issueForm" th:object="${issue}">
+
+                        <input type="hidden" id="projectId" name="projectId">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">IssueType</label>
+                                    <select class="form-select" th:field="*{issueType}">
+                                        <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}"
+                                                th:text="${issueType.issueName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" th:field="*{subject}"
+                                   placeholder="Subject">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="task-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="task-description" rows="3"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" th:field="*{issueStatus}">
+                                        <option th:each="issueStatus : ${issueStatuses}" th:value="${issueStatus}"
+                                                th:text="${issueStatus}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" th:field="*{priority}">
+                                        <option th:each="priority : ${priorities}" th:value="${priority}"
+                                                th:text="${priority}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" th:field="*{category}">
+                                        <option th:each="category : ${categories}" th:value="${category.id}"
+                                                th:text="${category.categoryName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-md-6 edit">
+                                <div class="mb-3">
+                                    <label class="form-label">Assign To</label>
+                                    <select id="userSelect" class="form-control" multiple="multiple" th:field="*{users}"
+                                            required>
+                                        <!-- Options will be dynamically populated -->
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="planStartDate" class="form-label">Plan Start Date</label>
+                                    <input type="date" class="form-control" id="planStartDate"
+                                           th:field="*{planStartDate}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="planDueDate" class="form-label">Plan Due Date</label>
+                                    <input type="date" class="form-control" id="planDueDate" th:field="*{planDueDate}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="actualStartDate" class="form-label">Actual Start Date</label>
+                                    <input type="date" class="form-control" id="actualStartDate"
+                                           th:field="*{actualStartDate}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="actualEndDate" class="form-label">Actual End Date</label>
+                                    <input type="date" class="form-control" id="actualEndDate"
+                                           th:field="*{actualEndDate}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="attachments" class="form-label">Attachments</label><span id="errorSpan"
+                                                                                                 class="text-danger"></span>
+                            <input type="file" class="form-control" id="attachments" name="attachments" multiple>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="reset" class="btn btn-light" data-bs-dismiss="modal" onclick="reloadPage()">
+                                Cancel
+                            </button>
+                            <button type="submit" id="createIssueBtn" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.js"
+            integrity="sha512-WHVh4oxWZQOEVkGECWGFO41WavMMW5vNCi55lyuzDBID+dHg2PIxVufsguM7nfTYN3CEeQ/6NB46FWemzpoI6Q=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to handle form submission
+            $('#createIssueBtn').click(function (event) {
+                // Prevent default form submission
+                event.preventDefault();
+
+                // Create a new FormData object
+                var formData = new FormData();
+
+                // Append form fields to FormData
+                formData.append('issueType', $('#issueType').val());
+                formData.append('subject', $('#subject').val());
+                formData.append('description', $('#task-description').val());
+
+                // Append select field values to FormData
+                formData.append('issueStatus', $('#issueStatus').val());
+                formData.append('priority', $('#priority').val());
+                formData.append('category', $('#category').val());
+
+                formData.append('planStartDate', $('#planStartDate').val());
+                formData.append('planDueDate', $('#planDueDate').val());
+                formData.append('actualStartDate', $('#actualStartDate').val());
+                formData.append('actualEndDate', $('#actualEndDate').val());
+
+                // Get the attached file
+                // var file = $('#attachments')[0].files[0];
+                // console.log(file);
+                // // Check if file exists
+                // if (file) {
+                //     formData.append('attachments', file);
+                // }
+
+                // Append other form fields similarly
+
+                // Get the value of projectId hidden field
+                var projectId = $('#projectId').val();
+                console.log("Project ID: " + projectId);
+
+                // Add selected user IDs to form data
+                const selectedUsers = document.getElementById('userSelect').selectedOptions;
+                const userIds = Array.from(selectedUsers).map(option => option.value);
+                formData.append('userIds', userIds.join(','));
+                formData.append('projectId', projectId);
+                console.log("USER IDs " + userIds)
+
+                // Perform AJAX submission
+                $.ajax({
+                    url: '/issue/process_issue', // URL to the controller endpoint for saving issues
+                    method: 'POST', // HTTP method
+                    data: formData, // Form data
+                    contentType: false, // Set to false when using FormData
+                    processData: false, // Set to false when using FormData
+                    success: function (response) {
+                        // Handle success response
+                        console.log('Issue created successfully:', response);
+                        // Close the modal
+                        $('#add-new-task-modal').modal('hide');
+                        // Show success message using SweetAlert
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Issue created successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error('Failed to create issue:', error);
+                        // Show error message using SweetAlert
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to create issue. Please try again later.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
+        integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script type="text/javascript" src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.dataTables.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+
+<script>
+    new DataTable('#today-tasks');
+</script>
+
+<script>
+    new DataTable('#upcoming-tasks');
+</script>
+
+<script>
+    new DataTable('#overdue-tasks', {
+        layout: {
+            topStart: {
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            }
+        }
+    });
+</script>
+
+<script>
+    new DataTable('#stack-members', {
+        layout: {
+            topStart: {
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            }
+        }
+    });
+</script>
+
+<script>
+    new DataTable('#example', {
+        layout: {
+            topStart: {
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            }
+        }
+    });
+</script>
+
+
+<!-- Vendor js -->
+<script src="/js/vendor.min.js"></script>
+
+<!-- quill js -->
+<script src="/libs/quill/quill.min.js"></script>
+
+<!-- Init js-->
+<script src="/js/pages/demo.tasks.js"></script>
+
+<!-- App js -->
+<script src="/js/app.min.js"></script>
+</body>
+</html>

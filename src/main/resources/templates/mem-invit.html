@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Invite</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+          integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/invite.css">
+</head>
+<body>
+<!--<div class="add-drop d-flex justify-content-center" th:fragment="mem-invit">-->
+    <div class="dropdown">
+        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+            <i class="bi bi-plus-circle-fill"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="/project">
+                <iconify-icon icon="ph:coffee-bold"></iconify-icon> Add Project
+            </a>
+            <a class="dropdown-item" href="/issues">
+                <iconify-icon icon="ph:bug-bold"></iconify-icon> Add Issues
+            </a>
+            <a class="dropdown-item" data-toggle="modal" data-target=".bd-example-modal-lg" href="#">
+                <iconify-icon icon="ph:user-circle-plus-bold"></iconify-icon> Add Users
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Invite New Users</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="inviteForm">
+                        <!-- First row -->
+                        <div class="form-row">
+                            <div class="col-6">Email Address</div>
+                            <div class="col-3">Role</div>
+                            <div class="col-3">Restriction</div>
+                        </div>
+                        <!-- Second row -->
+                        <div class="form-row mt-2">
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="emailAddress" placeholder="Type Email Address"
+                                       oninput="checkInput()">
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="role" onchange="checkInput()" style="font-size: 14px;">
+                                    <option value="Member">Member</option>
+                                    <option value="Guest">Guest</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="restriction" onchange="checkInput()" style="font-size: 14px;">
+                                    <option value="NoRestriction">No restriction</option>
+                                    <option value="AddIssueOnly">Add issue only</option>
+                                    <option value="AddMemberOnly">Add member only</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Third row -->
+                        <div class="form-row mt-2">
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="emailAddress" placeholder="Type Email Address"
+                                       oninput="checkInput()">
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="role" onchange="checkInput()" style="font-size: 14px;">
+                                    <option value="Member">Member</option>
+                                    <option value="Guest">Guest</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="restriction" onchange="checkInput()" style="font-size: 14px;">
+                                    <option value="NoRestriction">No restriction</option>
+                                    <option value="AddIssueOnly">Add issue only</option>
+                                    <option value="AddMemberOnly">Add member only</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Fourth row -->
+                        <div class="form-row mt-2">
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="emailAddress" placeholder="Type Email Address"
+                                       oninput="checkInput()">
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="role" onchange="checkInput()" style="font-size: 14px;">
+                                    <option value="Member">Member</option>
+                                    <option value="Guest">Guest</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="restriction" onchange="checkInput()" style="font-size: 14px;">
+                                    <option value="NoRestriction">No restriction</option>
+                                    <option value="AddIssueOnly">Add issue only</option>
+                                    <option value="AddMemberOnly">Add member only</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Buttons -->
+                        <div class="form-row btn-row mt-3 d-flex justify-content-end">
+
+                            <div class="col-lg-12 d-flex justify-content-end">
+                                <button type="button" class="btn btn-secondary mr-3" data-dismiss="modal" onclick="resetForm()">Cancel</button>
+                                <button type="submit" class="btn btn-primary btn-invite" id="inviteBtn" disabled>Invite</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    // Function to enable/disable Invite button based on input
+    function checkInput() {
+        const emailAddress = document.getElementById('emailAddress').value;
+        const inviteBtn = document.getElementById('inviteBtn');
+        inviteBtn.disabled = emailAddress.trim() === '';
+    }
+
+    // Function to reset the form
+    function resetForm() {
+        document.getElementById('inviteForm').reset();
+        document.getElementById('inviteBtn').disabled = true;
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    
+<!-- Mirrored from coderthemes.com/jidox/layouts/auth-register.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:00:51 GMT -->
+<head>
+        <meta charset="utf-8" />
+        <title>Register </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/images/favicon.ico">
+
+        <!-- Theme Config Js -->
+        <script src="/js/config.js"></script>
+
+        <!-- App css -->
+        <link href="/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+        <!-- Icons css -->
+        <link href="/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+
+</head>
+
+    <body class="authentication-bg">
+
+        <div class="position-absolute start-0 end-0 start-0 bottom-0 w-100 h-100">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 1920 1024">
+                <g mask="url(&quot;#SvgjsMask1046&quot;)" fill="none">
+                    <rect width="1920" height="1024" x="0" y="0" fill="url(#SvgjsLinearGradient1047)"></rect>
+                    <path d="M1920 0L1864.16 0L1920 132.5z" fill="rgba(255, 255, 255, .1)"></path>
+                    <path d="M1864.16 0L1920 132.5L1920 298.4L1038.6100000000001 0z" fill="rgba(255, 255, 255, .075)"></path>
+                    <path d="M1038.6100000000001 0L1920 298.4L1920 379.53999999999996L857.7000000000002 0z" fill="rgba(255, 255, 255, .05)"></path>
+                    <path d="M857.7 0L1920 379.53999999999996L1920 678.01L514.57 0z" fill="rgba(255, 255, 255, .025)"></path>
+                    <path d="M0 1024L939.18 1024L0 780.91z" fill="rgba(0, 0, 0, .1)"></path>
+                    <path d="M0 780.91L939.18 1024L1259.96 1024L0 585.71z" fill="rgba(0, 0, 0, .075)"></path>
+                    <path d="M0 585.71L1259.96 1024L1426.79 1024L0 408.19000000000005z" fill="rgba(0, 0, 0, .05)"></path>
+                    <path d="M0 408.19000000000005L1426.79 1024L1519.6599999999999 1024L0 404.09000000000003z" fill="rgba(0, 0, 0, .025)"></path>
+                </g>
+                <defs>
+                    <mask id="SvgjsMask1046">
+                        <rect width="1920" height="1024" fill="#ffffff"></rect>
+                    </mask>
+                    <linearGradient x1="11.67%" y1="-21.87%" x2="88.33%" y2="121.88%" gradientUnits="userSpaceOnUse" id="SvgjsLinearGradient1047">
+                        <stop stop-color="#0e2a47" offset="0"></stop>
+                        <stop stop-color="#00459e" offset="1"></stop>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xxl-4 col-lg-5">
+                        <div class="card">
+
+                            <!-- Logo -->
+                            <div class="card-header pt-4 text-center">
+                                <div class="auth-brand mb-0">
+                                    <a href="" class="logo-dark">
+                                        <span><img src="/images/logo-dark.png" alt="dark logo" height="28"></span>
+                                    </a>
+                                    <a href="" class="logo-light">
+                                        <span><img src="/images/logo.png" alt="logo" height="28"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-4">
+                                
+                                <div class="text-center w-75 m-auto">
+                                    <h4 class="text-dark-50 text-center mt-0">Register</h4>
+                                    <p class="text-muted mb-4">Don't have an account? Create your account, it takes less than a minute </p>
+                                </div>
+
+
+
+
+                                <form th:action="@{/process_register}" enctype="multipart/form-data"  method="post"  th:object="${user}">
+
+                                    <!-- Check if success message exists and display it -->
+                                    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                                        <span th:text="${successMessage}"></span>
+                                    </div>
+                                    <!-- Display the error message for username or email if it exists -->
+                                    <div th:if="${usernameEmailError}" class="alert alert-danger" role="alert">
+                                        <span th:text="${usernameEmailError}"></span>
+                                    </div>
+
+                                    <input type="file" name="image" accept="image/jpeg, image/png, image/jpg" id="file-path" class="user-file" style="display: none;">
+
+                                    <input type="hidden" id="role" name="role" th:value="${param.role}" />
+
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input class="form-control" type="text" id="username" th:field="*{username}" placeholder="Enter your name" >
+                                        <!-- Display validation errors for the username -->
+                                        <div th:if="${#fields.hasErrors('username')}" class="text-danger">
+                                            <span th:errors="*{username}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email-address" class="form-label">Email address</label>
+                                        <input class="form-control" type="email" id="email-address" th:field="*{email}" placeholder="Enter your email">
+                                        <!-- Display validation errors for the email -->
+                                        <div th:if="${#fields.hasErrors('email')}" class="text-danger">
+                                            <span th:errors="*{email}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Enter your password">
+                                            <div class="input-group-text" data-password="false">
+                                                <span class="password-eye"></span>
+                                            </div>
+                                        </div>
+                                        <!-- Display validation errors for the password -->
+                                        <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                            <span th:errors="*{password}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 text-center">
+                                        <button class="btn btn-primary" type="submit"> Register </button>
+                                    </div>
+
+                                </form>
+                            </div> <!-- end card-body -->
+                        </div>
+                        <!-- end card -->
+
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <p class="text-white-50">Already have account? <a href="/" class="text-white ms-1 link-offset-3 text-decoration-underline"><b>Log In</b></a></p>
+                            </div> <!-- end col-->
+                        </div>
+                        <!-- end row -->
+
+                    </div> <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end page -->
+
+        <!-- Vendor js -->
+        <script src="/js/vendor.min.js"></script>
+        
+        <!-- App js -->
+        <script src="/js/app.min.js"></script>
+
+        <script>
+            function validateUsername() {
+                const username = document.getElementById('username').value;
+                const usernameError = document.getElementById('username-error');
+
+                if (username.length === 0) {
+                    usernameError.textContent = 'Username cannot be empty';
+                } else if (username.length < 3) {
+                    usernameError.textContent = 'Username must be at least 3 characters long';
+                }
+                    // else if (!/^([a-z0-9-_]+)$/i.test(username)) {
+                    //     usernameError.textContent = 'Username contains invalid characters';
+                // }
+                else {
+                    usernameError.textContent = '';
+                }
+            }
+
+            function validateEmail() {
+                const email = document.getElementById('email').value;
+                const emailError = document.getElementById('email-error');
+
+                if (email.length === 0) {
+                    emailError.textContent = 'Email cannot be empty';
+                } else if (!/^\S+@\S+\.\S+$/.test(email) || email.indexOf('@gmail.com') === -1) {
+                    emailError.textContent = 'Invalid Email';
+                } else {
+                    emailError.textContent = '';
+                }
+            }
+
+            function validatePassword() {
+                const password = document.getElementById('password').value;
+                const passwordError = document.getElementById('password-error');
+                const progressBar = document.getElementById('progress-bar');
+                const strengthText = document.getElementById('password-strength-text');
+                const strength = calculatePasswordStrength(password);
+
+                if (password.length === 0) {
+                    passwordError.textContent = 'Password cannot be empty';
+                } else if (password.length < 6) {
+                    passwordError.textContent = 'Password must be at least 6 characters long';
+                } else {
+                    passwordError.textContent = '';
+                }
+
+                // Update progress bar based on password strength
+                progressBar.style.width = strength + '%';
+                progressBar.className = 'progress-bar';
+
+                if (strength < 30) {
+                    progressBar.classList.add('bg-danger'); // Weak, red
+                    strengthText.textContent = 'Weak';
+                    strengthText.style.color = 'red';
+                } else if (strength < 60) {
+                    progressBar.classList.add('bg-warning'); // Moderate, yellow
+                    strengthText.textContent = 'Moderate';
+                    strengthText.style.color = 'yellow';
+                } else {
+                    progressBar.classList.add('bg-success'); // Strong, green
+                    strengthText.textContent = 'Strong';
+                    strengthText.style.color = 'green';
+                }
+            }
+
+            function calculatePasswordStrength(password) {
+                // A simple example: measure strength based on the length of the password
+                const maxLength = 20; // Maximum password length for a strong password
+                const strength = Math.min((password.length / maxLength) * 100, 100);
+                return strength;
+            }
+
+            function validateForm() {
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const usernameError = document.getElementById('username-error');
+                const emailError = document.getElementById('email-error');
+                const passwordError = document.getElementById('password-error');
+                const generalError = document.getElementById('general-error');
+
+                // Reset all error messages
+                usernameError.textContent = '';
+                emailError.textContent = '';
+                passwordError.textContent = '';
+                generalError.textContent = '';
+
+                let isValid = true;
+
+                // Check if any field is empty and display specific error messages
+                if (username.length === 0) {
+                    usernameError.textContent = 'Username cannot be empty';
+                    isValid = false;
+                }
+
+                if (email.length === 0) {
+                    emailError.textContent = 'Email cannot be empty';
+                    isValid = false;
+                } else if (!/^\S+@\S+\.\S+$/.test(email) || email.indexOf('@gmail.com') === -1) {
+                    emailError.textContent = 'Invalid Email';
+                    isValid = false;
+                }
+
+                if (password.length === 0) {
+                    passwordError.textContent = 'Password cannot be empty';
+                    isValid = false;
+                } else if (password.length < 6) {
+                    passwordError.textContent = 'Password must be at least 6 characters long';
+                    isValid = false;
+                }
+
+                // Display general error message if any field is empty
+                if (!isValid) {
+                    generalError.textContent = 'All fields are required';
+                }
+
+                // If there are any error messages, prevent form submission
+                return isValid;
+            }
+        </script>
+
+    </body>
+
+<!-- Mirrored from coderthemes.com/jidox/layouts/auth-register.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:00:51 GMT -->
+</html>

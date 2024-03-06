@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.thymeleaf.org ">
+    
+<!-- Mirrored from coderthemes.com/jidox/layouts/pages-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:00:41 GMT -->
+<head>
+        <meta charset="utf-8" />
+        <title>Profile </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/images/favicon.ico">
+
+        <!-- Theme Config Js -->
+        <script src="/js/config.js"></script>
+
+        <!-- App css -->
+        <link href="/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+
+        <!-- Icons css -->
+        <link href="/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+
+</head>
+
+    <body>
+        <!-- Begin page -->
+        <div class="wrapper">
+
+
+            <!-- ========== Topbar Start ========== -->
+            <div th:insert="~{/top-bar :: top-bar}">  </div>
+            <!-- ========== Topbar End ========== -->
+
+            <!-- ========== Left Sidebar Start ========== -->
+            <div th:insert="~{/leftside-menu :: leftside-menu}"> </div>
+            <!-- ========== Left Sidebar End ========== -->
+
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+
+            <div class="content-page">
+                <div class="content">
+                    
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">     
+                                    <h4 class="page-title">Profile</h4>
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+<!--                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>-->
+                                        <li class="breadcrumb-item"><a href="/userList">User List</a></li>
+                                        <li class="breadcrumb-item active">Profile</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-5">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <!-- User's Photo -->
+<!--                                        <img th:if="${user.photosImagePath == null}" src="/user-profile.jpg" class="rounded-circle avatar-lg img-thumbnail" alt="Default photo">-->
+<!--                                        <img th:unless="${user.photosImagePath == null}" th:src="${user.photosImagePath}" class="rounded-circle avatar-lg img-thumbnail" alt="User photo">-->
+
+<!--                                        <img src="/images/users/avatar-1.jpg" class="rounded-circle avatar-lg img-thumbnail"-->
+<!--                                        alt="profile-image">-->
+
+                                        <!-- User's Name and Role -->
+                                        <h4 class="mb-1 mt-2" th:text="${user.username}"></h4>
+                                        <p class="text-info fw-bold" th:each="role: ${user.authorities}">
+                                            <span th:text="${#strings.substring(role.authority, 5)}"></span>
+                                        </p>
+
+                                        <form action="/admin/userUpdate" method="POST" th:object="${user}">
+                                            <!-- Input fields for editing user details -->
+                                            <div class="text-start mt-3">
+                                                <div class="mb-3">
+                                                    <input type="hidden" class="form-control" id="userId" name="id"  th:field="*{id}" >
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="fullName" class="form-label">Full Name:</label>
+                                                    <input type="text" class="form-control" id="fullName" name="username" th:field="*{username}"  >
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="email" class="form-label">Email:</label>
+                                                    <input type="email" class="form-control" id="email" name="email" th:field="*{email}"  >
+                                                </div>
+                                                <!-- Input fields for user roles -->
+<!--                                                <div class="mb-3">-->
+<!--                                                    <label for="role" class="form-label">Role:</label>-->
+<!--                                                    <select class="form-select" id="role" name="role" required>-->
+
+<!--                                                        &lt;!&ndash; Populate options dynamically from user's authorities &ndash;&gt;-->
+<!--                                                        <option selected th:each="role: ${user.authorities}" th:value="${role.authority}" th:text="${#strings.substring(role.authority, 5)}"></option>-->
+<!--                                                    </select>-->
+<!--                                                </div>-->
+                                            </div>
+
+                                            <!-- Submit button -->
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        </form>
+
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card -->
+
+                            </div> <!-- end col-->
+
+                            <div class="col-xl-8 col-lg-7">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
+                                            <li class="nav-item">
+                                                <a href="#project" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-start rounded-0 active">
+                                                    Project
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="#settings" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-end rounded-0">
+                                                    Settings
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="project">
+    
+                                                <h5 class="text-uppercase mb-3"><i class="ri-briefcase-line me-1"></i>
+                                                    Projects</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-centered table-hover table-borderless mb-0">
+                                                        <thead class="border-top border-bottom bg-light-subtle border-light">
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Project Name</th>
+                                                                <th>Start Date</th>
+                                                                <th>Due Date</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>1</td>
+                                                                <td>App design and development</td>
+                                                                <td>01/01/2022</td>
+                                                                <td>10/12/2023</td>
+                                                                <td><span class="badge bg-info-subtle text-info">Work in Progress</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>2</td>
+                                                                <td>Coffee detail page - Main Page</td>
+                                                                <td>21/07/2023</td>
+                                                                <td>12/05/2024</td>
+                                                                <td><span class="badge bg-danger-subtle text-danger">Pending</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>3</td>
+                                                                <td>Poster illustation design</td>
+                                                                <td>18/03/2023</td>
+                                                                <td>28/09/2023</td>
+                                                                <td><span class="badge bg-success-subtle text-success">Done</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>4</td>
+                                                                <td>Drinking bottle graphics</td>
+                                                                <td>02/10/2022</td>
+                                                                <td>07/05/2023</td>
+                                                                <td><span class="badge bg-info-subtle text-info">Work in Progress</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>5</td>
+                                                                <td>Landing page design - Home</td>
+                                                                <td>17/01/2022</td>
+                                                                <td>25/05/2023</td>
+                                                                <td><span class="badge bg-warning-subtle text-warning">Coming soon</span></td>
+                                                            </tr>
+    
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+
+
+    
+                                            </div> <!-- end tab-pane -->
+                                            <!-- end about me section content -->
+
+    
+                                            <div class="tab-pane" id="settings">
+                                                <form action="/updateProfile">
+                                                    <h5 class="mb-4 text-uppercase"><i class="ri-contacts-book-2-line me-1"></i> Personal Info</h5>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="username" class="form-label">Username</label>
+                                                                <input type="text" class="form-control" id="username" placeholder="Enter your name" value="Ella Stella">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="useremail" class="form-label">Email Address</label>
+                                                                <input type="email" class="form-control" id="useremail" placeholder="Enter your email" value="stella@gmail.com">
+<!--                                                                <span class="form-text text-muted"><small>If you want to change email please <a href="javascript: void(0);">click</a> here.</small></span>-->
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-end">
+                                                            <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>
+                                                        </div>
+                                                        <!-- end col -->
+                                                    </div> <!-- end row -->
+                                                </form>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="accordion accordion-flush mb-3" id="changeEmailPasswordAccordion">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="emailPasswordHeading">
+                                                                        <button class="accordion-button collapsed text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#emailPasswordCollapse" aria-expanded="false" aria-controls="emailPasswordCollapse">
+                                                                            Change Password
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="emailPasswordCollapse" class="accordion-collapse collapse" aria-labelledby="emailPasswordHeading" data-bs-parent="#changeEmailPasswordAccordion">
+                                                                        <div class="accordion-body">
+                                                                            <form action="/changePw" method="post">
+                                                                                <div class="row g-2">
+                                                                                    <div class="col-lg-4">
+                                                                                        <div>
+                                                                                            <label for="oldpasswordInput" class="form-label">Old Password*</label>
+                                                                                            <input type="password" class="form-control" id="oldpasswordInput" placeholder="Enter current password">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-4">
+                                                                                        <div>
+                                                                                            <label for="newpasswordInput" class="form-label">New Password*</label>
+                                                                                            <input type="password" class="form-control" id="newpasswordInput" placeholder="Enter new password">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-4">
+                                                                                        <div>
+                                                                                            <label for="confirmpasswordInput" class="form-label">Confirm Password*</label>
+                                                                                            <input type="password" class="form-control" id="confirmpasswordInput" placeholder="Confirm password">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-12">
+                                                                                        <div class="mb-3">
+                                                                                            <a href="/auth-recoverpw" class="link-primary text-decoration-underline">Forgot Password ?</a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!--end col-->
+                                                                                    <div class="col-lg-12">
+                                                                                        <div class="text-end">
+                                                                                            <button type="submit" class="btn btn-success">Change Password</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!-- Success Alert Modal -->
+                                                                                    <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="successAlertModalLabel" aria-hidden="true">
+                                                                                        <div class="modal-dialog modal-sm">
+                                                                                            <div class="modal-content modal-filled bg-success">
+                                                                                                <div class="modal-body p-4">
+                                                                                                    <div class="text-center">
+                                                                                                        <i class="ri-check-line h1"></i>
+                                                                                                        <h4 class="mt-2">Password changed successfully!</h4>
+                                                                                                        <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Continue</button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div><!-- /.modal-content -->
+                                                                                        </div><!-- /.modal-dialog -->
+                                                                                    </div><!-- /.modal -->
+
+                                                                                    <!--end col-->
+                                                                                </div>
+                                                                                <!--end row-->
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div> <!-- end col -->
+                                                    </div> <!-- end row -->
+
+                                                    <!-- Success Modal -->
+                                                    <div id="success-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-sm">
+                                                            <div class="modal-content">
+                                                                <div class="modal-body">
+                                                                    <h5 class="modal-title" id="successModalLabel">Profile Updated Successfully!</h5>
+                                                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <!-- end settings content-->
+    
+                                        </div> <!-- end tab-content -->
+                                    </div> <!-- end card body -->
+                                </div> <!-- end card -->
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row-->
+
+                    </div>
+                    <!-- container -->
+
+                </div>
+                <!-- content -->
+
+                <!-- Footer Start -->
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <script>document.write(new Date().getFullYear())</script> © PMS - G-3
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-md-end footer-links d-none d-md-block">
+                                    <a href="javascript: void(0);">About</a>
+                                    <a href="javascript: void(0);">Support</a>
+                                    <a href="javascript: void(0);">Contact Us</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <!-- end Footer -->
+
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+
+        </div>
+        <!-- END wrapper -->
+
+        <!-- Theme Settings -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
+            <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
+                <h5 class="text-white m-0">Theme Settings</h5>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body p-0">
+                <div data-simplebar class="h-100">
+                    <div class="card mb-0 p-3">
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+                        </div>
+
+                        <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical" class="form-check-input">
+                                <label class="form-check-label" for="customizer-layout01">Vertical</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal" class="form-check-input">
+                                <label class="form-check-label" for="customizer-layout02">Horizontal</label>
+                            </div>
+                        </div>
+
+                        <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
+
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light" value="light">
+                                <label class="form-check-label" for="layout-color-light">Light</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark" value="dark">
+                                <label class="form-check-label" for="layout-color-dark">Dark</label>
+                            </div>
+                        </div>
+
+                        <div id="layout-width">
+                            <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
+
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-fluid" value="fluid">
+                                    <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
+                                </div>
+
+                                <div id="layout-boxed">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="data-layout-mode" id="layout-mode-boxed" value="boxed">
+                                        <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
+                                    </div>
+                                </div>
+
+                                <div id="layout-detached">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="data-layout-mode" id="data-layout-detached" value="detached">
+                                        <label class="form-check-label" for="data-layout-detached">Detached</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-light" value="light">
+                                <label class="form-check-label" for="topbar-color-light">Light</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-dark" value="dark">
+                                <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-brand" value="brand">
+                                <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
+
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-light" value="light">
+                                    <label class="form-check-label" for="leftbar-color-light">Light</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-dark" value="dark">
+                                    <label class="form-check-label" for="leftbar-color-dark">Dark</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-menu-color" id="leftbar-color-brand" value="brand">
+                                    <label class="form-check-label" for="leftbar-color-brand">Brand</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="sidebar-size">
+                            <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
+
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-default" value="default">
+                                    <label class="form-check-label" for="leftbar-size-default">Default</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-compact" value="compact">
+                                    <label class="form-check-label" for="leftbar-size-compact">Compact</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small" value="condensed">
+                                    <label class="form-check-label" for="leftbar-size-small">Condensed</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-small-hover" value="sm-hover">
+                                    <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-full" value="full">
+                                    <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="data-sidenav-size" id="leftbar-size-fullscreen" value="fullscreen">
+                                    <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="layout-position">
+                            <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
+
+                            <div class="btn-group checkbox" role="group">
+                                <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed" value="fixed">
+                                <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
+
+                                <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-scrollable" value="scrollable">
+                                <label class="btn btn-soft-primary w-sm ms-0" for="layout-position-scrollable">Scrollable</label>
+                            </div>
+                        </div>
+
+                        <div id="sidebar-user">
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" name="sidebar-user" id="sidebaruser-check">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="offcanvas-footer border-top p-3 text-center">
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
+                    </div>
+                    <div class="col-6">
+                        <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <!-- Vendor js -->
+        <script src="/js/vendor.min.js"></script>
+
+        <!-- App js -->
+        <script src="/js/app.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('form').submit(function(event) {
+                    event.preventDefault(); // Prevent form submission
+
+                    // Here, you can add your AJAX call to submit the form data to the server.
+                    // For simplicity, let's assume the form submission is successful.
+
+                    // Show the success modal
+                    $('#success-alert-modal').modal('show');
+                });
+            });
+        </script>
+
+
+    </body>
+
+<!-- Mirrored from coderthemes.com/jidox/layouts/pages-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:00:43 GMT -->
+</html>

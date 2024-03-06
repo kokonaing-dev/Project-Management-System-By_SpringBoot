@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Creating</title>
+</head>
+<body>
+<h1>Add Project</h1>
+<form th:action="@{/create_project}" method="post" th:object="${project}" >
+    <label>Id: <input type="hidden" th:value="${project.id}" /></label><br/>
+    <label>Name: <input type="text" th:value="${project.name}" /></label><br/>
+
+
+<fieldset class="row mb-4">
+    <div class="col-md-2"></div>
+    <legend class="col-form-label col-md-2 pt-0 label-black">Members</legend>
+
+    <div class="col-md-4">
+        <label for="userSelect">Select Users:</label>
+        <select id="userSelect" name="selectedUsers" class="form-control" multiple="multiple">
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+        </select>
+    </div>
+
+    <button type="submit">Add Project</button>
+</fieldset>
+</form>
+<a th:href="@{/index}">Back to Projects</a>
+</body>
+</html>
