@@ -386,51 +386,7 @@
                                     </div>
 
 <!--<<<<<<< HEAD
-&lt;!&ndash;                            <script>&ndash;&gt;
-&lt;!&ndash;                                $(function() {&ndash;&gt;
-&lt;!&ndash;                                    $("#jsGrid").jsGrid({&ndash;&gt;
-&lt;!&ndash;                                        width: "100%",&ndash;&gt;
-&lt;!&ndash;                                        height: "auto",&ndash;&gt;
-
-&lt;!&ndash;                                        // Configure your fields here&ndash;&gt;
-&lt;!&ndash;                                        fields: [&ndash;&gt;
-&lt;!&ndash;                                            { name: "id", type: "text", title: "ID" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "subject", type: "text", title: "Subject" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "description", type: "text", title: "Description" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "issueType.issueName", type: "text", title: "Issue Type" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "category.categoryName", type: "text", title: "Category" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "project.projectName", type: "text", title: "Project" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "issueStatus", type: "text", title: "Issue Status" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "priority", type: "text", title: "Priority" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "planStartDate", type: "text", title: "Plan Start Date" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "planDueDate", type: "text", title: "Plan Due Date" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "actualStartDate", type: "text", title: "Actual Start Date" },&ndash;&gt;
-&lt;!&ndash;                                            { name: "actualEndDate", type: "text", title: "Actual End Date" },&ndash;&gt;
-&lt;!&ndash;                                            // Add other fields as needed&ndash;&gt;
-&lt;!&ndash;                                        ],&ndash;&gt;
-
-&lt;!&ndash;                                        // Load data dynamically&ndash;&gt;
-&lt;!&ndash;                                        data: [],&ndash;&gt;
-
-&lt;!&ndash;                                        // Configure sorting and paging if needed&ndash;&gt;
-&lt;!&ndash;                                        sorting: true,&ndash;&gt;
-&lt;!&ndash;                                        paging: true,&ndash;&gt;
-
-&lt;!&ndash;                                        // Configure custom controllers for searching&ndash;&gt;
-&lt;!&ndash;                                        controller: {&ndash;&gt;
-&lt;!&ndash;                                            loadData: function(filter) {&ndash;&gt;
-&lt;!&ndash;                                                // Implement loading data based on filter parameters&ndash;&gt;
-&lt;!&ndash;                                                // You can make an AJAX call here to fetch data based on search criteria&ndash;&gt;
-&lt;!&ndash;                                                return $.ajax({&ndash;&gt;
-&lt;!&ndash;                                                    type: "GET",&ndash;&gt;
-&lt;!&ndash;                                                    url: "/api/issues/filtered", // Your endpoint for fetching filtered data&ndash;&gt;
-&lt;!&ndash;                                                    data: filter // Pass the filter parameters to the backend&ndash;&gt;
-&lt;!&ndash;                                                });&ndash;&gt;
-&lt;!&ndash;                                            }&ndash;&gt;
-&lt;!&ndash;                                        }&ndash;&gt;
-&lt;!&ndash;                                    });&ndash;&gt;
-&lt;!&ndash;                                });&ndash;&gt;
-&lt;!&ndash;                            </script>&ndash;&gt;
+&lt;!&ndash;
 
 
 
@@ -961,13 +917,16 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                         id="closeModalBtn"></button>
                             </div>
-                            <form id="createProjectForm" th:object="${project}">
+                            <form id="createProjectForm" th:object="${project}" class="needs-validation" novalidate>
                                 <div class="modal-body">
+                                    <div id="errorMessage" class="text-danger"></div>
+
                                     <div class="mb-3">
                                         <label for="projectName" class="form-label">Project Name</label>
                                         <input type="text" class="form-control" id="projectName"
-                                               th:field="*{projectName}" placeholder="Enter Project Name">
-                                        <div id="projectNameError" class="text-danger"></div>
+                                               th:field="*{projectName}" placeholder="Enter Project Name" required>
+<!--                                        <div id="projectNameError" class="text-danger"></div>-->
+                                        <div class="invalid-feedback">Please enter a project name.</div>
                                         <!-- Error message for project name -->
                                     </div>
 
@@ -977,28 +936,29 @@
                                                 <label for="projectStartDate" class="form-label">Project Start
                                                     Date</label>
                                                 <input type="date" class="form-control" id="projectStartDate"
-                                                       th:field="*{projectStartDate}">
-                                                <div id="projectStartDateError" class="text-danger"></div>
+                                                       th:field="*{projectStartDate}" required>
+<!--                                                <div id="projectStartDateError" class="text-danger"></div>-->
+                                                <div class="invalid-feedback">Please select a start date.</div>
                                                 <!-- Error message for project start date -->
                                             </div>
                                             <div class="col">
-                                                <label for="projectEndDate" class="form-label">Project End Date</label>
-                                                <input type="date" class="form-control" id="projectEndDate"
-                                                       th:field="*{projectEndDate}">
-                                                <div id="projectEndDateError" class="text-danger"></div>
+                                                <label for="projectDueDate" class="form-label">Project Due Date</label>
+                                                <input type="date" class="form-control" id="projectDueDate"
+                                                       th:field="*{projectDueDate}" required>
+<!--                                                <div id="projectEndDateError" class="text-danger"></div>-->
+                                                <div class="invalid-feedback">Please select due date.</div>
                                                 <!-- Error message for project end date -->
                                             </div>
-                                            <div id="projectDateError" class="text-danger"></div>
+<!--                                            <div id="projectDateError" class="text-danger"></div>-->
                                         </div>
                                         <div class="row g-3 mb-3">
 
                                             <div class="col-sm-12">
                                                 <!-- Hidden field to carry the logged-in user's ID -->
-                                                <input type="hidden" name="loggedInUserId"
-                                                       th:value="${loggedInUser.id}">
+                                                <input type="hidden" name="loggedInUserId" th:value="${loggedInUser.id}">
 
                                                 <label class="form-label">Task Assign Person</label>
-                                                <select name="countries" id="countries" multiple="multiple">
+                                                <select name="countries" id="countries" multiple="multiple" required>
                                                     <!--                                                                <option selected disabled>Choose Person</option>-->
                                                     <!-- Loop through projectManagersAndMembers -->
                                                     <option
@@ -1013,7 +973,8 @@
                                                             th:text="${user.username}+ ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'Manager' : 'Member'}) + '</span>'">
                                                     </option>
                                                 </select>
-                                                <div id="assignPersonError" class="text-danger"></div>
+<!--                                                <div id="assignPersonError" class="text-danger"></div>-->
+                                                <div class="invalid-feedback">Please select at least one person.</div>
                                                 <!-- Error message for assignee selection -->
                                                 <script>
                                                     new MultiSelectTag('countries', {
@@ -1277,56 +1238,56 @@
         createIssue();
     });
 
-    function createIssue() {
-        // Retrieve the project ID from the select element
-        var projectId = $('#projectSelect').val();
-        console.log("Project ID " + projectId);
-
-        // Create a new FormData object
-        var formData = new FormData(document.getElementById('issueForm'));
-
-        // Add the project ID to the form data
-        formData.append('projectId', projectId);
-
-        // Add selected user IDs to form data
-        const selectedUsers = document.getElementById('userSelect').selectedOptions;
-        const userIds = Array.from(selectedUsers).map(option => option.value);
-        formData.append('userIds', userIds.join(','));
-
-        // Make AJAX request to save the issue
-        $.ajax({
-            url: '/issue/process_issue', // URL to the controller endpoint for saving issues
-            method: 'POST', // HTTP method
-            data: formData, // Form data
-            contentType: false, // Set to false when using FormData
-            processData: false, // Set to false when using FormData
-            success: function (response) {
-                // Handle success response
-                console.log('Issue created successfully:', response);
-                // Show success message using SweetAlert
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Issue created successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    // Optionally, reload the page after successful creation
-                    location.reload();
-                });
-            },
-            error: function (xhr, status, error) {
-                // Handle error
-                console.error('Failed to create issue:', error);
-                // Show error message using SweetAlert
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to create issue. Please try again later.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    }
+    // function createIssue() {
+    //     // Retrieve the project ID from the select element
+    //     var projectId = $('#projectSelect').val();
+    //     console.log("Project ID " + projectId);
+    //
+    //     // Create a new FormData object
+    //     var formData = new FormData(document.getElementById('issueForm'));
+    //
+    //     // Add the project ID to the form data
+    //     formData.append('projectId', projectId);
+    //
+    //     // Add selected user IDs to form data
+    //     const selectedUsers = document.getElementById('userSelect').selectedOptions;
+    //     const userIds = Array.from(selectedUsers).map(option => option.value);
+    //     formData.append('userIds', userIds.join(','));
+    //
+    //     // Make AJAX request to save the issue
+    //     $.ajax({
+    //         url: '/issue/process_issue', // URL to the controller endpoint for saving issues
+    //         method: 'POST', // HTTP method
+    //         data: formData, // Form data
+    //         contentType: false, // Set to false when using FormData
+    //         processData: false, // Set to false when using FormData
+    //         success: function (response) {
+    //             // Handle success response
+    //             console.log('Issue created successfully:', response);
+    //             // Show success message using SweetAlert
+    //             Swal.fire({
+    //                 title: 'Success!',
+    //                 text: 'Issue created successfully.',
+    //                 icon: 'success',
+    //                 confirmButtonText: 'OK'
+    //             }).then(() => {
+    //                 // Optionally, reload the page after successful creation
+    //                 location.reload();
+    //             });
+    //         },
+    //         error: function (xhr, status, error) {
+    //             // Handle error
+    //             console.error('Failed to create issue:', error);
+    //             // Show error message using SweetAlert
+    //             Swal.fire({
+    //                 title: 'Error!',
+    //                 text: 'Failed to create issue. Please try again later.',
+    //                 icon: 'error',
+    //                 confirmButtonText: 'OK'
+    //             });
+    //         }
+    //     });
+    // }
 
 </script>
 
@@ -1376,27 +1337,6 @@
         // Extract form data
         const formData = new FormData(this);
 
-        // Validate project name
-        const projectName = formData.get('projectName').trim();
-        const projectNameValid = validateField(projectName, document.getElementById('projectNameError'), 'Project name is required');
-
-        // Validate project start date
-        const startDate = formData.get('projectStartDate').trim();
-        const startDateValid = validateField(startDate, document.getElementById('projectStartDateError'), 'Project start date is required');
-
-        // Validate project end date
-        const endDate = formData.get('projectEndDate').trim();
-        const endDateValid = validateField(endDate, document.getElementById('projectEndDateError'), 'Project end date is required');
-
-        // Check if project start date is after end date
-        let dateRangeValid = true;
-        if (startDateValid && endDateValid && startDate !== '' && endDate !== '') {
-            const startDateObj = new Date(startDate);
-            const endDateObj = new Date(endDate);
-            dateRangeValid = startDateObj <= endDateObj;
-            document.getElementById('projectStartDateError').innerText = dateRangeValid ? '' : 'Project start date cannot be after project end date';
-        }
-
         // Get the value of the loggedInUserId hidden field
         const loggedInUserId = formData.get('loggedInUserId');
         console.log('Logged In User ID:', loggedInUserId);
@@ -1405,14 +1345,8 @@
 
         // Check if at least one assignee is selected
         const selectedUsers = document.getElementById('countries').selectedOptions;
-        const assigneeValid = selectedUsers.length > 0;
-        document.getElementById('assignPersonError').innerText = assigneeValid ? '' : 'At least one assignee must be selected';
-
-        // Stop form submission if any validation fails
-        if (!projectNameValid || !startDateValid || !endDateValid || !dateRangeValid || !assigneeValid) {
-            return;
-        }
-
+        // Add selected user IDs to form data
+        // const selectedUsers = document.getElementById('countries').selectedOptions;
         const userIds = Array.from(selectedUsers).map(option => option.value);
         formData.append('userIds', userIds.join(','));
 
@@ -1423,51 +1357,51 @@
         })
             .then(response => {
                 if (!response.ok) {
-                    return response.text().then(errorMessage => {
-                        if (errorMessage === 'Project with the same name already exists') {
-                            throw new Error('ProjectExistsError'); // Custom error for project name duplication
-                        } else {
-                            throw new Error(errorMessage); // Regular error handling
-                        }
-                    });
+                    return response.text(); // Return error message from response body
                 }
                 return response.json();
             })
             .then(data => {
-                // Handle success response from the server
-                console.log('Success:', data);
-
-                // Show SweetAlert
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Project Created Successfully',
-                    text: 'Your project has been created successfully!',
-                    showConfirmButton: true,
-                    // timer: 2000 // Close alert after 2 seconds
-                }).then(() => {
-                    sendNotificationToSpecificUsers(userIds);
-                    //     // Reload the page after clicking OK
-                    window.location.reload();
-                });
+                // Check if data is an error message
+                if (typeof data === 'string') {
+                    // Handle error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data,
+                        showConfirmButton: true,
+                    });
+                } else {
+                    // Handle success response from the server
+                    console.log('Success:', data);
+                    // Show SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Project Created Successfully',
+                        text: 'Your project has been created successfully!',
+                        showConfirmButton: true,
+                    }).then(() => {
+                        // Optional: Redirect to another page or perform other actions
+                        window.location.reload(); // Reload the page after clicking OK
+                    });
+                }
             })
             .catch(error => {
                 // Handle error
                 console.error('Error:', error);
-                if (error.message === 'ProjectExistsError') {
-                    // Show specific error message for project name duplication
-                    document.getElementById('projectNameError').innerText = 'Project with the same name already exists';
-                } else {
-                    // Show generic error message
-                    error.json().then(data => {
-                        document.getElementById('projectNameError').innerText = data.message || 'An error occurred';
-                    }).catch(() => {
-                        document.getElementById('projectNameError').innerText = 'An error occurred';
-                    });
-                }
-                // Clear the field value after showing the error
-                document.getElementById('projectName').value = '';
+
+
+                // Show error message using SweetAlert
+                // Swal.fire({
+                //     icon: 'error',
+                //     title: 'Error',
+                //     text: error, // Display the error message from the response body
+                //     showConfirmButton: true,
+                // });
             });
     });
+
+
 
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1549,7 +1483,7 @@
         var projectId = $('#projectId').val();
         var projectName = $('#updateProjectName').val();
         var projectStartDate = $('#updateProjectStartDate').val();
-        var projectEndDate = $('#updateProjectEndDate').val();
+        var projectDueDate = $('#updateProjectDueDate').val();
 
         // Ajax request to update project details
         $.ajax({
@@ -1558,7 +1492,7 @@
             data: {
                 projectName: projectName,
                 projectStartDate: projectStartDate,
-                projectEndDate: projectEndDate
+                projectDueDate: projectDueDate
             },
             success: function (data) {
                 // Handle success response

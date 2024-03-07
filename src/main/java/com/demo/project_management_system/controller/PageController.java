@@ -59,7 +59,7 @@ public class PageController {
         model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
         model.addAttribute("categories", categoryService.getAllCategories());
 
-        Set<Project> projectList = projectService.getAllProjects();
+        Set<Project> projectList = projectService.getAllActiveProjects();
         model.addAttribute("projectList", projectList);
 
         // Get the Authentication object from SecurityContextHolder

@@ -107,12 +107,12 @@
                                             </thead>
 
                                             <tbody>
-                                                <tr th:each="user: ${userList}">
-                                                    <td th:text="${user.id}"></td>
+                                                <tr th:each="user, iterStat : ${userList}">
+                                                    <td th:text="${iterStat.count}"></td>
                                                     <td th:text="${user.username}"></td>
                                                     <td th:text="${user.email}"></td>
                                                     <td>
-                                                        <img th:src="${user.photosImagePath}"  alt="photo" style="width: 50px; height: 50px;"/>
+                                                        <img th:src="${user.photosImagePath}"  alt="photo" class="rounded-circle shadow" height="42"/>
                                                     </td>
                                                     <td>
                                                         <span th:each="role: ${user.authorities}">
