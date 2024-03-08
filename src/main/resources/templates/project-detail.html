@@ -27,8 +27,36 @@
     <!-- Include SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-</head>
 
+    <style>
+        /* Status boxes */
+        .status {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Graph bar */
+        .graph--bar.-w-full .graph--bar__fig {
+            width: 100%;
+            height: 18px;
+        }
+
+        .graph--bar__fig {
+            font-size: 0;
+            display: inline-block;
+            vertical-align: middle;
+            /* Remove fixed width */
+            /* width: 330px; */
+            height: 16px;
+            padding-top: 5px;
+        }
+
+
+    </style>
+</head>
 <body>
 
 <!-- Begin page -->
@@ -41,11 +69,6 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div th:insert="~{/leftside-menu :: leftside-menu}"></div>
     <!-- ========== Left Sidebar End ========== -->
-
-
-    <!-- ============================================================== -->
-    <!-- Start Page Content here -->
-    <!-- ============================================================== -->
 
 
     <div class="content-page">
@@ -70,47 +93,52 @@
                 <!-- end page title -->
 
                 <div class="row">
-                    <div class="col-md-6 col-xl-3">
-                        <div class="widget-rounded-circle card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
-                                            <!--                                                    <i class="fe-list font-26 avatar-title text-primary"></i>-->
-                                            <i class="ri-bug-fill avatar-title"></i>
-                                        </div>
+                    <div class="col-xl-6">
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="widget-rounded-circle card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
+                                                    <!--                                                    <i class="fe-list font-26 avatar-title text-primary"></i>-->
+                                                    <i class="ri-bug-fill avatar-title"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-end">
+                                                    <h3 class="text-dark mt-1"><span th:text="${totalIssues}"></span></h3>
+                                                    <p class="text-muted mb-1 text-truncate">Total Issues</p>
+                                                </div>
+                                            </div>
+                                        </div> <!-- end row-->
                                     </div>
-                                    <div class="col-6">
-                                        <div class="text-end">
-                                            <h3 class="text-dark mt-1"><span th:text="${totalIssues}"></span></h3>
-                                            <p class="text-muted mb-1 text-truncate">Total Issues</p>
-                                        </div>
-                                    </div>
-                                </div> <!-- end row-->
-                            </div>
-                        </div> <!-- end widget-rounded-circle-->
-                    </div> <!-- end col-->
+                                </div> <!-- end widget-rounded-circle-->
+                            </div> <!-- end col-->
 
-                    <div class="col-md-6 col-xl-3">
-                        <div class="widget-rounded-circle card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
-                                            <!--                                                    <i class="fe-users font-26 avatar-title text-info"></i>-->
-                                            <i class="ri-group-fill avatar-title"></i>
-                                        </div>
+                            <div class="col-xl-6">
+                                <div class="widget-rounded-circle card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
+                                                    <!--                                                    <i class="fe-users font-26 avatar-title text-info"></i>-->
+                                                    <i class="ri-group-fill avatar-title"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-end">
+                                                    <h3 class="text-dark mt-1"><span th:text="${totalAssignedUsers}"></span>
+                                                    </h3>
+                                                    <p class="text-muted mb-1 text-truncate">Total Assigned Users</p>
+                                                </div>
+                                            </div>
+                                        </div> <!-- end row-->
                                     </div>
-                                    <div class="col-6">
-                                        <div class="text-end">
-                                            <h3 class="text-dark mt-1"><span th:text="${totalAssignedUsers}"></span>
-                                            </h3>
-                                            <p class="text-muted mb-1 text-truncate">Total Assigned Users</p>
-                                        </div>
-                                    </div>
-                                </div> <!-- end row-->
-                            </div>
-                        </div> <!-- end widget-rounded-circle-->
+                                </div> <!-- end widget-rounded-circle-->
+                            </div> <!-- end col-->
+                        </div>
+
                     </div> <!-- end col-->
                 </div>
 
@@ -173,19 +201,167 @@
                                             </a>
                                         </div>
                                     </div>
-                                </div>
 
-                            </div> <!-- end card-body-->
+                                </div> <!-- end card-body-->
 
-                        </div> <!-- end card-->
+                            </div> <!-- end card-->
 
-                    </div> <!-- end col -->
+                        </div> <!-- end col -->
 
-                </div>
-                <!-- end row -->
+                    </div>
+                    </div>
 
 
-                <!-- Edit Project Modal -->
+                    <div class="col-xl-6">
+                        <div class="col-xl-12">
+                            <div class="page-title"><h4>Status</h4></div>
+                            <div class="status in-progress" style="background-color: #ffcc00;">InProgress <span class="count" th:text="${inProgressCount}"></span></div>
+                            <div class="status open" style="background-color: #00cc00;">Open <span class="count" th:text="${openCount}"></span></div>
+                            <div class="status solved" style="background-color: #3366ff;">Solved <span class="count" th:text="${solvedCount}"></span></div>
+                            <div class="status closed" style="background-color: #999999;">Closed <span class="count" th:text="${closedCount}"></span></div>
+                            <div class="status pending" style="background-color: #ff9900;">Pending <span class="count" th:text="${pendingCount}"></span></div>
+                        </div>
+                        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+                        <div id="issueTypeChartContainer" style="height: 300px; width: 100%;"></div>
+                        <div id="categoryChartContainer" style="height: 300px; width: 100%;"></div>
+
+                        <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+                        <script>
+                            window.onload = function() {
+                                // Fetch issue type data
+                                fetchIssueTypeData().then(issueTypeData => {
+                                    var issueTypeDataPoints = [];
+                                    issueTypeData.forEach(issueType => {
+                                        issueTypeDataPoints.push({
+                                            y: issueType.count,
+                                            label: issueType.name
+                                        });
+                                    });
+
+                                    var issueTypeChart = new CanvasJS.Chart("issueTypeChartContainer", {
+                                        animationEnabled: true,
+                                        title: {
+                                            text: "Issue Types"
+                                        },
+                                        data: [{
+                                            type: "pie",
+                                            startAngle: 240,
+                                            yValueFormatString: "##0.00\"%\"",
+                                            indexLabel: "{label} {y}",
+                                            dataPoints: issueTypeDataPoints
+                                        }]
+                                    });
+                                    issueTypeChart.render();
+                                }).catch(error => {
+                                    console.error('Failed to fetch issue type data:', error);
+                                });
+
+                                // Fetch category data
+                                fetchCategoryData().then(categoryData => {
+                                    var categoryDataPoints = [];
+                                    categoryData.forEach(category => {
+                                        categoryDataPoints.push({
+                                            y: category.count,
+                                            label: category.name
+                                        });
+                                    });
+
+                                    var categoryChart = new CanvasJS.Chart("categoryChartContainer", {
+                                        animationEnabled: true,
+                                        title: {
+                                            text: "Categories"
+                                        },
+                                        data: [{
+                                            type: "pie",
+                                            startAngle: 240,
+                                            yValueFormatString: "##0.00\"%\"",
+                                            indexLabel: "{label} {y}",
+                                            dataPoints: categoryDataPoints
+                                        }]
+                                    });
+                                    categoryChart.render();
+                                }).catch(error => {
+                                    console.error('Failed to fetch category data:', error);
+                                });
+
+                                // Fetch total data
+                                var inProgressCount = parseInt(document.querySelector('.in-progress .count').innerText);
+                                var openCount = parseInt(document.querySelector('.open .count').innerText);
+                                var solvedCount = parseInt(document.querySelector('.solved .count').innerText);
+                                var closedCount = parseInt(document.querySelector('.closed .count').innerText);
+                                var pendingCount = parseInt(document.querySelector('.pending .count').innerText);
+
+                                var total = inProgressCount + openCount + solvedCount + closedCount + pendingCount;
+
+                                // Define colors for each status
+                                var colors = ['#ffcc00', '#00cc00', '#3366ff', '#999999', '#ff9900'];
+
+                                var chart = new CanvasJS.Chart("chartContainer", {
+                                    animationEnabled: true,
+                                    title: {
+                                        text: "Chart"
+                                    },
+                                    data: [{
+                                        type: "pie",
+                                        startAngle: 240,
+                                        yValueFormatString: "##0.00\"%\"",
+                                        indexLabel: "{label} {y}",
+                                        dataPoints: [
+                                            { y: (inProgressCount / total) * 100, label: "InProgress", color: colors[0] },
+                                            { y: (openCount / total) * 100, label: "Open", color: colors[1] },
+                                            { y: (solvedCount / total) * 100, label: "Solved", color: colors[2] },
+                                            { y: (closedCount / total) * 100, label: "Closed", color: colors[3] },
+                                            { y: (pendingCount / total) * 100, label: "Pending", color: colors[4] }
+                                        ]
+                                    }]
+                                });
+                                chart.render();
+                            };
+
+                            // Function to fetch issue type data
+                            function fetchIssueTypeData() {
+                                return new Promise(function(resolve, reject) {
+                                    // Make an AJAX request to fetch issue type data
+                                    var url = '/api/issueTypeData'; // Update with your endpoint
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open('GET', url, true);
+                                    xhr.onreadystatechange = function() {
+                                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                                            if (xhr.status === 200) {
+                                                resolve(JSON.parse(xhr.responseText));
+                                            } else {
+                                                reject(xhr.responseText);
+                                            }
+                                        }
+                                    };
+                                    xhr.send();
+                                });
+                            }
+
+                            // Function to fetch category data
+                            function fetchCategoryData() {
+                                return new Promise(function(resolve, reject) {
+                                    // Make an AJAX request to fetch category data
+                                    var url = '/api/categoryData'; // Update with your endpoint
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open('GET', url, true);
+                                    xhr.onreadystatechange = function() {
+                                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                                            if (xhr.status === 200) {
+                                                resolve(JSON.parse(xhr.responseText));
+                                            } else {
+                                                reject(xhr.responseText);
+                                            }
+                                        }
+                                    };
+                                    xhr.send();
+                                });
+                            }
+                        </script>
+
+
+
+                        <!-- Edit Project Modal -->
                 <div class="modal fade" id="updateProjectModal" tabindex="-1" aria-labelledby="updateProjectModalLabel"
                      aria-hidden="true">
                     <div class="modal-dialog">
@@ -226,6 +402,9 @@
                         </div>
                     </div>
                 </div>
+
+
+
 
                 <!-- Invite Users Modal -->
                 <div class="modal fade" id="userInviteModal" tabindex="-1" aria-labelledby="userInviteModalLabel"
@@ -314,12 +493,9 @@
                         <div class="row justify-content-between py-1">
                             <div class="col-sm-7">
                                 <div class="d-flex align-items-start">
-                                    <div>
-                                        <h5 class="my-0 font-15">
 
-                                        </h5>
-                                    </div>
-                                </div>
+
+
                             </div>
                         </div>
                     </div>
