@@ -34,42 +34,110 @@ public class ProjectController {
     @Autowired
     private IssueService issueService;
 
+
     @Autowired
     private CategoryService categoryService;
 
     @Autowired
     private IssueTypeService issueTypeService;
 
+//    @PostMapping(value = "/project/create")
+//    public ResponseEntity<?> createProject(@ModelAttribute("project") Project project,
+//                                           @RequestParam("userIds") List<Long> userIds,
+//                                           @RequestParam("loggedInUserId") int loggedInUserId,
+//                                           Model model) {
+//        try {
+//            // Check if projectName already exists
+//            if (projectService.isProjectNameExists(project.getProjectName())) {
+//                return ResponseEntity.badRequest().body("Project with the same name already exists");
+//            }
+//
+//            // Check if project start date is greater than end date
+//            if (project.getProjectStartDate().isAfter(project.getProjectEndDate())) {
+//                return ResponseEntity.badRequest().body("Project start date cannot be after project end date");
+//            }
+//
+//            // Retrieve the logged-in user from the userService
+//            User loggedInUser = userService.getUserById(loggedInUserId);
+//
+//            // Retrieve User entities based on the provided user IDs
+//            Set<User> users = userService.findByIdIn(userIds);
+//
+//            // Add the logged-in user to the set of users
+//            users.add(loggedInUser);
+//
+//            // Set the retrieved users on the project
+//            project.setUsers(users);
+//
+//            Project savedProject = projectService.save(project);
+//            return ResponseEntity.ok(savedProject);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during project creation");
+//        }
+//    }
+
+
 
     @PostMapping(value = "/project/create")
-    public ResponseEntity<?> createProject(@ModelAttribute("project") Project project, @RequestParam("userIds") List<Long> userIds, @RequestParam("loggedInUserId") int loggedInUserId, Model model) {
-        // Check if projectName already exists
-        if (projectService.isProjectNameExists(project.getProjectName())) {
-            // Handle case where projectName already exists
-            return new ResponseEntity<>("Project with the same name already exists", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> createProject(@ModelAttribute("project") Project project,
+                                           @RequestParam("userIds") List<Long> userIds,
+                                           @RequestParam("loggedInUserId") int loggedInUserId,
+                                           BindingResult result) {
+        try {
+            // Check if required fields are empty
+            if (project.getProjectName() == null || project.getProjectName().isEmpty() ||
+                    project.getProjectStartDate() == null || project.getProjectDueDate() == null) {
+                return ResponseEntity.badRequest().body("Please fill in all required fields.");
+            }
+            // Check if project start date is greater than end date
+            if (project.getProjectStartDate().isAfter(project.getProjectDueDate())) {
+                return new ResponseEntity<>("Project start date cannot be after project end date", HttpStatus.BAD_REQUEST);
+            }
+            // Validate the project object
+            if (result.hasErrors()) {
+                return ResponseEntity.badRequest().body("Invalid data provided.");
+            }
+
+            // Check if the project name already exists
+            boolean existingProject = projectService.isProjectNameExists(project.getProjectName());
+            if (existingProject) {
+                return ResponseEntity.badRequest().body("Project name already exists.");
+            }
+
+            System.out.println("Logged in User ID is Here " + loggedInUserId);
+            // Retrieve the logged-in user from the userService
+            User loggedInUser = userService.getUserById(loggedInUserId);
+
+            // Retrieve User entities based on the provided user IDs
+            Set<User> users = userService.findByIdIn(userIds);
+
+            // Add the logged-in user to the set of users
+            users.add(loggedInUser);
+
+            // Set the retrieved users on the project
+            project.setUsers(users);
+
+            // Save the project
+            Project savedProject = projectService.save(project);
+
+            return ResponseEntity.ok(savedProject);
+        } catch (Exception e) {
+            // Handle exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create project");
         }
-        // Check if project start date is greater than end date
-        if (project.getProjectStartDate().isAfter(project.getProjectEndDate())) {
-            return new ResponseEntity<>("Project start date cannot be after project end date", HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/deleteProject/{projectId}")
+    public ResponseEntity<String> deleteProject(@PathVariable long projectId) {
+        try {
+            // Delete the project by its ID
+            projectService.deleteProjectById(projectId);
+            return ResponseEntity.ok().body("Project deleted successfully");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete project");
         }
-
-        System.out.println("Logged in User ID is Here " + loggedInUserId);
-        // Retrieve the logged-in user from the userService
-        User loggedInUser = userService.getUserById(loggedInUserId);
-
-        // Retrieve User entities based on the provided user IDs
-        Set<User> users = userService.findByIdIn(userIds);
-
-        // Add the logged-in user to the set of users
-        users.add(loggedInUser);
-
-        System.out.println("SAVEDDDDDDDDDDDDD");
-
-        // Set the retrieved users on the project
-        project.setUsers(users);
-
-        Project savedProject = projectService.save(project);
-        return new ResponseEntity<>(savedProject, HttpStatus.OK);
     }
 
     @GetMapping("/projects/delete/{projectId}")
@@ -95,7 +163,9 @@ public class ProjectController {
     }
 
     @GetMapping("/homepage/{projectId}")
-    public String goToHomePage(@PathVariable int projectId, @AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session) {
+    public String goToHomePage(@PathVariable long projectId,
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               Model model, HttpSession session) {
         User user = userService.findUserByEmail(userDetails.getUsername());
         // Store the user object in the session
         session.setAttribute("loggedInUser", user);
@@ -106,14 +176,16 @@ public class ProjectController {
         Optional<Project> optionalProject = Optional.ofNullable(projectService.getProjectById(projectId));
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
-            int totalIssues = issueService.getTotalIssuesByProjectId((long) projectId);
-            int totalAssignedUsers = userService.getTotalAssignedUsersByProjectId((long) projectId);
-            // Count issues by status
+
             int inProgressCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.IN_PROGRESS,(long) projectId);
             int openCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.OPEN, (long) projectId);
             int solvedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.SOLVED, (long) projectId);
             int closedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.CLOSED,(long) projectId);
             int pendingCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.PENDING,(long) projectId);
+
+
+            int totalIssues = issueService.getTotalIssuesByProjectId(projectId);
+            int totalAssignedUsers = userService.getTotalAssignedUsersByProjectId(projectId);
 
             model.addAttribute("project", project);
             model.addAttribute("totalIssues", totalIssues);

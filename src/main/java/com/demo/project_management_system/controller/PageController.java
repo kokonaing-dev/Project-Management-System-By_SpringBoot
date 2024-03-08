@@ -59,7 +59,7 @@ public class PageController {
         model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
         model.addAttribute("categories", categoryService.getAllCategories());
 
-        Set<Project> projectList = projectService.getAllProjects();
+        Set<Project> projectList = projectService.getAllActiveProjects();
         model.addAttribute("projectList", projectList);
 
         // Get the Authentication object from SecurityContextHolder
@@ -183,21 +183,24 @@ public class PageController {
         // Pass the user object to the view
         model.addAttribute("loggedInUser", loggedInUser);
 
+        Set<Issue> issueList = loggedInUser.getIssues();
+        System.out.println("loggedInUser Issues"+issueList);
+
 
         Set<Project> projectList = projectService.getProjectsByUserId(loggedInUser.getId());
         model.addAttribute("projectList", projectList);
+//
+//        Set<Issue> issueList = new HashSet<>();
+//        for (Project project : projectList) {
+//            issueList.addAll(issueService.findIssueByProjectId(project.getId()));
+//        }
 
-        Set<Issue> issueList = new HashSet<>();
-        for (Project project : projectList) {
-            issueList.addAll(issueService.findIssueByProjectId(project.getId()));
-        }
 
-
-        Set<User> userList = new HashSet<>();
-        for (Issue issue : issueList) {
-            userList.addAll(issue.getUsers());
-        }
-        System.out.println("USER LIST ...." + userList);
+//        Set<User> userList = new HashSet<>();
+//        for (Issue issue : issues) {
+//            userList.addAll(issue.getUsers());
+//        }
+//        System.out.println("USER LIST ...." + userList);
 
 
         // Filter issues by status
@@ -232,9 +235,6 @@ public class PageController {
 
         model.addAttribute("issue", new Issue());
         model.addAttribute("project", new Project());
-
-        List<IssueType> issueTypeList = issueTypeService.getAllIssueTypes();
-        model.addAttribute("issueTypeList", issueTypeList);
 
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("issueStatuses", IssueStatus.values()); // Add statuses enum

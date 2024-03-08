@@ -33,45 +33,6 @@ public class ManagerController {
     @Autowired
     private CategoryService categoryService;
 
-//    @GetMapping("/project-list")
-//    public String showProject(HttpSession session , Model model){
-//        // Retrieve the user object from the session
-//        User loggedInUser = (User) session.getAttribute("loggedInUser");
-//        // Pass the user object to the view
-//        model.addAttribute("loggedInUser", loggedInUser);
-//
-//        model.addAttribute("project", new Project());
-//
-//        // Get the Authentication object from SecurityContextHolder
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        // Retrieve authorities from the Authentication object
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//
-//
-//        // Check if the logged-in user has ROLE_SYSTEM_ADMIN authority
-//        boolean isProjectManager = authorities.stream()
-//                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER"));
-//
-//
-//        if (isProjectManager) {
-//            // Get users with authority ROLE_MEMBER and status "Active"
-//            List<User> members = userService.getUsersByAuthorityAndStatus("ROLE_MEMBER", "Active");
-//
-//            session.setAttribute("members", members);
-//
-//            model.addAttribute("members", members);
-//
-//            System.out.println("MMMMMMMMMMMMMMM " + members);
-//
-//            Set<Project> projectList = projectService.getProjectsByUsersId(loggedInUser.getId());
-//            System.out.println(projectList);
-//            model.addAttribute("projectList", projectList);
-//            return "project-list";
-//        }
-//
-//        return "project-list";
-//    }
-
     @GetMapping("/tasks")
     public String viewTasks(HttpSession session , Model model){
         // Retrieve the user object from the session
@@ -90,53 +51,147 @@ public class ManagerController {
         List<Issue> todayIssues = new ArrayList<>();
         List<Issue> upcomingIssues = new ArrayList<>();
         List<Issue> overdueTasks = new ArrayList<>();
+        List<Issue> closedIssues = new ArrayList<>();
 
         // Get today's date
         LocalDate today = LocalDate.now();
         System.out.println("TODAY DATE...." + today);
 
-        // Map to store user ID and count of issues assigned to each user
-        Map<Long, Long> userIssueCountMap = new HashMap<>();
 
         for (Project project : userProjects) {
-            long projectId = project.getId();
+            Long projectId = project.getId();
 
             // Get issues for the current project
             Set<Issue> issuesForProject = projectService.getIssuesByProjectId(projectId);
+            System.out.println("Issues For Project " + issuesForProject);
+
+            // Filter issues where planStartDate or planDueDate is equal to today's date
+            List<Issue> filteredTodayIssues = issuesForProject.stream()
+                    .filter(issue -> {
+                        LocalDate planStartDate = issue.getPlanStartDate();
+                        LocalDate actualStartDate = issue.getActualStartDate();
+                        return (planStartDate != null && planStartDate.equals(today)) ||
+                                (actualStartDate != null && actualStartDate.equals(today));
+                    })
+                    .toList();
+
+            // Add filtered issues for today to the list of all issues
+            todayIssues.addAll(filteredTodayIssues);
+            model.addAttribute("todayIssues", todayIssues);
+            System.out.println("User..........Today Issues" + todayIssues);
+
+            // Count the number of issues that must be done today
+            int todayIssuesCount = todayIssues.size();
+            model.addAttribute("todayIssuesCount", todayIssuesCount);
 
 
-            // Iterate through the issues and count the number of issues assigned to each user
-            for (Issue issue : issuesForProject) {
-                Set<User> assignedUsers = issue.getUsers();
-                for (User user : assignedUsers) {
-                    long assignedUserId = user.getId();
-                    userIssueCountMap.put(assignedUserId, userIssueCountMap.getOrDefault(assignedUserId, Long.valueOf(0)) + 1);
-                }
-            }
+            //filteredUpcomingIssues
+            List<Issue> filteredUpcomingIssues = issuesForProject.stream()
+                    .filter(issue -> {
+                        IssueStatus issueStatus = issue.getIssueStatus();
+                        LocalDate planStartDate = issue.getPlanStartDate();
+                        LocalDate actualStartDate = issue.getActualStartDate();
 
-            System.out.println("Issue Count Map " + userIssueCountMap);
+                        LocalDate planDueDate = issue.getPlanDueDate();
 
-            // Retrieve all issues from the database
-            List<Issue> issues = issueService.findAll();
+                        return !(issueStatus == IssueStatus.SOLVED || // Exclude solved issues
+                                issueStatus == IssueStatus.CLOSED || // Exclude closed issues
+                                (planDueDate != null && planDueDate.isBefore(today))) &&  // Exclude overdue based on planDueDate
 
-            // Add the list of issues to the model
-            model.addAttribute("issues", issues);
+                                ((planStartDate == null || planStartDate.isAfter(today)) &&
+                                        (actualStartDate == null || actualStartDate.isAfter(today)));
+                    })
+                    .toList();
+
+            // Add filtered upcoming issues
+            upcomingIssues.addAll(filteredUpcomingIssues);
+            model.addAttribute("upcomingIssues", upcomingIssues);
+            System.out.println("User..........Upcoming Issues" + upcomingIssues);
+
+            // Count the number of upcoming tasks
+            int upcomingIssuesCount = upcomingIssues.size();
+            model.addAttribute("upcomingIssuesCount", upcomingIssuesCount);
+            model.addAttribute("upcomingIssues", upcomingIssues);
+
+
+
+            // Filter issues for overdueTasks
+            List<Issue> filteredOverTasks = issuesForProject.stream()
+                    .filter(issue -> {
+                        IssueStatus issueStatus = issue.getIssueStatus();
+                        LocalDate planDueDate = issue.getPlanDueDate();
+
+                        // Exclude issues where the status is closed and plan due date is before today
+                        return !(issueStatus == IssueStatus.CLOSED || planDueDate.isBefore(today));
+                    })
+                    .toList();
+
+            // Add filtered overdueTasks for the current project to the list of overdueTasks
+            overdueTasks.addAll(filteredOverTasks);
+            model.addAttribute("overdueTasks", overdueTasks);
+            System.out.println("User..........overdue Tasks" + overdueTasks);
+
+            // Count the number of overdue tasks
+            int overdueTasksCount = overdueTasks.size();
+            model.addAttribute("overdueTasksCount", overdueTasksCount);
+
+
+
+
+            // Filter issues for CLOSED state
+            List<Issue> filteredClosedIssues = issuesForProject.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.CLOSED)
+                    .toList();
+
+            // Add filtered closed issues
+            closedIssues.addAll(filteredClosedIssues);
+            model.addAttribute("closedIssues", closedIssues);
+            System.out.println("User..........Closed Issues" + closedIssues);
+
+            // Count the number of closed issues
+            int closedIssuesCount = closedIssues.size();
+            model.addAttribute("closedIssuesCount", closedIssuesCount);
+
 
 
         }
 
-        // Filter the userIssueCountMap to get users with more than one issue
-        List<User> usersWithMultipleIssues = userIssueCountMap.entrySet().stream()
-                .filter(entry -> entry.getValue() > 1)
-                .map(entry -> userService.getUserById(entry.getKey()))
-                .collect(Collectors.toList());
 
-        System.out.println("usersWithMultipleIssues..." + usersWithMultipleIssues);
 
+        Set<Issue> issues = issueService.getAllIssues();
+        // Map to store user IDs and their corresponding issue counts
+        Map<Long, Integer> userIssueCountMap = new HashMap<>();
+
+        // Count issues for each user
+        for (Issue issue : issues) {
+            Set<User> assignees = issue.getUsers(); // Assuming there's a method to get the assignee users
+            for (User assignee : assignees) {
+                long assigneeId = assignee.getId();
+                userIssueCountMap.put(assigneeId, userIssueCountMap.getOrDefault(assigneeId, 0) + 1);
+            }
+        }
+
+        // Debugging output: Print user ID and corresponding issue count
+        System.out.println("User Issue Counts: " + userIssueCountMap);
+
+        // Filter users with more than one issue
+        List<User> usersWithMultipleIssues = new ArrayList<>();
+        for (Map.Entry<Long, Integer> entry : userIssueCountMap.entrySet()) {
+            if (entry.getValue() >= 2) { // Check if user has 2 or more issues
+                User user = userService.findUserById(entry.getKey()); // Assuming there's a method to find a user by ID
+                if (user != null) {
+                    usersWithMultipleIssues.add(user);
+                }
+            }
+        }
         model.addAttribute("usersWithMultipleIssues", usersWithMultipleIssues);
+        // Now you have the list of users who have two or more issues
+        System.out.println("Users with two or more issues: " + usersWithMultipleIssues);
 
-        model.addAttribute("issue", new Issue());
-        model.addAttribute("project", new Project());
+        int totalUsersWithMultipleIssues = usersWithMultipleIssues.size();
+        model.addAttribute("totalUsersWithMultipleIssues", totalUsersWithMultipleIssues);
+
+
 
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("issueStatuses", IssueStatus.values()); // Add statuses enum
@@ -147,6 +202,8 @@ public class ManagerController {
         Set<Project> projectList = projectService.getAllProjects();
         model.addAttribute("projectList", projectList);
 
+        model.addAttribute("issue", new Issue());
+        model.addAttribute("project", new Project());
 
         return "apps-tasks";
     }

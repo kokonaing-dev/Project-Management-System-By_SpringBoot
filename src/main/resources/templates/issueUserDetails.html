@@ -1,0 +1,66 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<div>
+    <!-- Display users' photos, names, and remove button -->
+    <p><strong>Members:</strong></p>
+    <div th:each="user : ${issue.users}" th:if="${!#lists.isEmpty(issue.users)}">
+        <div class="d-flex align-items-center mb-3"> <!-- Added align-items-center -->
+            <!-- Display user photo -->
+            <img th:src="${user.photosImagePath}" th:alt="${user.username}" style="height: 50px; width: 50px;" class="rounded-circle avatar-xs me-3">
+            <!-- Wrapper for user info and buttons -->
+            <div class="d-flex flex-column">
+                <!-- Display user name -->
+                <span th:text="${user.username}" class="me-3"></span>
+                <!-- Display user email -->
+                <span th:text="${user.email}" class="me-3"></span>
+            </div>
+            <!-- Wrapper for remove button -->
+            <div class="ms-auto" th:unless="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}"> <!-- Added th:unless to hide the button if the user has ROLE_MEMBER -->
+                <!-- Remove button -->
+                <button type="button" class="btn btn-danger btn-sm" th:onclick="'removeUser(' + ${user.id} + ',' + ${issue.id} + ')'" title="Remove">Remove</button>
+            </div>
+
+        </div>
+    </div>
+    <span th:if="${#lists.isEmpty(issue.users)}">No users associated with this issue</span>
+</div>
+
+<script>
+    function removeUser(userId, issueId) {
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Are you sure to remove this user from this issue.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it!',
+            cancelButtonText: 'No, cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If user confirms, send an AJAX request to remove the user from the issue
+                $.ajax({
+                    url: '/api/removeUser',
+                    method: 'POST',
+                    data: { userId: userId, issueId: issueId },
+                    success: function(response) {
+                        console.log('AJAX request succeeded:', response);
+                        // If the removal is successful, remove the corresponding row from the UI
+                        var userRow = $('#userRow_' + userId);
+                        console.log('User row:', userRow);
+                        userRow.fadeOut('fast', function() {
+                            console.log('Fade out animation completed.');
+                            $(this).remove();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Failed to remove user:', error);
+                    }
+                });
+                // Close the modal
+                $('#userModal').modal('hide');
+            }
+        });
+    }
+
+</script>
+

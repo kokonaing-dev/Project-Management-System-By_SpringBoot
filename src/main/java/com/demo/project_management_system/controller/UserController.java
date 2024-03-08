@@ -38,9 +38,6 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private ProjectService projectService;
-
-    @Autowired
     private IssueService issueService;
 
     @Autowired

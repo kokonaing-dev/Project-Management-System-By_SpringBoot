@@ -67,7 +67,25 @@
     <!-- Sidebar -left -->
     <div class="h-100" id="leftside-menu-container" data-simplebar>
       <!-- Leftbar User -->
-
+        <div class="leftbar-user p-3 text-white">
+            <a href="/pages-profile" class="d-flex align-items-center text-reset">
+                <div class="flex-shrink-0">
+                <img th:src="${loggedInUser.photosImagePath}" alt="photo" height="42" class="rounded-circle shadow">
+                </div>
+                <div class="flex-grow-1 ms-2">
+                <span class="fw-semibold fs-15 d-block" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span>
+                  <div th:each="authority : ${loggedInUser.authorities}">
+                      <!-- Check authority name and display corresponding text -->
+                      <span th:if="${authority.authority == 'ROLE_SYSTEM_ADMIN'}">ADMIN</span>
+                      <span th:if="${authority.authority == 'ROLE_PROJECT_MANAGER'}">MANAGER</span>
+                      <span th:if="${authority.authority == 'ROLE_MEMBER'}">MEMBER</span>
+                  </div>
+                </div>
+                <div class="ms-auto">
+                    <i class="ri-arrow-right-s-fill fs-20"></i>
+                </div>
+            </a>
+        </div>
 
       <!--- Sidemenu -->
       <ul class="side-nav">
@@ -94,29 +112,6 @@
                   <span> User List </span>
               </a>
           </li>
-
-<!--            <li class="side-nav-item">-->
-<!--              <a href="/apps-chat" class="side-nav-link">-->
-<!--                  <i class="ri-chat-voice-fill"></i>-->
-<!--                  <span> Chat </span>-->
-<!--              </a>-->
-<!--            </li>-->
-<!--  --Start for project ----- -->
-<!--        Check if the user has ROLE_SYSTEM_ADMIN role-->
-<!--            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">-->
-<!--                <a href="/project-list" class="side-nav-link">-->
-<!--                    <i class="ri-briefcase-5-fill"></i>-->
-<!--                    <span>Projects</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--&lt;!&ndash;        Check if the user has ROLE_PROJECT_MANAGER role&ndash;&gt;-->
-<!--            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_PROJECT_MANAGER'') or hasRole(''ROLE_MEMBER'')')}">-->
-<!--                <a href="/project-list" class="side-nav-link">-->
-<!--                    <i class="ri-briefcase-5-fill"></i>-->
-<!--                    <span>Projects</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!-- ------End for project --- -->
 
 
 
@@ -152,12 +147,6 @@
             </li>
 
 
-<!--          <li class="side-nav-item">-->
-<!--              <a href="/displayBarGraph" class="side-nav-link">-->
-<!--                  &nbsp;<span class="material-symbols-outlined">bar_chart</span>-->
-<!--                  <span> Chart </span>-->
-<!--              </a>-->
-<!--          </li>-->
 <!--    ==================-->
           <li class="side-nav-item"  th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">
               <a href="/setting" class="side-nav-link">

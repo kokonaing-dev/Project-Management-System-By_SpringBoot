@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<!-- Mirrored from coderthemes.com/ubold/layouts/default/project-detail.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:28:44 GMT -->
 <head>
     <meta charset="utf-8"/>
     <title>Project Page</title>
@@ -139,73 +138,80 @@
                                 </div> <!-- end widget-rounded-circle-->
                             </div> <!-- end col-->
                         </div>
-                        <div class="row">
-                            <div class="col-xl-12">
-                                <!-- project card -->
-                                <div class="card d-block">
-                                    <div class="card-body">
-                                        <div class="dropdown float-end">
-                                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                                               aria-expanded="false">
-                                                <i class="ri-more-line"></i>
+
+                    </div> <!-- end col-->
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6">
+                        <!-- project card -->
+                        <div class="card d-block">
+                            <div class="card-body">
+                                <div class="dropdown float-end">
+                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
+                                       aria-expanded="false">
+                                        <i class="ri-more-line"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <!-- Button to trigger update project modal -->
+                                        <a th:href="@{'project/editProject/' + ${project.id} }" th:id="${project.id}"
+                                           class="dropdown-item" data-bs-toggle="modal"
+                                           data-bs-target="#updateProjectModal" data-action="edit">
+                                            <i class="ri-edit-2-fill me-1"></i>
+                                            Edit
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- project title-->
+                                <h3 class="mt-0 font-20" th:text="${project.projectName}"></h3>
+
+                                <!-- Start Date and End Date -->
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <div class="mb-4">
+                                            <h5>Start Date</h5>
+                                            <p class="project-start-date"
+                                               th:text="${#temporals.format(project.projectStartDate, 'dd MMMM yyyy')}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-4">
+                                            <h5>End Date</h5>
+                                            <p class="project-end-date"
+                                               th:text="${#temporals.format(project.projectDueDate, 'dd MMMM yyyy')}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-4">
+                                            <h5><i class="ri-calendar-schedule-line"></i></h5>
+                                            <p><span class="ms-2 date-difference"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Team Members section -->
+                                <div id="tooltips-container">
+                                    <h5>Team Members:</h5>
+                                    <!-- Iterate over team members -->
+                                    <div class="avatar-group">
+                                        <div th:each="user : ${project.users}">
+                                            <a href="#" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${user.username}" class="avatar-group-item">
+                                                <img th:src="${user.photosImagePath}" class="rounded-circle avatar-xs" alt="User Avatar">
                                             </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <!-- Button to trigger update project modal -->
-                                                <a th:href="@{'project/editProject/' + ${project.id} }" th:id="${project.id}"
-                                                   class="dropdown-item" data-bs-toggle="modal"
-                                                   data-bs-target="#updateProjectModal" data-action="edit">
-                                                    <i class="ri-edit-2-fill me-1"></i>
-                                                    Edit
-                                                </a>
-                                            </div>
                                         </div>
-                                        <!-- project title-->
-                                        <h3 class="mt-0 font-20" th:text="${project.projectName}"></h3>
+                                    </div>
 
-                                        <!-- Start Date and End Date -->
-                                        <div class="row mt-3">
-                                            <div class="col-md-4">
-                                                <div class="mb-4">
-                                                    <h5>Start Date</h5>
-                                                    <p class="project-start-date"
-                                                       th:text="${#temporals.format(project.projectStartDate, 'dd MMMM yyyy')}"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-4">
-                                                    <h5>End Date</h5>
-                                                    <p class="project-end-date"
-                                                       th:text="${#temporals.format(project.projectEndDate, 'dd MMMM yyyy')}"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-4">
-                                                    <h5><i class="ri-calendar-schedule-line"></i></h5>
-                                                    <p><span class="ms-2 date-difference"></span></p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                </div> <!-- end card-body-->
 
-                                        <!-- Team Members section -->
-                                        <div id="tooltips-container">
-                                            <h5>Team Members:</h5>
-                                            <!-- Iterate over team members -->
-                                            <div class="avatar-group">
-                                                <div th:each="user : ${project.users}">
-                                                    <a href="#" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${user.username}" class="avatar-group-item">
-                                                        <img th:src="${user.photosImagePath}" class="rounded-circle avatar-xs" alt="User Avatar">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
+                            </div> <!-- end card-->
 
-                                    </div> <!-- end card-body-->
+                        </div> <!-- end col -->
 
-                                </div> <!-- end card-->
-
-                            </div> <!-- end col -->
-                        </div>
                     </div>
+                    </div>
+
+
                     <div class="col-xl-6">
                         <div class="col-xl-12">
                             <div class="page-title"><h4>Status</h4></div>
@@ -383,7 +389,7 @@
                                     <div class="mb-3">
                                         <label for="endDate" class="form-label">End Date</label>
                                         <input type="date" class="form-control" id="endDate"
-                                               th:field="*{projectEndDate}">
+                                               th:field="*{projectDueDate}">
                                     </div>
                                     <input type="hidden" th:field="*{id}">
                                     <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -487,14 +493,9 @@
                         <div class="row justify-content-between py-1">
                             <div class="col-sm-7">
                                 <div class="d-flex align-items-start">
-                                    <!--                                    <img src="/images/users/avatar-5.jpg" class="me-2 rounded-circle" height="36"-->
-                                    <!--                                         alt="Project Image">-->
-                                    <div>
-                                        <h5 class="my-0 font-15">
-                                            <!--                                            <a href="#" class="text-reset">Project Name</a>-->
-                                        </h5>
-                                    </div>
-                                </div>
+
+
+
                             </div>
                         </div>
                     </div>

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -27,13 +31,17 @@ public class Project {
     @Column(unique = true)
     private String projectName;
 
-    @JsonIgnore
+
     private LocalDate projectStartDate;
 
-    @JsonIgnore
-    private LocalDate projectEndDate;
 
-    @JsonIgnore
+    private LocalDate projectDueDate;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     @ManyToMany(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
     @JoinTable(name = "user_project",
             joinColumns = @JoinColumn(name = "project_id"),
