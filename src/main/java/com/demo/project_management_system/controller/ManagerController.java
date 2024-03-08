@@ -65,13 +65,16 @@ public class ManagerController {
             Set<Issue> issuesForProject = projectService.getIssuesByProjectId(projectId);
             System.out.println("Issues For Project " + issuesForProject);
 
-            // Filter issues where planStartDate or planDueDate is equal to today's date
+            // Filter issues where planStartDate is equal to today's date
             List<Issue> filteredTodayIssues = issuesForProject.stream()
                     .filter(issue -> {
+                        IssueStatus issueStatus = issue.getIssueStatus();
                         LocalDate planStartDate = issue.getPlanStartDate();
-                        LocalDate actualStartDate = issue.getActualStartDate();
-                        return (planStartDate != null && planStartDate.equals(today)) ||
-                                (actualStartDate != null && actualStartDate.equals(today));
+                        return !(issueStatus == IssueStatus.IN_PROGRESS ||
+                                issueStatus == IssueStatus.SOLVED ||
+                                issueStatus == IssueStatus.PENDING ||
+                                issueStatus == IssueStatus.CLOSED) &&
+                                ((planStartDate == null || planStartDate.equals(today)));
                     })
                     .toList();
 
@@ -90,16 +93,12 @@ public class ManagerController {
                     .filter(issue -> {
                         IssueStatus issueStatus = issue.getIssueStatus();
                         LocalDate planStartDate = issue.getPlanStartDate();
-                        LocalDate actualStartDate = issue.getActualStartDate();
 
-                        LocalDate planDueDate = issue.getPlanDueDate();
-
-                        return !(issueStatus == IssueStatus.SOLVED || // Exclude solved issues
-                                issueStatus == IssueStatus.CLOSED || // Exclude closed issues
-                                (planDueDate != null && planDueDate.isBefore(today))) &&  // Exclude overdue based on planDueDate
-
-                                ((planStartDate == null || planStartDate.isAfter(today)) &&
-                                        (actualStartDate == null || actualStartDate.isAfter(today)));
+                        return !(issueStatus == IssueStatus.IN_PROGRESS ||
+                                issueStatus == IssueStatus.SOLVED ||
+                                issueStatus == IssueStatus.PENDING ||
+                                issueStatus == IssueStatus.CLOSED) &&
+                                ((planStartDate == null || planStartDate.isAfter(today)));
                     })
                     .toList();
 
@@ -121,8 +120,7 @@ public class ManagerController {
                         IssueStatus issueStatus = issue.getIssueStatus();
                         LocalDate planDueDate = issue.getPlanDueDate();
 
-                        // Exclude issues where the status is closed and plan due date is before today
-                        return !(issueStatus == IssueStatus.CLOSED || planDueDate.isBefore(today));
+                        return (planDueDate.isBefore(today));
                     })
                     .toList();
 
@@ -151,8 +149,6 @@ public class ManagerController {
             // Count the number of closed issues
             int closedIssuesCount = closedIssues.size();
             model.addAttribute("closedIssuesCount", closedIssuesCount);
-
-
 
         }
 

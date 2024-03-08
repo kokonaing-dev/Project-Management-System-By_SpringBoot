@@ -209,7 +209,7 @@
                     <div class="col-2 mb-2">
                         <label for="search-select"></label>
                         <select id="search-select" class="form-control" data-control="select2" data-placeholder="Select an option">
-                            <option th:each="type : ${issueTypeList}" th:value="${type.id}" th:text="${type.issueName}"></option>
+                            <option th:each="type : ${issueTypes}" th:value="${type.id}" th:text="${type.issueName}"></option>
                         </select>
                     </div>
 
@@ -1336,8 +1336,14 @@
         function isMemberRestricted(source, target) {
             // Define the restricted transitions
             const restrictedTransitionsForMember = [
+                { source: 'task-list-one', target: 'task-list-five' }, // OPEN to CLOSED
+                { source: 'task-list-two', target: 'task-list-five' }, // IN_PROGRESS to CLOSED
+                { source: 'task-list-three', target: 'task-list-five' }, // SOLVED to CLOSED
                 { source: 'task-list-four', target: 'task-list-five' }, // PENDING to CLOSED
-                { source: 'task-list-five', target: 'task-list-four' }  // CLOSED to PENDING
+                { source: 'task-list-five', target: 'task-list-four' },  // CLOSED to PENDING
+                { source: 'task-list-five', target: 'task-list-three' },  // CLOSED to PENDING
+                { source: 'task-list-five', target: 'task-list-two' },  // CLOSED to PENDING
+                { source: 'task-list-five', target: 'task-list-one' }  // CLOSED to PENDING
             ];
 
             // Check if the current source and target match any restricted transition
@@ -1346,6 +1352,97 @@
     });
 </script>
 
+
+<script th:unless="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get all task containers
+        const taskContainers = document.querySelectorAll('.task-list-items');
+
+        // Initialize Dragula for all task containers
+        const drake = dragula(Array.from(taskContainers), {
+            // Add your options here if needed
+        });
+
+        // Add event listener for when an item is dropped
+        drake.on('drop', function (el, target, source, sibling) {
+            // Get the dragged issue ID
+            const draggedIssueId = el.getAttribute('id');
+            console.log("Dragged Issue ID: " + draggedIssueId);
+
+            // Get the target task list
+            const targetTaskList = target.id;
+            console.log("Target Task List: " + targetTaskList);
+
+            // Define the new issueStatus based on the target task list
+            let newIssueStatus;
+            switch (targetTaskList) {
+                case 'task-list-one':
+                    newIssueStatus = 'OPEN';
+                    break;
+                case 'task-list-two':
+                    newIssueStatus = 'IN_PROGRESS';
+                    break;
+                case 'task-list-three':
+                    newIssueStatus = 'SOLVED';
+                    break;
+                case 'task-list-four':
+                    newIssueStatus = 'PENDING';
+                    break;
+                case 'task-list-five':
+                    newIssueStatus = 'CLOSED';
+                    break;
+                default:
+                    break;
+            }
+
+            // Perform a fetch request to update the issueStatus
+            fetch('/updateIssueStatus', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    issueId: draggedIssueId,
+                    newIssueStatus: newIssueStatus
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update issue status');
+                    }
+                    console.log('Issue status updated successfully');
+
+                    // Update the issue status in the DOM
+                    const statusElement = el.querySelector('.float-end.badge.bg-danger-subtle.text-success');
+                    if (statusElement) {
+                        statusElement.textContent = newIssueStatus;
+                        console.log('Issue status updated in the DOM');
+                        // Auto-reload the page after updating status
+                        // setTimeout(() => {
+                        //     window.location.reload();
+                        // }, 2000); // Reload after 2 seconds (adjust the time as needed)
+                    } else {
+                        console.error('Status element not found in the dragged issue');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating issue status:', error);
+                });
+            // Update issue counts after drop
+            updateIssueCounts();
+        });
+        function updateIssueCounts() {
+            // Iterate over task containers to update issue counts
+            taskContainers.forEach(container => {
+                const countElement = container.previousElementSibling.querySelector('span');
+                if (countElement) {
+                    const issueCount = container.querySelectorAll('.card').length;
+                    countElement.textContent = issueCount;
+                }
+            });
+        }
+    });
+</script>
 
 
 

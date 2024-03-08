@@ -45,7 +45,6 @@ public class PageController {
 
         // Expose loggedInUser as a model attribute
         model.addAttribute("loggedInUser", user);
-        model.addAttribute("project", new Project());
 
         model.addAttribute("issue", new Issue());
         model.addAttribute("project", new Project());
@@ -183,13 +182,83 @@ public class PageController {
         // Pass the user object to the view
         model.addAttribute("loggedInUser", loggedInUser);
 
-        Set<Issue> issueList = loggedInUser.getIssues();
-        System.out.println("loggedInUser Issues"+issueList);
+
+        // Get the Authentication object from SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Retrieve authorities from the Authentication object
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isProjectManager = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER"));
+
+        if (isProjectManager) {
+
+            Set<Project> projectList = projectService.getProjectsByUserId(loggedInUser.getId());
+            model.addAttribute("projectList", projectList);
+
+
+        Set<Issue> issueList = new HashSet<>();
+        for (Project project : projectList) {
+            issueList.addAll(issueService.findIssueByProjectId(project.getId()));
+        }
+
+
+            // Filter issues by status
+            List<Issue> todoIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.OPEN && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> inProgressIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.IN_PROGRESS && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> solvedIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.SOLVED && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> pendingIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.PENDING && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> closedIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.CLOSED && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+
+            // Add filtered lists to the model
+            model.addAttribute("todoIssues", todoIssues);
+            model.addAttribute("inProgressIssues", inProgressIssues);
+            model.addAttribute("solvedIssues", solvedIssues);
+            model.addAttribute("pendingIssues", pendingIssues);
+            model.addAttribute("closedIssues", closedIssues);
+
+
+            model.addAttribute("issue", new Issue());
+            model.addAttribute("project", new Project());
+
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("issueStatuses", IssueStatus.values()); // Add statuses enum
+            model.addAttribute("priorities", Priority.values()); // Add priorities enum
+            model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
+            model.addAttribute("categories", categoryService.getAllCategories());
+
+            return "apps-kanban";
+
+        }
+
+
+//        Set<Issue> issues = loggedInUser.getIssues();
+//        System.out.println("loggedInUser Issues"+issues);
 
 
         Set<Project> projectList = projectService.getProjectsByUserId(loggedInUser.getId());
         model.addAttribute("projectList", projectList);
-//
+
+        List<Issue> issueList = issueService.getIssuesByUserId(loggedInUser.getId());
+//        model.addAttribute("projectList", projectList);
+
+
 //        Set<Issue> issueList = new HashSet<>();
 //        for (Project project : projectList) {
 //            issueList.addAll(issueService.findIssueByProjectId(project.getId()));
