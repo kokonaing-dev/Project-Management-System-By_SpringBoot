@@ -76,13 +76,24 @@ public class ProjectService {
     }
 
 
+//    @Transactional
+//    public void deleteProjectById(long projectId) {
+//        // Perform the deletion operation
+//        projectRepository.deleteById(projectId);
+//
+//        // Redirect to the project list page after deletion
+//        new RedirectView("/project-list", true);
+//    }
+
     @Transactional
     public void deleteProjectById(long projectId) {
-        // Perform the deletion operation
-        projectRepository.deleteById(projectId);
-
-        // Redirect to the project list page after deletion
-        new RedirectView("/project-list", true);
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        projectOptional.ifPresent(project -> {
+            // Update the status of the project
+            project.setStatus("DELETED");
+            // Save the updated project
+            projectRepository.save(project);
+        });
     }
 
     public Project getProjectById(long projectId) {

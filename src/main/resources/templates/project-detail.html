@@ -150,7 +150,7 @@
                                         <div class="mb-4">
                                             <h5>End Date</h5>
                                             <p class="project-end-date"
-                                               th:text="${#temporals.format(project.projectEndDate, 'dd MMMM yyyy')}"></p>
+                                               th:text="${#temporals.format(project.projectDueDate, 'dd MMMM yyyy')}"></p>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -213,7 +213,7 @@
                                     <div class="mb-3">
                                         <label for="endDate" class="form-label">End Date</label>
                                         <input type="date" class="form-control" id="endDate"
-                                               th:field="*{projectEndDate}">
+                                               th:field="*{projectDueDate}">
                                     </div>
                                     <input type="hidden" th:field="*{id}">
                                     <button type="submit" class="btn btn-primary">Save Changes</button>

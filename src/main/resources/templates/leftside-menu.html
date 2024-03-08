@@ -67,7 +67,25 @@
     <!-- Sidebar -left -->
     <div class="h-100" id="leftside-menu-container" data-simplebar>
       <!-- Leftbar User -->
-
+        <div class="leftbar-user p-3 text-white">
+            <a href="/pages-profile" class="d-flex align-items-center text-reset">
+                <div class="flex-shrink-0">
+                <img th:src="${loggedInUser.photosImagePath}" alt="photo" height="42" class="rounded-circle shadow">
+                </div>
+                <div class="flex-grow-1 ms-2">
+                <span class="fw-semibold fs-15 d-block" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span>
+                  <div th:each="authority : ${loggedInUser.authorities}">
+                      <!-- Check authority name and display corresponding text -->
+                      <span th:if="${authority.authority == 'ROLE_SYSTEM_ADMIN'}">ADMIN</span>
+                      <span th:if="${authority.authority == 'ROLE_PROJECT_MANAGER'}">MANAGER</span>
+                      <span th:if="${authority.authority == 'ROLE_MEMBER'}">MEMBER</span>
+                  </div>
+                </div>
+                <div class="ms-auto">
+                    <i class="ri-arrow-right-s-fill fs-20"></i>
+                </div>
+            </a>
+        </div>
 
       <!--- Sidemenu -->
       <ul class="side-nav">
