@@ -239,19 +239,19 @@
                                                 <table id="today-tasks" class="table table-striped nowrap" style="width:100%">
                                                     <thead>
                                                     <tr>
-                                                        <th>No</th>
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
                                                         <th>Subject</th>
                                                         <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
-                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Priority
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
                                                         <th>Due Date</th>
                                                         <th>Details</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr th:each="issue : ${todayIssues}">
-                                                        <td th:text="${issue.id}"></td>
                                                         <td th:text="${issue.project.projectName}"></td>
                                                         <td>
                                                             <span th:switch="${issue.issueType.issueName}"
@@ -294,32 +294,28 @@
                                                                         th:selected="${issue.issueStatus.ordinal() == 3}">
                                                                     PENDING
                                                                 </option>
-                                                                <option value="CLOSED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
-                                                                    CLOSED
-                                                                </option>
+                                                                <th:block th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                    <!-- Exclude the CLOSED option for ROLE_MEMBER -->
+                                                                </th:block>
+                                                                <th:block th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                    <option value="CLOSED" th:selected="${issue.issueStatus.ordinal() == 4}">CLOSED</option>
+                                                                </th:block>
                                                             </select>
                                                         </td>
 
                                                         <td>
-                                                            <select class="priorityDropdown form-select"
-                                                                    th:id="${issue.id}">
-                                                                <option value="HIGH"
-                                                                        th:selected="${issue.priority.ordinal() == 0}">
-                                                                    HIGH
-                                                                </option>
-                                                                <option value="MEDIUM"
-                                                                        th:selected="${issue.priority.ordinal() == 1}">
-                                                                    MEDIUM
-                                                                </option>
-                                                                <option value="LOW"
-                                                                        th:selected="${issue.priority.ordinal() == 2}">
-                                                                    LOW
-                                                                </option>
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.priority}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="priorityDropdown form-select" th:id="${issue.id}">
+                                                                <option value="HIGH" th:selected="${issue.priority.ordinal() == 0}">HIGH</option>
+                                                                <option value="MEDIUM" th:selected="${issue.priority.ordinal() == 1}">MEDIUM</option>
+                                                                <option value="LOW" th:selected="${issue.priority.ordinal() == 2}">LOW</option>
                                                             </select>
                                                         </td>
 
-                                                        <td th:text="${issue.actualEndDate}"></td>
+                                                        <td th:text="${issue.planDueDate}"></td>
 
                                                         <td>
                                                             <a href="#" th:id="'moreInfo_' + ${issue.id}"
@@ -335,7 +331,6 @@
                                             </div>
                                         </div>
                                         <!-- end task -->
-
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card -->
                             </div> <!-- end .collapse-->
@@ -418,19 +413,19 @@
                                                 <table id="upcoming-tasks" class="table table-striped nowrap" style="width:100%">
                                                     <thead>
                                                     <tr>
-                                                        <th>No</th>
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
                                                         <th>Subject</th>
-                                                        <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
-                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Status</th>
+                                                        <th>Priority
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
                                                         <th>Due Date</th>
                                                         <th>Details</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr th:each="issue : ${upcomingIssues}">
-                                                        <td th:text="${issue.id}"></td>
                                                         <td th:text="${issue.project.projectName}"></td>
                                                         <td>
                                                             <span th:switch="${issue.issueType.issueName}"
@@ -454,51 +449,21 @@
 
                                                         <td th:text="${issue.subject}"></td>
 
+                                                        <td th:text="${issue.issueStatus}"></td>
+
                                                         <td>
-                                                            <select class="issueStatusDropdown form-select"
-                                                                    th:id="${issue.id}">
-                                                                <option value="OPEN"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 0}">
-                                                                    OPEN
-                                                                </option>
-                                                                <option value="IN_PROGRESS"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 1}">
-                                                                    IN_PROGRESS
-                                                                </option>
-                                                                <option value="SOLVED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 2}">
-                                                                    SOLVED
-                                                                </option>
-                                                                <option value="PENDING"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 3}">
-                                                                    PENDING
-                                                                </option>
-                                                                <option value="CLOSED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
-                                                                    CLOSED
-                                                                </option>
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.priority}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="priorityDropdown form-select" th:id="${issue.id}">
+                                                                <option value="HIGH" th:selected="${issue.priority.ordinal() == 0}">HIGH</option>
+                                                                <option value="MEDIUM" th:selected="${issue.priority.ordinal() == 1}">MEDIUM</option>
+                                                                <option value="LOW" th:selected="${issue.priority.ordinal() == 2}">LOW</option>
                                                             </select>
                                                         </td>
 
-                                                        <td>
-                                                            <select class="priorityDropdown form-select"
-                                                                    th:id="${issue.id}">
-                                                                <option value="HIGH"
-                                                                        th:selected="${issue.priority.ordinal() == 0}">
-                                                                    HIGH
-                                                                </option>
-                                                                <option value="MEDIUM"
-                                                                        th:selected="${issue.priority.ordinal() == 1}">
-                                                                    MEDIUM
-                                                                </option>
-                                                                <option value="LOW"
-                                                                        th:selected="${issue.priority.ordinal() == 2}">
-                                                                    LOW
-                                                                </option>
-                                                            </select>
-                                                        </td>
-
-                                                        <td th:text="${issue.actualEndDate}"></td>
+                                                        <td th:text="${issue.planDueDate}"></td>
 
                                                         <td>
                                                             <a href="#" th:id="'moreInfo_' + ${issue.id}"
@@ -513,14 +478,13 @@
                                             </div>
                                         </div>
                                         <!-- end task -->
-
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card -->
                             </div> <!-- end collapse-->
                         </div>
                         <!-- end upcoming tasks -->
 
-                        <!-- start other tasks -->
+                        <!-- start overdue tasks -->
                         <div class="mt-4 mb-4">
                             <h5 class="m-0 pb-2">
                                 <a class="text-dark" data-bs-toggle="collapse" href="#overdueTasks" role="button"
@@ -540,20 +504,21 @@
                                                 <table id="overdue-tasks" class="display nowrap" style="width:100%">
                                                     <thead>
                                                     <tr>
-                                                        <th>No</th>
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
                                                          <th>Subject</th>
-                                                        <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
-                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Status
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
+                                                        <th>Priority
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
                                                         <th>Due Date</th>
                                                         <th>Details</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr th:each="issue : ${overdueTasks}"
-                                                        th:if="${#lists.size(issue.users) > 1}">
-                                                        <td th:text="${issue.id}"></td>
+                                                    <tr th:each="issue : ${overdueTasks}">
                                                         <td th:text="${issue.project.projectName}"></td>
                                                         <td>
                                                             <span th:switch="${issue.issueType.issueName}"
@@ -578,61 +543,32 @@
                                                         <td th:text="${issue.subject}"></td>
 
                                                         <td>
-                                                            <select class="issueStatusDropdown form-select"
-                                                                    th:id="${issue.id}">
-                                                                <option value="OPEN"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 0}">
-                                                                    OPEN
-                                                                </option>
-                                                                <option value="IN_PROGRESS"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 1}">
-                                                                    IN_PROGRESS
-                                                                </option>
-                                                                <option value="SOLVED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 2}">
-                                                                    SOLVED
-                                                                </option>
-                                                                <option value="PENDING"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 3}">
-                                                                    PENDING
-                                                                </option>
-                                                                <option value="CLOSED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
-                                                                    CLOSED
-                                                                </option>
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.issueStatus}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="issueStatusDropdown form-select" th:id="${issue.id}">
+                                                                <option value="OPEN" th:selected="${issue.issueStatus.ordinal() == 0}">OPEN</option>
+                                                                <option value="IN_PROGRESS" th:selected="${issue.issueStatus.ordinal() == 1}">IN_PROGRESS</option>
+                                                                <option value="SOLVED" th:selected="${issue.issueStatus.ordinal() == 2}">SOLVED</option>
+                                                                <option value="PENDING" th:selected="${issue.issueStatus.ordinal() == 3}">PENDING</option>
+                                                                <option value="CLOSED" th:selected="${issue.issueStatus.ordinal() == 4}">CLOSED</option>
                                                             </select>
                                                         </td>
 
                                                         <td>
-                                                            <select class="priorityDropdown form-select"
-                                                                    th:id="${issue.id}">
-                                                                <option value="HIGH"
-                                                                        th:selected="${issue.priority.ordinal() == 0}">
-                                                                    HIGH
-                                                                </option>
-                                                                <option value="MEDIUM"
-                                                                        th:selected="${issue.priority.ordinal() == 1}">
-                                                                    MEDIUM
-                                                                </option>
-                                                                <option value="LOW"
-                                                                        th:selected="${issue.priority.ordinal() == 2}">
-                                                                    LOW
-                                                                </option>
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.priority}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="priorityDropdown form-select" th:id="${issue.id}">
+                                                                <option value="HIGH" th:selected="${issue.priority.ordinal() == 0}">HIGH</option>
+                                                                <option value="MEDIUM" th:selected="${issue.priority.ordinal() == 1}">MEDIUM</option>
+                                                                <option value="LOW" th:selected="${issue.priority.ordinal() == 2}">LOW</option>
                                                             </select>
                                                         </td>
 
-
-                                                        <td>
-                                                            <input type="date" class="form-control start-date"
-                                                                   th:id="${issue.id}"
-                                                                   th:value="${issue.actualStartDate}"/>
-                                                        </td>
-
-                                                        <td>
-                                                            <input type="date" class="form-control end-date"
-                                                                   th:id="${issue.id}"
-                                                                   th:value="${issue.actualEndDate}"/>
-                                                        </td>
+                                                        <td th:text="${issue.planDueDate}"></td>
 
 
                                                         <td>
@@ -653,112 +589,24 @@
                             </div>
 
 
-                            <!-- start stack members -->
+                            <!-- start closed tasks -->
                             <div class="mt-4 mb-4">
                                 <h5 class="m-0 pb-2">
-                                    <a class="text-dark" data-bs-toggle="collapse" href="#stackMembers" role="button"
-                                       aria-expanded="false" aria-controls="stackMembers">
-                                        <i class='ri-arrow-down-s-line fs-18'></i>Stack Members <span
-                                            class="text-muted">(</span><span class="text-muted"></span><span
+                                    <a class="text-dark" data-bs-toggle="collapse" href="#closedTasks" role="button"
+                                       aria-expanded="false" aria-controls="closedTasks">
+                                        <i class='ri-arrow-down-s-line fs-18'></i>Closed Tasks <span
+                                            class="text-muted">(</span><span class="text-muted" th:text="${closedIssuesCount}"></span><span
                                             class="text-muted">)</span>
                                     </a>
                                 </h5>
-                                <div class="collapse show" id="stackMembers">
+                                <div class="collapse show" id="closedTasks">
                                     <div class="card mb-0">
                                         <div class="card-body">
                                             <div class="table-responsive">
                                                 <div class="row justify-content-sm-between">
-                                                    <table id="stack-members" class="display nowrap" style="width:100%">
+                                                    <table id="closed-tasks" class="display nowrap" style="width:100%">
                                                         <thead>
                                                         <tr>
-                                                            <th>No</th>
-                                                            <th>Project</th>
-                                                            <th>Issue Type</th>
-                                                            <th>Subject</th>
-                                                            <th>Assignee</th>
-                                                            <th>Status</th>
-                                                            <th>Due Date</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr th:each="issue : ${issues}">
-                                                            <td th:text="${issue.id}"></td>
-                                                            <td th:text="${issue.project.projectName}"></td>
-                                                            <!-- <td th:text="${projectIssueCounts[issue.project]}"></td>-->
-                                                            <td>
-                                                                    <span th:switch="${issue.issueType.issueName}"
-                                                                          style="font-size: 17px;">
-                                                                        <span th:case="'Task'"
-                                                                              class="badge bg-success-subtle text-success p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <span th:case="'Bug'"
-                                                                              class="badge bg-danger-subtle text-danger p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <span th:case="'Request'"
-                                                                              class="badge bg-info-subtle text-info p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <!-- Add more cases for other issue names -->
-                                                                        <span th:case="*"
-                                                                              class="badge bg-warning-subtle text-warning p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <!-- Default case: In case none of the specified cases match -->
-                                                                    </span>
-                                                            </td>
-
-                                                            <td th:text="${issue.subject}"></td>
-
-                                                            <td>
-                                                                <span th:each="user, iterStat : ${issue.users}">
-                                                                    <span th:text="${user.username}"></span>
-                                                                    <span th:if="${!iterStat.last}">, </span>
-                                                                </span>
-                                                            </td>
-
-
-                                                            <td th:text="${issue.issueStatus}"></td>
-
-                                                            <td th:text="${issue.actualEndDate}"></td>
-
-
-<!--                                                            <td>-->
-<!--                                                                <span th:if="${issue.attachmentFileNames != null}">-->
-<!--                                                                    <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">-->
-<!--                                                                        <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>-->
-<!--                                                                        <span th:if="${!iterStat.last}">, </span>-->
-<!--                                                                    </span>-->
-<!--                                                                </span>-->
-<!--                                                            </td>-->
-
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <!-- start solved tasks -->
-                            <div class="mt-4 mb-4">
-                                <h5 class="m-0 pb-2">
-                                    <a class="text-dark" data-bs-toggle="collapse" href="#solvedTasks" role="button"
-                                       aria-expanded="false" aria-controls="solvedTasks">
-                                        <i class='ri-arrow-down-s-line fs-18'></i>Solved Tasks <span
-                                            class="text-muted">(</span><span class="text-muted"></span><span
-                                            class="text-muted">)</span>
-                                    </a>
-                                </h5>
-                                <div class="collapse show" id="solvedTasks">
-                                    <div class="card mb-0">
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <div class="row justify-content-sm-between">
-                                                    <table id="example" class="display nowrap" style="width:100%">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>No</th>
                                                             <th>Project</th>
                                                             <th>Issue Type</th>
                                                             <th>Subject</th>
@@ -769,48 +617,17 @@
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <tr th:each="issue : ${overdueTasks}"
-                                                            th:if="${#lists.size(issue.users) > 1}">
-                                                            <td th:text="${issue.id}"></td>
+                                                        <tr th:each="issue : ${closedIssues}">
                                                             <td th:text="${issue.project.projectName}"></td>
-                                                            <td>
-                                                            <span th:switch="${issue.issueType.issueName}"
-                                                                  style="font-size: 17px;">
-                                                                <span th:case="'Task'"
-                                                                      class="badge bg-success-subtle text-success p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <span th:case="'Bug'"
-                                                                      class="badge bg-danger-subtle text-danger p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <span th:case="'Request'"
-                                                                      class="badge bg-info-subtle text-info p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <!-- Add more cases for other issue names -->
-                                                                <span th:case="*"
-                                                                      class="badge bg-warning-subtle text-warning p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <!-- Default case: In case none of the specified cases match -->
-                                                            </span>
-                                                            </td>
+                                                            <td th:text="${issue.issueType.issueName}"></td>
 
                                                             <td th:text="${issue.subject}"></td>
 
-                                                            <td th:text="${issue.status}"></td>
+                                                            <td th:text="${issue.issueStatus}"></td>
 
                                                             <td th:text="${issue.priority}"></td>
 
-                                                            <td>
-                                                                <input type="date" class="form-control start-date"
-                                                                       th:id="${issue.id}"
-                                                                       th:value="${issue.actualStartDate}"/>
-                                                            </td>
-
-                                                            <td>
-                                                                <input type="date" class="form-control end-date"
-                                                                       th:id="${issue.id}"
-                                                                       th:value="${issue.actualEndDate}"/>
-                                                            </td>
-
+                                                            <td th:text="${issue.planDueDate}"></td>
 
                                                             <td>
                                                                 <a href="#" th:id="'moreInfo_' + ${issue.id}"
@@ -829,6 +646,84 @@
                                     </div>
                                 </div>
                             </div>
+
+
+                            <!-- start stack members -->
+                            <div class="mt-4 mb-4" th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                <h5 class="m-0 pb-2">
+                                    <a class="text-dark" data-bs-toggle="collapse" href="#stackMembers" role="button"
+                                       aria-expanded="false" aria-controls="stackMembers">
+                                        <i class='ri-arrow-down-s-line fs-18'></i>Stack Members <span
+                                            class="text-muted">(</span><span class="text-muted" th:text="${totalUsersWithMultipleIssues}"></span><span
+                                            class="text-muted">)</span>
+                                    </a>
+                                </h5>
+                                <div class="collapse show" id="stackMembers">
+                                    <div class="card mb-0">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <div class="row justify-content-sm-between">
+                                                    <table id="stack-members" class="display nowrap" style="width:100%">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Assignee</th>
+                                                            <th>Photo</th>
+                                                            <th>Project</th>
+                                                            <th>Issue Type</th>
+                                                            <th>Subject</th>
+                                                            <th>Status</th>
+                                                            <th>Priority</th>
+                                                            <th>Due Date</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr th:each="user : ${usersWithMultipleIssues}">
+                                                            <td>
+                                                                <span th:text="${user.username}"></span>
+                                                            </td>
+                                                            <td>
+                                                                <img th:src="${user.photosImagePath}" alt="User Photo" style="width:50px; height:50px;">
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.project.projectName}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.issueType.issueName}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.subject}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.issueStatus}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.priority}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.planDueDate}"></li>
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script>
@@ -1129,144 +1024,108 @@
         </div>
     </div>
 
-    <!--  Add new task modal -->
-    <div class="modal fade task-modal-content" id="add-new-task-modal" tabindex="-1" role="dialog"
-         aria-labelledby="NewTaskModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1070px;">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:#007bff; color: #fff; padding: 20px 30px;">
-                    <h4 class="modal-title" id="NewTaskModalLabel">Create New Task</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="background-color:#eeeef1;color: black; padding: 0 30px;">
-                    <form class="p-2" id="issueForm" th:object="${issue}">
+<!--  Add new task modal -->
+<div class="modal fade task-modal-content" id="add-new-task-modal" tabindex="-1" role="dialog" aria-labelledby="NewTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1070px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#007bff; color: #fff; padding: 20px 30px;">
+                <h4 class="modal-title" id="NewTaskModalLabel">Create New Task</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="background-color:#eeeef1;color: black; padding: 0 30px;">
+                <form class="p-2" id="issueForm" th:object="${issue}" enctype="multipart/form-data">
 
-                        <input type="hidden" id="projectId" name="projectId">
+                    <input type="hidden" id="projectId" name="projectId">
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">IssueType</label>
-                                    <select class="form-select" th:field="*{issueType}">
-                                        <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}"
-                                                th:text="${issueType.issueName}"></option>
-                                    </select>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">IssueType</label>
+                                <select class="form-select" th:field="*{issueType}">
+                                    <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}" th:text="${issueType.issueName}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" th:field="*{category}">
+                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <span id="subjectError" class="text-danger"></span>
+                        <input type="text" class="form-control" id="subject" th:field="*{subject}" placeholder="Subject">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="task-description" class="form-label">Description</label>
+                        <textarea class="form-control" id="task-description" rows="3"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Priority</label>
+                                <select class="form-select" th:field="*{priority}">
+                                    <option th:each="priority : ${priorities}" th:value="${priority}" th:text="${priority}"></option>
+                                </select>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="subject" class="form-label">Subject</label>
-                            <input type="text" class="form-control" id="subject" th:field="*{subject}"
-                                   placeholder="Subject">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="task-description" class="form-label">Description</label>
-                            <textarea class="form-control" id="task-description" rows="3"></textarea>
-                        </div>
-
-                        <div class="row">
-                            <!-- Left Column -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select" th:field="*{issueStatus}">
-                                        <option th:each="issueStatus : ${issueStatuses}" th:value="${issueStatus}"
-                                                th:text="${issueStatus}"></option>
-                                    </select>
-                                </div>
+                        <div class="col-md-6 edit">
+                            <div class="mb-3">
+                                <label for="attachments" class="form-label">Attachments</label>
+                                <input type="file" class="form-control" id="attachments" name="attachments" multiple>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Right Column -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Priority</label>
-                                    <select class="form-select" th:field="*{priority}">
-                                        <option th:each="priority : ${priorities}" th:value="${priority}"
-                                                th:text="${priority}"></option>
-                                    </select>
-                                </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="planStartDate" class="form-label">Plan Start Date</label>
+                                <!-- Error div -->
+                                <span id="errorDiv" class="text-danger"></span>
+                                <span id="dateError" class="text-danger"></span>
+                                <input type="date" class="form-control" id="planStartDate" th:field="*{planStartDate}">
                             </div>
                         </div>
 
-                        <div class="row">
-                            <!-- Left Column -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Category</label>
-                                    <select class="form-select" th:field="*{category}">
-                                        <option th:each="category : ${categories}" th:value="${category.id}"
-                                                th:text="${category.categoryName}"></option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Right Column -->
-                            <div class="col-md-6 edit">
-                                <div class="mb-3">
-                                    <label class="form-label">Assign To</label>
-                                    <select id="userSelect" class="form-control" multiple="multiple" th:field="*{users}"
-                                            required>
-                                        <!-- Options will be dynamically populated -->
-                                    </select>
-
-                                </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="planDueDate" class="form-label">Plan Due Date</label>
+                                <input type="date" class="form-control" id="planDueDate" th:field="*{planDueDate}">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="planStartDate" class="form-label">Plan Start Date</label>
-                                    <input type="date" class="form-control" id="planStartDate"
-                                           th:field="*{planStartDate}">
-                                </div>
-                            </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="planDueDate" class="form-label">Plan Due Date</label>
-                                    <input type="date" class="form-control" id="planDueDate" th:field="*{planDueDate}">
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="mb-3 edit">
+                            <label class="form-label">Assign To</label>
+                            <!-- Add this dropdown for selecting users -->
+                            <select id="userSelect" class="form-control" multiple="multiple" th:field="*{users}" required>
+                                <!-- Default option -->
+                                <!-- Options will be dynamically populated -->
+                            </select>
                         </div>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="actualStartDate" class="form-label">Actual Start Date</label>
-                                    <input type="date" class="form-control" id="actualStartDate"
-                                           th:field="*{actualStartDate}">
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="actualEndDate" class="form-label">Actual End Date</label>
-                                    <input type="date" class="form-control" id="actualEndDate"
-                                           th:field="*{actualEndDate}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="attachments" class="form-label">Attachments</label><span id="errorSpan"
-                                                                                                 class="text-danger"></span>
-                            <input type="file" class="form-control" id="attachments" name="attachments" multiple>
-                        </div>
-
-                        <div class="text-end">
-                            <button type="reset" class="btn btn-light" data-bs-dismiss="modal" onclick="reloadPage()">
-                                Cancel
-                            </button>
-                            <button type="submit" id="createIssueBtn" class="btn btn-primary">Create</button>
-                        </div>
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+                    <div class="text-end">
+                        <button type="reset" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" id="createIssueBtn" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.js"
             integrity="sha512-WHVh4oxWZQOEVkGECWGFO41WavMMW5vNCi55lyuzDBID+dHg2PIxVufsguM7nfTYN3CEeQ/6NB46FWemzpoI6Q=="
@@ -1287,14 +1146,11 @@
                 formData.append('description', $('#task-description').val());
 
                 // Append select field values to FormData
-                formData.append('issueStatus', $('#issueStatus').val());
                 formData.append('priority', $('#priority').val());
                 formData.append('category', $('#category').val());
 
                 formData.append('planStartDate', $('#planStartDate').val());
                 formData.append('planDueDate', $('#planDueDate').val());
-                formData.append('actualStartDate', $('#actualStartDate').val());
-                formData.append('actualEndDate', $('#actualEndDate').val());
 
                 // Get the attached file
                 // var file = $('#attachments')[0].files[0];
@@ -1387,7 +1243,7 @@
 </script>
 
 <script>
-    new DataTable('#stack-members', {
+    new DataTable('#closed-tasks', {
         layout: {
             topStart: {
                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
@@ -1396,8 +1252,9 @@
     });
 </script>
 
+
 <script>
-    new DataTable('#example', {
+    new DataTable('#stack-members', {
         layout: {
             topStart: {
                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print']

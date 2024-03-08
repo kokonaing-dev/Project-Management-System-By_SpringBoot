@@ -113,29 +113,6 @@
               </a>
           </li>
 
-<!--            <li class="side-nav-item">-->
-<!--              <a href="/apps-chat" class="side-nav-link">-->
-<!--                  <i class="ri-chat-voice-fill"></i>-->
-<!--                  <span> Chat </span>-->
-<!--              </a>-->
-<!--            </li>-->
-<!--  --Start for project ----- -->
-<!--        Check if the user has ROLE_SYSTEM_ADMIN role-->
-<!--            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">-->
-<!--                <a href="/project-list" class="side-nav-link">-->
-<!--                    <i class="ri-briefcase-5-fill"></i>-->
-<!--                    <span>Projects</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--&lt;!&ndash;        Check if the user has ROLE_PROJECT_MANAGER role&ndash;&gt;-->
-<!--            <li class="side-nav-item" th:if="${#authorization.expression('hasRole(''ROLE_PROJECT_MANAGER'') or hasRole(''ROLE_MEMBER'')')}">-->
-<!--                <a href="/project-list" class="side-nav-link">-->
-<!--                    <i class="ri-briefcase-5-fill"></i>-->
-<!--                    <span>Projects</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!-- ------End for project --- -->
-
 
 
 <!--  --Start for tasks ----- -->
@@ -170,12 +147,6 @@
             </li>
 
 
-<!--          <li class="side-nav-item">-->
-<!--              <a href="/displayBarGraph" class="side-nav-link">-->
-<!--                  &nbsp;<span class="material-symbols-outlined">bar_chart</span>-->
-<!--                  <span> Chart </span>-->
-<!--              </a>-->
-<!--          </li>-->
 <!--    ==================-->
           <li class="side-nav-item"  th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">
               <a href="/setting" class="side-nav-link">

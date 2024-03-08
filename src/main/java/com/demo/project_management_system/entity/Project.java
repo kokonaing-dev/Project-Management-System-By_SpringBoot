@@ -14,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -36,7 +37,11 @@ public class Project {
 
     private LocalDate projectDueDate;
 
-    @JsonIgnore
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     @ManyToMany(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
     @JoinTable(name = "user_project",
             joinColumns = @JoinColumn(name = "project_id"),
