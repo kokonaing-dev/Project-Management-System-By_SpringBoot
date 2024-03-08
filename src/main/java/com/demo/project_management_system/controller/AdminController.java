@@ -144,7 +144,7 @@ public class AdminController {
             model.addAttribute("members", members);
 
             System.out.println("MMMMMMMMMMMMMMM " + members);
-//            return "project-list";
+
         }
 
         return "project-list";

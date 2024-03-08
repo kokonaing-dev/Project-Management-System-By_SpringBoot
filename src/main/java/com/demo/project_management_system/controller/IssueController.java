@@ -42,12 +42,6 @@ public class IssueController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(value = "/issue/upload/{id}")
-    public String uploadIssue(@PathVariable("id") int issueId){
-        System.out.println("File Upload ..........."+ issueId);
-        return "redirect:/apps-kanban";
-    }
-
 
     @PostMapping(value = "/issue/process_issue")
     @ResponseBody
@@ -110,15 +104,8 @@ public class IssueController {
 
                 issue.setStatus(1);
 
-//                String subject = issue.getSubject();
-//                System.out.println("ISSUE SUBJECT " + subject);
-//                String issueType = issue.getIssueType().getIssueName();
-//                System.out.println("ISSUE TYPE " + issueType);
-
-
-
                 // Save the issue (if not already saved)
-                Issue savedIssue = issueService.save(issue);
+                issueService.save(issue);
 
                 // Process other form fields and perform necessary operations
 
@@ -180,6 +167,7 @@ public class IssueController {
         return ResponseEntity.ok("Issue status updated successfully");
     }
 
+
     @DeleteMapping(value = "issue/deleteissue/{id}")
     @ResponseBody
     public ResponseEntity<?> deleteIssue(@PathVariable int id) {
@@ -203,20 +191,22 @@ public class IssueController {
     }
 
 
-    @PatchMapping("/issue/edit/{id}")
-    public ResponseEntity<String> updateIssue(@PathVariable int id, @RequestBody Issue updatedIssue) {
+    @PatchMapping("/issue/edit/{issueId}")
+    public ResponseEntity<String> updateIssue(@PathVariable int issueId, @RequestBody Issue updatedIssue) {
         try {
-            Optional<Issue> optionalExistingIssue = issueService.findIssueById(id);
+            Optional<Issue> optionalExistingIssue = issueService.findIssueById(issueId);
             if (optionalExistingIssue.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 
             Issue existingIssue = optionalExistingIssue.get();
+            System.out.println("UPDATE ISSUE..." + updatedIssue);
 
             // Update properties of existingIssue
             existingIssue.setSubject(updatedIssue.getSubject());
-            existingIssue.setIssueType(updatedIssue.getIssueType());
+//            existingIssue.setIssueType(updatedIssue.getIssueType());
             existingIssue.setCategory(updatedIssue.getCategory());
+            System.out.println(updatedIssue.getSubject());
 
             // Update other fields as needed
 
@@ -238,6 +228,43 @@ public class IssueController {
             return "issueDetails";
         } else {
             return "issueNotFound";
+        }
+    }
+
+    @GetMapping(value = "getIssueUserInfo")
+    public String getIssueUserInfo(@RequestParam("issueId") int issueId, Model model) {
+        Optional<Issue> optionalIssue = issueService.findIssueById(issueId);
+        if (optionalIssue.isPresent()){
+            Issue issue = optionalIssue.get();
+            System.out.println("Issue User More Info..." + issue);
+            model.addAttribute("issue", issue);
+            return "issueUserDetails";
+        } else {
+            return "issueUserNotFound";
+        }
+    }
+
+    @PostMapping("/api/removeUser")
+    public ResponseEntity<String> removeUserFromIssue(@RequestParam Long userId, @RequestParam Long issueId) {
+        try {
+            // Retrieve the issue by its ID
+            Optional<Issue> optionalIssue = issueService.findIssueById(issueId);
+            if (optionalIssue.isEmpty()) {
+                return ResponseEntity.notFound().build(); // Issue not found
+            }
+
+            Issue issue = optionalIssue.get();
+
+            // Remove the user from the issue
+            issue.getUsers().removeIf(user -> user.getId().equals(userId));
+
+            // Save the updated issue
+            issueService.updateIssue(Optional.of(issue));
+
+            return ResponseEntity.ok("User removed from the issue successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error removing user from the issue: " + e.getMessage());
         }
     }
 

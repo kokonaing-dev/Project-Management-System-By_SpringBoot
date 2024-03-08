@@ -26,7 +26,7 @@ public class Issue {
     private String description;
 
     @Enumerated(EnumType.ORDINAL)
-    private IssueStatus issueStatus;
+    private IssueStatus issueStatus = IssueStatus.OPEN; // Default value is OPEN
 
     @Enumerated(EnumType.ORDINAL)
     private Priority priority;
@@ -38,8 +38,17 @@ public class Issue {
 
     private int status; //for soft delete
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> attachmentFileNames = new ArrayList<>();
+
+
+    @Override
+    public String toString() {
+        return "Issue{" +
+                "id=" + id +
+                ", // Include other simple attributes" +
+                '}';
+    }
 
 //    @Transient // Skip persisting this field to the database
 //    private String attachments;
