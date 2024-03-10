@@ -204,9 +204,14 @@ public class IssueController {
 
             // Update properties of existingIssue
             existingIssue.setSubject(updatedIssue.getSubject());
+            existingIssue.setDescription(updatedIssue.getDescription());
+            existingIssue.setPriority(updatedIssue.getPriority());
+            existingIssue.setPlanStartDate(updatedIssue.getPlanStartDate());
+            existingIssue.setPlanDueDate(updatedIssue.getPlanDueDate());
 //            existingIssue.setIssueType(updatedIssue.getIssueType());
             existingIssue.setCategory(updatedIssue.getCategory());
-            System.out.println(updatedIssue.getSubject());
+
+            System.out.println(updatedIssue.getPlanDueDate());
 
             // Update other fields as needed
 

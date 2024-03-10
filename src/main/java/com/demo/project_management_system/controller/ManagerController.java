@@ -70,11 +70,14 @@ public class ManagerController {
                     .filter(issue -> {
                         IssueStatus issueStatus = issue.getIssueStatus();
                         LocalDate planStartDate = issue.getPlanStartDate();
-                        return !(issueStatus == IssueStatus.IN_PROGRESS ||
-                                issueStatus == IssueStatus.SOLVED ||
-                                issueStatus == IssueStatus.PENDING ||
-                                issueStatus == IssueStatus.CLOSED) &&
-                                ((planStartDate == null || planStartDate.equals(today)));
+
+                        return (planStartDate.equals(today));
+
+//                        return !(issueStatus == IssueStatus.IN_PROGRESS ||
+//                                issueStatus == IssueStatus.SOLVED ||
+//                                issueStatus == IssueStatus.PENDING ||
+//                                issueStatus == IssueStatus.CLOSED) &&
+//                                ((planStartDate == null || planStartDate.equals(today)));
                     })
                     .toList();
 
@@ -94,11 +97,13 @@ public class ManagerController {
                         IssueStatus issueStatus = issue.getIssueStatus();
                         LocalDate planStartDate = issue.getPlanStartDate();
 
-                        return !(issueStatus == IssueStatus.IN_PROGRESS ||
-                                issueStatus == IssueStatus.SOLVED ||
-                                issueStatus == IssueStatus.PENDING ||
-                                issueStatus == IssueStatus.CLOSED) &&
-                                ((planStartDate == null || planStartDate.isAfter(today)));
+                        return (planStartDate.isAfter(today));
+
+//                        return !(issueStatus == IssueStatus.IN_PROGRESS ||
+//                                issueStatus == IssueStatus.SOLVED ||
+//                                issueStatus == IssueStatus.PENDING ||
+//                                issueStatus == IssueStatus.CLOSED) &&
+//                                ((planStartDate == null || planStartDate.isAfter(today)));
                     })
                     .toList();
 

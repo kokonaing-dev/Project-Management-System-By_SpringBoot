@@ -1144,7 +1144,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">IssueType</label>
-                                <select class="form-select" th:field="*{issueType}">
+                                <select id="issueType" class="form-select" th:field="*{issueType}">
                                     <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}" th:text="${issueType.issueName}"></option>
                                 </select>
                             </div>
@@ -1152,7 +1152,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Category</label>
-                                <select class="form-select" th:field="*{category}">
+                                <select id="category" class="form-select" th:field="*{category}">
                                     <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
                                 </select>
                             </div>
@@ -1180,7 +1180,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 edit">
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="attachments" class="form-label">Attachments</label>
                                 <input type="file" class="form-control" id="attachments" name="attachments" multiple>
@@ -1341,9 +1341,9 @@
                 { source: 'task-list-three', target: 'task-list-five' }, // SOLVED to CLOSED
                 { source: 'task-list-four', target: 'task-list-five' }, // PENDING to CLOSED
                 { source: 'task-list-five', target: 'task-list-four' },  // CLOSED to PENDING
-                { source: 'task-list-five', target: 'task-list-three' },  // CLOSED to PENDING
-                { source: 'task-list-five', target: 'task-list-two' },  // CLOSED to PENDING
-                { source: 'task-list-five', target: 'task-list-one' }  // CLOSED to PENDING
+                { source: 'task-list-five', target: 'task-list-three' },  // CLOSED to SOLVED
+                { source: 'task-list-five', target: 'task-list-two' },  // CLOSED to IN_PROGRESS
+                { source: 'task-list-five', target: 'task-list-one' }  // CLOSED to OPEN
             ];
 
             // Check if the current source and target match any restricted transition
@@ -1476,11 +1476,18 @@
             $('#issueForm').attr('action', '/issue/edit/' + issue.id);
             $('#NewTaskModalLabel').text('Edit Task');
             $('#createIssueBtn').text('Save Changes');
+
+
             $('#subject').val(issue.subject);
-            $('#description').val(issue.description);
+            $('#task-description').val(issue.description);
             $('#priority').val(issue.priority);
             $('#planStartDate').val(issue.planStartDate);
             $('#planDueDate').val(issue.planDueDate);
+
+            // Populate category
+            $('#category').val(issue.category.id);
+
+
 
             if (isEditing) {
                 // Hide the div containing the select element when editing
@@ -1518,6 +1525,8 @@
                 subject: $('#subject').val(),
                 description: $('#task-description').val(),
                 priority: $('#priority').val(),
+                planStartDate: $('#planStartDate').val(),
+                planDueDate: $('#planDueDate').val(),
                 category: {
                     id: $('#category').val(),
                     categoryName: $('#category option:selected').text()

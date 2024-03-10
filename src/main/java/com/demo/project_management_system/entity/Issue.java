@@ -46,9 +46,22 @@ public class Issue {
     public String toString() {
         return "Issue{" +
                 "id=" + id +
-                ", // Include other simple attributes" +
+                ", subject='" + subject + '\'' +
+                ", description='" + description + '\'' +
+                ", issueStatus=" + issueStatus +
+                ", priority=" + priority +
+                ", planStartDate=" + planStartDate +
+                ", planDueDate=" + planDueDate +
+                ", actualStartDate=" + actualStartDate +
+                ", actualEndDate=" + actualEndDate +
+                ", status=" + status +
+                ", attachmentFileNames=" + attachmentFileNames +
+                ", createdAt=" + createdAt +
+                ", issueType=" + issueType +
+                ", category=" + category +
                 '}';
     }
+
 
 //    @Transient // Skip persisting this field to the database
 //    private String attachments;

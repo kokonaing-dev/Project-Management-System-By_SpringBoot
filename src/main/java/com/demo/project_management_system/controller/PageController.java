@@ -1,10 +1,12 @@
 package com.demo.project_management_system.controller;
 
+import com.demo.project_management_system.dto.IssueDto;
 import com.demo.project_management_system.entity.*;
 import com.demo.project_management_system.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -122,10 +124,93 @@ public class PageController {
     }
 
 
+    @GetMapping("/calendar")
+    public String viewCalendar(@AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session){
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        // Store the user object in the session
+        session.setAttribute("loggedInUser", user);
+
+        // Expose loggedInUser as a model attribute
+        model.addAttribute("loggedInUser", user);
+        return "calendar";
+    }
+
+    @GetMapping("/api/events")
+    public ResponseEntity<List<IssueDto>> fetchEvents(HttpSession session, Model model) {
+        // Retrieve the user object from the session
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        // Pass the user object to the view
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        // Get the Authentication object from SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Retrieve authorities from the Authentication object
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isProjectManager = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER"));
+
+        if (isProjectManager) {
+
+            Set<Project> projectList = projectService.getProjectsByUserId(loggedInUser.getId());
+            model.addAttribute("projectList", projectList);
+
+            Set<Issue> issueList = new HashSet<>();
+            for (Project project : projectList) {
+                issueList.addAll(issueService.findIssueByProjectId(project.getId()));
+            }
+
+            List<IssueDto> events = new ArrayList<>();
+
+
+            for (Issue issue : issueList) {
+                IssueDto eventDto = new IssueDto();
+                eventDto.setId(issue.getId());
+                eventDto.setIssueName(issue.getIssueType().getIssueName());
+                eventDto.setPriority(issue.getPriority());
+                eventDto.setProjectName(issue.getProject().getProjectName());
+                eventDto.setSubject(issue.getSubject());
+                eventDto.setPlanStartDate(issue.getPlanStartDate());
+                eventDto.setPlanDueDate(issue.getPlanDueDate());
+
+                // Add event to the list
+                events.add(eventDto);
+            }
+            return ResponseEntity.ok().body(events);
+
+        }
+
+
+        List<Issue> issueList = issueService.getIssuesByUserId(loggedInUser.getId());
+
+        List<IssueDto> events = new ArrayList<>();
+
+
+        for (Issue issue : issueList) {
+            IssueDto eventDto = new IssueDto();
+            eventDto.setId(issue.getId());
+            eventDto.setIssueName(issue.getIssueType().getIssueName());
+            eventDto.setPriority(issue.getPriority());
+            eventDto.setProjectName(issue.getProject().getProjectName());
+            eventDto.setSubject(issue.getSubject());
+            eventDto.setPlanStartDate(issue.getPlanStartDate());
+            eventDto.setPlanDueDate(issue.getPlanDueDate());
+
+            // Add event to the list
+            events.add(eventDto);
+        }
+
+        return ResponseEntity.ok().body(events);
+    }
+
+
+
     @GetMapping("/")
     public String authSignIn(Model model){
         return "auth-login";
     }
+
 
     @GetMapping("/register")
     public String authSignUp(ModelMap modelMap){
