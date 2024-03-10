@@ -143,7 +143,7 @@ public class PageController {
         System.out.println("User IDDDDDD " + userId);
 
         // Find projects for the logged-in user
-        Set<Project> userProjects = userService.findProjectsByUserId(userId);
+        Set<Project> userProjects = userService.findActiveProjectsByUserId(userId);
         System.out.println("User Projects " + userProjects);
 
         // Fetch the number of issues for each project

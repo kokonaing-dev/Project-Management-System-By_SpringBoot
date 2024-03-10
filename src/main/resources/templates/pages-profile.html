@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns="http://www.w3.org/1999/html"
       xsi:schemaLocation="http://www.thymeleaf.org ">
 <head>
         <meta charset="utf-8" />
@@ -39,6 +38,16 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <style>
+        .material-symbols-rounded {
+            /*background-color: rgba(0, 0, 0, 0.6);*/
+            color: white;
+            border-radius: 50%;
+            padding: 5px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 
     <body>
@@ -85,33 +94,68 @@
                                     <div class="card-body">
                                         <form th:action="@{/user/save/{id}(id=${loggedInUser != null ? loggedInUser.id : ''})}" method="post" enctype="multipart/form-data">
                                             <div class="wrapper2">
-                                                <h2>Profile Photo</h2>
-                                                <div class="image">
-                                                    <img th:src="${loggedInUser.photosImagePath}"  alt="photo" style="width: 50px; height: 50px;"/>
-                                                    <label for="file-path">
+                                                <h3>My Profile</h3>
+
+                                                <button type="submit" class="btn btn-success btn-sm mb-3"><i class="ri-save-line"></i> Save</button>
+
+                                                <div class="image" style="position: relative; display: inline-block;">
+                                                    <img th:src="${loggedInUser.photosImagePath}"  alt="photo" style="width: 60px; height: 60px;"/>
+                                                    <label for="file-path" style="position: absolute; bottom: -30px; right: -20px;">
                                                         <span class="material-symbols-rounded">
                                                             photo_camera
                                                         </span>
                                                     </label>
-                                                    <input type="file" name="image" accept="image/jpeg, image/png, image/jpg" id="file-path" class="user-file">
+                                                    <input type="file" name="image" accept="image/jpeg, image/png, image/jpg" id="file-path" class="user-file" style="display: none;">
                                                 </div>
                                             </div>
-                                            <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>
                                         </form>
 
                                         <!-- User's Name and Role -->
-                                        <h4 class="mb-1 mt-2"><span class="ms-2"><span class="ms-2 ">
-                                            <span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span></span></span></h4>
-                                            <p class="text-muted"><span th:each="authority : ${loggedInUser.authorities}" th:text="${#strings.replace(#strings.substring(authority.authority, 5), '_', ' ')}"></span>
-                                            </p>
+                                        <h4 class="mb-1 mt-2">
+                                            <span class="ms-2">
+                                                <span th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}">
 
-                                        <div class="text-start mt-3">
-                                            <p class="text-muted mb-2"><strong>Full Name :</strong> <span class="ms-2"><span class="ms-2 ">
-                                                <span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span></span></span></p>
-
-                                            <p class="text-muted mb-2"><strong>Email :</strong> <span class="ms-2 "><span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.email : 'Not Logged In'}"></span>
-                                            </span></p>
+                                                </span>
+                                            </span>
+                                        </h4>
+                                        <p class="text-muted">
+                                            <span th:each="authority : ${loggedInUser.authorities}" th:text="${#strings.replace(#strings.substring(authority.authority, 5), '_', ' ')}"></span>
+                                        </p>
+                                        <div class="mt-3">
+                                            <table class="table">
+                                                <tbody>
+                                                <tr>
+                                                    <th scope="row">Username :</th>
+                                                    <td><span th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Email :</th>
+                                                    <td><span th:text="${loggedInUser != null ? loggedInUser.email : 'Not Logged In'}"></span></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
+
+
+
+                                        <!--                                        <div class="text-start mt-3">-->
+<!--                                            <p class="text-muted mb-2"><strong>Username :</strong>-->
+<!--                                                <span class="ms-2">-->
+<!--                                                    <span class="ms-2">-->
+<!--                                                        <span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}">-->
+
+<!--                                                        </span>-->
+<!--                                                    </span>-->
+<!--                                                </span>-->
+<!--                                            </p>-->
+<!--                                            <p class="text-muted mb-2"><strong>Email :</strong>-->
+<!--                                                <span class="ms-2 ">-->
+<!--                                                    <span class="ms-2" th:text="${loggedInUser != null ? loggedInUser.email : 'Not Logged In'}">-->
+
+<!--                                                    </span>-->
+<!--                                                </span>-->
+<!--                                            </p>-->
+<!--                                        </div>-->
 
                                     </div> <!-- end card-body -->
                                 </div> <!-- end card -->
@@ -158,7 +202,7 @@
                                                             <td th:text="${project.id}"></td>
                                                             <td th:text="${project.projectName}"></td>
                                                             <td th:text="${project.projectStartDate}"></td>
-                                                            <td th:text="${project.projectEndDate}"></td>
+                                                            <td th:text="${project.projectDueDate}"></td>
                                                             <td th:text="${project.numberOfIssues}"></td>
                                                             <td>
                                                                 <div class="wrapper2">
@@ -182,108 +226,215 @@
     
                                             </div> <!-- end tab-pane -->
                                             <!-- end about me section content -->
-    
 
-    
+
                                             <div class="tab-pane" id="settings">
+                                                <form action="/updateMyProfile">
                                                     <h5 class="mb-4 text-uppercase"><i class="ri-contacts-book-2-line me-1"></i> Personal Info</h5>
-                                                    <form id="profileForm">
-                                                        <div class="row">
-                                                            <!-- Hidden input field for logged-in user's ID -->
-                                                            <input type="hidden" id="userId" name="userId" th:value="${loggedInUser != null ? loggedInUser.id : ''}">
-                                                            <div class="col-md-6">
-                                                                <div class="mb-3">
-                                                                    <label for="username" class="form-label">Username</label>
-                                                                    <input type="text" class="form-control" id="username" placeholder="Enter your name" th:value="${loggedInUser != null ? loggedInUser.username : ''}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="mb-3">
-                                                                    <label for="email" class="form-label">Email Address</label>
-                                                                    <input type="email" class="form-control" id="email" placeholder="Enter your email" th:value="${loggedInUser != null ? loggedInUser.email : ''}">
-                                                                    <!--                                                                <span class="form-text text-muted"><small>If you want to change email please <a href="javascript: void(0);">click</a> here.</small></span>-->
-                                                                </div>
-                                                            </div>
-                                                            <div class="text-end">
-                                                                <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>
-                                                            </div>
-                                                            <!-- end col -->
-                                                        </div>
-                                                    </form> <!-- end row -->
-
-
                                                     <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="accordion accordion-flush mb-3" id="changeEmailPasswordAccordion">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="emailPasswordHeading">
-                                                                        <button class="accordion-button collapsed text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#emailPasswordCollapse" aria-expanded="false" aria-controls="emailPasswordCollapse">
-                                                                            Change Password
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="emailPasswordCollapse" class="accordion-collapse collapse" aria-labelledby="emailPasswordHeading" data-bs-parent="#changeEmailPasswordAccordion">
-                                                                        <div class="accordion-body">
-                                                                            <form th:action="@{/updatePassword/{id}(id=${loggedInUser != null ? loggedInUser.id : ''})}" method="post" id="passwordForm">
-                                                                                <div class="row g-2">
-                                                                                    <div class="col-lg-4">
-                                                                                        <div>
-                                                                                            <label for="currentPassword" class="form-label">Old Password*</label>
-                                                                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword"  placeholder="Enter current password">
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!--end col-->
-                                                                                    <div class="col-lg-4">
-                                                                                        <div>
-                                                                                            <label for="newPassword" class="form-label">New Password*</label>
-                                                                                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" onkeyup='check();'>
-                                                                                            <span id="errormessage"></span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!--end col-->
-                                                                                    <div class="col-lg-4">
-                                                                                        <div>
-                                                                                            <label for="re_typeNewPassword" class="form-label">Confirm Password*</label>
-                                                                                            <input type="password" class="form-control" id="re_typeNewPassword" name="re_typeNewPassword" placeholder="Confirm password" onkeyup='check();'>
-                                                                                            <span id="message"></span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!--end col-->
-                                                                                    <div class="col-lg-12">
-                                                                                        <div class="mb-3">
-                                                                                            <a href="/auth-recoverpw" class="link-primary text-decoration-underline">Forgot Password ?</a>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!--end col-->
-                                                                                    <div class="col-lg-12">
-                                                                                        <div class="text-end">
-                                                                                            <button type="submit" id="signupbtn" class="btn btn-success">Change Password</button>
-                                                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="username" class="form-label">Username</label>
+                                                                <input type="text" class="form-control" id="username" placeholder="Enter your name" value="Ella Stella">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="useremail" class="form-label">Email Address</label>
+                                                                <input type="email" class="form-control" id="useremail" placeholder="Enter your email" value="stella@gmail.com">
+                                                                <!--                                                                <span class="form-text text-muted"><small>If you want to change email please <a href="javascript: void(0);">click</a> here.</small></span>-->
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-end">
+                                                            <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>
+                                                        </div>
+                                                        <!-- end col -->
+                                                    </div> <!-- end row -->
+                                                </form>
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="accordion accordion-flush mb-3" id="changeEmailPasswordAccordion">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="emailPasswordHeading">
+                                                                    <button class="accordion-button collapsed text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#emailPasswordCollapse" aria-expanded="false" aria-controls="emailPasswordCollapse">
+                                                                        Change Password
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="emailPasswordCollapse" class="accordion-collapse collapse" aria-labelledby="emailPasswordHeading" data-bs-parent="#changeEmailPasswordAccordion">
+                                                                    <div class="accordion-body">
+                                                                        <form action="/changePw" method="post">
+                                                                            <div class="row g-2">
+                                                                                <div class="col-lg-4">
+                                                                                    <div>
+                                                                                        <label for="oldpasswordInput" class="form-label">Old Password*</label>
+                                                                                        <input type="password" class="form-control" id="oldpasswordInput" placeholder="Enter current password">
                                                                                     </div>
                                                                                 </div>
-                                                                                <!--end row-->
-                                                                            </form>
-                                                                        </div>
+                                                                                <!--end col-->
+                                                                                <div class="col-lg-4">
+                                                                                    <div>
+                                                                                        <label for="newpasswordInput" class="form-label">New Password*</label>
+                                                                                        <input type="password" class="form-control" id="newpasswordInput" placeholder="Enter new password">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!--end col-->
+                                                                                <div class="col-lg-4">
+                                                                                    <div>
+                                                                                        <label for="confirmpasswordInput" class="form-label">Confirm Password*</label>
+                                                                                        <input type="password" class="form-control" id="confirmpasswordInput" placeholder="Confirm password">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!--end col-->
+                                                                                <div class="col-lg-12">
+                                                                                    <div class="mb-3">
+                                                                                        <a href="/auth-recoverpw" class="link-primary text-decoration-underline">Forgot Password ?</a>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!--end col-->
+                                                                                <div class="col-lg-12">
+                                                                                    <div class="text-end">
+                                                                                        <button type="submit" class="btn btn-success">Change Password</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- Success Alert Modal -->
+                                                                                <div id="success-alert-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="successAlertModalLabel" aria-hidden="true">
+                                                                                    <div class="modal-dialog modal-sm">
+                                                                                        <div class="modal-content modal-filled bg-success">
+                                                                                            <div class="modal-body p-4">
+                                                                                                <div class="text-center">
+                                                                                                    <i class="ri-check-line h1"></i>
+                                                                                                    <h4 class="mt-2">Password changed successfully!</h4>
+                                                                                                    <button type="button" class="btn btn-light my-2" data-bs-dismiss="modal">Continue</button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div><!-- /.modal-content -->
+                                                                                    </div><!-- /.modal-dialog -->
+                                                                                </div><!-- /.modal -->
+
+                                                                                <!--end col-->
+                                                                            </div>
+                                                                            <!--end row-->
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
 
-                                                        </div> <!-- end col -->
-                                                    </div> <!-- end row -->
-                                                    
+                                                    </div> <!-- end col -->
+                                                </div> <!-- end row -->
 
-                                                    <!-- Success Modal -->
-                                                    <div id="success-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-sm">
-                                                            <div class="modal-content">
-                                                                <div class="modal-body">
-                                                                    <h5 class="modal-title" id="successModalLabel">Profile Updated Successfully!</h5>
-                                                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
-                                                                </div>
+                                                <!-- Success Modal -->
+                                                <div id="success-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-sm">
+                                                        <div class="modal-content">
+                                                            <div class="modal-body">
+                                                                <h5 class="modal-title" id="successModalLabel">Profile Updated Successfully!</h5>
+                                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
                                                             </div>
                                                         </div>
                                                     </div>
-<!--                                                </form>-->
+                                                </div>
                                             </div>
+<!--                                            <div class="tab-pane" id="settings">-->
+<!--                                                    <h5 class="mb-4 text-uppercase"><i class="ri-contacts-book-2-line me-1"></i> Personal Info</h5>-->
+<!--                                                    <form id="profileForm">-->
+<!--                                                        <div class="row">-->
+<!--                                                            &lt;!&ndash; Hidden input field for logged-in user's ID &ndash;&gt;-->
+<!--                                                            <input type="hidden" id="userId" name="userId" th:value="${loggedInUser != null ? loggedInUser.id : ''}">-->
+<!--                                                            <div class="col-md-6">-->
+<!--                                                                <div class="mb-3">-->
+<!--                                                                    <label for="username" class="form-label">Username</label>-->
+<!--                                                                    <input type="text" class="form-control" id="username" placeholder="Enter your name" th:value="${loggedInUser != null ? loggedInUser.username : ''}">-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                            <div class="col-md-6">-->
+<!--                                                                <div class="mb-3">-->
+<!--                                                                    <label for="email" class="form-label">Email Address</label>-->
+<!--                                                                    <input type="email" class="form-control" id="email" placeholder="Enter your email" th:value="${loggedInUser != null ? loggedInUser.email : ''}">-->
+<!--                                                                    &lt;!&ndash;                                                                <span class="form-text text-muted"><small>If you want to change email please <a href="javascript: void(0);">click</a> here.</small></span>&ndash;&gt;-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                            <div class="text-end">-->
+<!--                                                                <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>-->
+<!--                                                            </div>-->
+<!--                                                            &lt;!&ndash; end col &ndash;&gt;-->
+<!--                                                        </div>-->
+<!--                                                    </form> &lt;!&ndash; end row &ndash;&gt;-->
+
+
+<!--                                                    <div class="row">-->
+<!--                                                        <div class="col-md-12">-->
+<!--                                                            <div class="accordion accordion-flush mb-3" id="changeEmailPasswordAccordion">-->
+<!--                                                                <div class="accordion-item">-->
+<!--                                                                    <h2 class="accordion-header" id="emailPasswordHeading">-->
+<!--                                                                        <button class="accordion-button collapsed text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#emailPasswordCollapse" aria-expanded="false" aria-controls="emailPasswordCollapse">-->
+<!--                                                                            Change Password-->
+<!--                                                                        </button>-->
+<!--                                                                    </h2>-->
+<!--                                                                    <div id="emailPasswordCollapse" class="accordion-collapse collapse" aria-labelledby="emailPasswordHeading" data-bs-parent="#changeEmailPasswordAccordion">-->
+<!--                                                                        <div class="accordion-body">-->
+<!--                                                                            <form th:action="@{/updatePassword/{id}(id=${loggedInUser != null ? loggedInUser.id : ''})}" method="post" id="passwordForm">-->
+<!--                                                                                <div class="row g-2">-->
+<!--                                                                                    <div class="col-lg-4">-->
+<!--                                                                                        <div>-->
+<!--                                                                                            <label for="currentPassword" class="form-label">Old Password*</label>-->
+<!--                                                                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword"  placeholder="Enter current password">-->
+<!--                                                                                        </div>-->
+<!--                                                                                    </div>-->
+<!--                                                                                    &lt;!&ndash;end col&ndash;&gt;-->
+<!--                                                                                    <div class="col-lg-4">-->
+<!--                                                                                        <div>-->
+<!--                                                                                            <label for="newPassword" class="form-label">New Password*</label>-->
+<!--                                                                                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" onkeyup='check();'>-->
+<!--                                                                                            <span id="errormessage"></span>-->
+<!--                                                                                        </div>-->
+<!--                                                                                    </div>-->
+<!--                                                                                    &lt;!&ndash;end col&ndash;&gt;-->
+<!--                                                                                    <div class="col-lg-4">-->
+<!--                                                                                        <div>-->
+<!--                                                                                            <label for="re_typeNewPassword" class="form-label">Confirm Password*</label>-->
+<!--                                                                                            <input type="password" class="form-control" id="re_typeNewPassword" name="re_typeNewPassword" placeholder="Confirm password" onkeyup='check();'>-->
+<!--                                                                                            <span id="message"></span>-->
+<!--                                                                                        </div>-->
+<!--                                                                                    </div>-->
+<!--                                                                                    &lt;!&ndash;end col&ndash;&gt;-->
+<!--                                                                                    <div class="col-lg-12">-->
+<!--                                                                                        <div class="mb-3">-->
+<!--                                                                                            <a href="/auth-recoverpw" class="link-primary text-decoration-underline">Forgot Password ?</a>-->
+<!--                                                                                        </div>-->
+<!--                                                                                    </div>-->
+<!--                                                                                    &lt;!&ndash;end col&ndash;&gt;-->
+<!--                                                                                    <div class="col-lg-12">-->
+<!--                                                                                        <div class="text-end">-->
+<!--                                                                                            <button type="submit" id="signupbtn" class="btn btn-success">Change Password</button>-->
+<!--                                                                                        </div>-->
+<!--                                                                                    </div>-->
+<!--                                                                                </div>-->
+<!--                                                                                &lt;!&ndash;end row&ndash;&gt;-->
+<!--                                                                            </form>-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+
+<!--                                                        </div> &lt;!&ndash; end col &ndash;&gt;-->
+<!--                                                    </div> &lt;!&ndash; end row &ndash;&gt;-->
+<!--                                                    -->
+
+<!--                                                    &lt;!&ndash; Success Modal &ndash;&gt;-->
+<!--                                                    <div id="success-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">-->
+<!--                                                        <div class="modal-dialog modal-sm">-->
+<!--                                                            <div class="modal-content">-->
+<!--                                                                <div class="modal-body">-->
+<!--                                                                    <h5 class="modal-title" id="successModalLabel">Profile Updated Successfully!</h5>-->
+<!--                                                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--&lt;!&ndash;                                                </form>&ndash;&gt;-->
+<!--                                            </div>-->
                                             <!-- end settings content-->
     
                                         </div> <!-- end tab-content -->
@@ -486,6 +637,7 @@
                 </div>
             </div>
         </div>  
+
         <!-- Vendor js -->
         <script src="/js/vendor.min.js"></script>
 

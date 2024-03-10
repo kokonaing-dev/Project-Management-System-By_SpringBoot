@@ -51,10 +51,6 @@
           href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
     <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
 
-    <!--    jsGrid link and script-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css"/>
-
 
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
@@ -363,7 +359,7 @@
                                     <span class="input-group-text" id="searchIcon">
                                                 <i class="bi bi-search"></i>
                                         <!-- Assuming you're using Bootstrap icons -->
-                                            </span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -568,7 +564,7 @@
                                                     <table class="table">
                                                         <tbody id="projectTableBody">
                                                         <!-- Iterate over projects -->
-                                                        <tr th:each="project : ${projects}" class="project-row"
+                                                        <tr th:each="project : ${projectList}" class="project-row"
                                                             th:attr="data-project-id=${project.id}"
                                                             onclick="redirectToHomePage(this)">
                                                             <!-- Project name column -->
@@ -1300,7 +1296,7 @@
         if (tagName !== 'a' && tagName !== 'i') {
             var projectId = row.getAttribute('data-project-id');
             /* Redirect to homepage with project id */
-            window.location.href = '/homepage/' + projectId;
+            window.location.href = '/projectDetail/' + projectId;
         }
     }
 

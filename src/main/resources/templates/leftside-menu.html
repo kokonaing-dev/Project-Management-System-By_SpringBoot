@@ -70,7 +70,7 @@
         <div class="leftbar-user p-3 text-white">
             <a href="/pages-profile" class="d-flex align-items-center text-reset">
                 <div class="flex-shrink-0">
-                <img th:src="${loggedInUser.photosImagePath}" alt="photo" height="42" class="rounded-circle shadow">
+                <img th:src="${loggedInUser.photosImagePath}" alt="photo" height="40" class="rounded-circle shadow">
                 </div>
                 <div class="flex-grow-1 ms-2">
                 <span class="fw-semibold fs-15 d-block" th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span>

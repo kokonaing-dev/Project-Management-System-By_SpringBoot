@@ -155,7 +155,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/homepage/{projectId}")
+    @GetMapping("/projectDetail/{projectId}")
     public String goToHomePage(@PathVariable long projectId,
                                @AuthenticationPrincipal UserDetails userDetails,
                                Model model, HttpSession session) {

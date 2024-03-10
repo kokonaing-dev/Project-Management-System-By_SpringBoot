@@ -44,7 +44,7 @@ public class ManagerController {
         System.out.println("loggedInUserId......... " + userId);
 
         // Find projects for the logged-in user
-        Set<Project> userProjects = userService.findProjectsByUserId(userId);
+        Set<Project> userProjects = userService.findActiveProjectsByUserId(userId);
         System.out.println("User Projects " + userProjects);
 
         // List to store all issues

@@ -72,4 +72,43 @@ public class Project {
     @Transient
     private int numberOfIssues;
 
+    public String calculateProjectStatus() {
+        int totalIssues = issues.size();
+        int inProgressCount = 0;
+        int closedCount = 0;
+        int solvedCount = 0;
+
+        for (Issue issue : issues) {
+            switch (issue.getIssueStatus()) {
+                case IN_PROGRESS:
+                    inProgressCount++;
+                    break;
+                case CLOSED:
+                    closedCount++;
+                    break;
+                case SOLVED:
+                    solvedCount++;
+                    break;
+                default:
+                    // Do nothing or handle other statuses
+                    break;
+            }
+        }
+
+        // Determine project status based on the counts and other conditions
+        if (inProgressCount == totalIssues) {
+            return "Working in Progress";
+        } else if (closedCount == totalIssues) {
+            return "Done";
+        } else if (inProgressCount > 0 || (closedCount > 0 && inProgressCount + closedCount < totalIssues)) {
+            return "Working in Progress";
+        } else if (solvedCount == totalIssues) {
+            return "Pending";
+        } else if (projectStartDate.isAfter(LocalDate.now())) {
+            return "Coming Soon";
+        } else {
+            return "Other"; // Or any default status you want
+        }
+    }
+
 }

@@ -37,7 +37,7 @@
             <!-- Topbar Brand Logo -->
             <div class="logo-topbar">
                 <!-- Logo light -->
-                <a href="index.html" class="logo-light">
+                <a href="/dashboard" class="logo-light">
                                     <span class="logo-lg">
                                         <img src="/images/logo.png" alt="logo">
                                     </span>
@@ -47,7 +47,7 @@
                 </a>
 
                 <!-- Logo Dark -->
-                <a href="index.html" class="logo-dark">
+                <a href="/dashboard" class="logo-dark">
                                     <span class="logo-lg">
                                         <img src="/images/logo-dark.png" alt="dark logo">
                                     </span>
@@ -238,9 +238,9 @@
 
             <li class="dropdown me-md-2">
                 <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                                    <span class="account-user-avatar">
-                                        <img th:src="${loggedInUser.photosImagePath}" alt="user-image" width="32" class="rounded-circle">
-                                    </span>
+                    <span class="account-user-avatar">
+                        <img th:src="${loggedInUser.photosImagePath}" alt="user-image" width="40" class="rounded-circle">
+                    </span>
                     <span class="d-lg-flex flex-column gap-1 d-none">
                             <h5 class="my-0">
                                 <span th:text="${loggedInUser != null ? loggedInUser.username : 'Not Logged In'}"></span>
