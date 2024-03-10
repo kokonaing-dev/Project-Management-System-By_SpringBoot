@@ -381,171 +381,7 @@
                                         </div>
                                     </div>
 
-<!--<<<<<<< HEAD
-&lt;!&ndash;
 
-
-
-
-                            <script>
-                                $(document).ready(function () {
-                                    // Populate the Issue Type dropdown
-                                    fetchIssueTypes();
-
-                                    // Populate the Issue Category dropdown
-                                    fetchIssueCategories();
-
-                                    // Populate the Project dropdown
-                                    fetchActiveProjects()
-                                });
-
-                                // Function to fetch Issue Types and populate the dropdown
-                                function fetchIssueTypes() {
-                                    $.ajax({
-                                        url: '/api/issue-types',
-                                        type: 'GET',
-                                        success: function(issueTypes) {
-                                            var select = $('#searchIssueType');
-                                            select.empty();
-                                            select.append('<option value="">Select Issue Type</option>');
-                                            // Populate the dropdown with fetched Issue Types
-                                            issueTypes.forEach(function(issueType) {
-                                                select.append('<option value="' + issueType.id + '">' + issueType.issueName + '</option>');
-                                            });
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.error('Error fetching Issue Types:', error);
-                                        }
-                                    });
-                                }
-
-                                // Function to fetch Issue Categories and populate the dropdown
-                                function fetchIssueCategories() {
-                                    $.ajax({
-                                        url: '/api/issue-categories',
-                                        type: 'GET',
-                                        success: function(issueCategories) {
-                                            var select = $('#searchCategory');
-                                            select.empty();
-                                            select.append('<option value="">Select Issue Category</option>');
-                                            // Populate the dropdown with fetched Issue Categories
-                                            issueCategories.forEach(function(category) {
-                                                select.append('<option value="' + category.id + '">' + category.categoryName + '</option>');
-                                            });
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.error('Error fetching Issue Categories:', error);
-                                        }
-                                    });
-                                }
-
-
-                                // Function to fetch Active Projects and populate the dropdown
-                                function fetchActiveProjects() {
-                                    $.ajax({
-                                        url: '/api/active-projects', // Endpoint for active projects
-                                        type: 'GET',
-                                        success: function(activeProjectsList) {
-                                            var select = $('#searchProject');
-                                            select.empty();
-                                            select.append('<option value="">Select Project</option>');
-
-                                            // Populate the dropdown with fetched Active Projects
-                                            activeProjectsList.forEach(function(project) {
-                                                select.append('<option value="' + project.id + '">' + project.projectName + '</option>');
-                                            });
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.error('Error fetching Active Projects:', error);
-                                        }
-                                    });
-                                }
-
-                            </script>
-
-&lt;!&ndash;                            <div class="col-xl-12">&ndash;&gt;
-&lt;!&ndash;                                <div class="col-12">&ndash;&gt;
-&lt;!&ndash;                                    <div class="card">&ndash;&gt;
-&lt;!&ndash;                                        <div class="card-body">&ndash;&gt;
-&lt;!&ndash;                                            <div class="row">&ndash;&gt;
-&lt;!&ndash;                                                <div class="col-lg-3">&ndash;&gt;
-&lt;!&ndash;                                                    <div class="d-grid">&ndash;&gt;
-&lt;!&ndash;                                                        <button class="btn btn-lg fs-16 btn-danger" id="btn-new-event">&ndash;&gt;
-&lt;!&ndash;                                                            <i class="ri-add-circle-fill"></i> Create New Event&ndash;&gt;
-&lt;!&ndash;                                                        </button>&ndash;&gt;
-&lt;!&ndash;                                                    </div>&ndash;&gt;
-&lt;!&ndash;                                                    <div id="external-events" class="mt-3">&ndash;&gt;
-&lt;!&ndash;                                                        <p class="text-muted">Drag and drop your event or click in the calendar</p>&ndash;&gt;
-&lt;!&ndash;                                                        <div class="external-event bg-success-subtle text-success" data-class="bg-success"><i class="ri-focus-fill me-2 vertical-middle"></i>New Theme Release</div>&ndash;&gt;
-&lt;!&ndash;                                                        <div class="external-event bg-info-subtle text-info" data-class="bg-info"><i class="ri-focus-fill me-2 vertical-middle"></i>My Event</div>&ndash;&gt;
-&lt;!&ndash;                                                        <div class="external-event bg-warning-subtle text-warning" data-class="bg-warning"><i class="ri-focus-fill me-2 vertical-middle"></i>Meet manager</div>&ndash;&gt;
-&lt;!&ndash;                                                        <div class="external-event bg-danger-subtle text-danger" data-class="bg-danger"><i class="ri-focus-fill me-2 vertical-middle"></i>Create New theme</div>&ndash;&gt;
-&lt;!&ndash;                                                    </div>&ndash;&gt;
-
-&lt;!&ndash;                                                </div> &lt;!&ndash; end col&ndash;&gt;&ndash;&gt;
-
-&lt;!&ndash;                                                <div class="col-lg-9">&ndash;&gt;
-&lt;!&ndash;                                                    <div class="mt-4 mt-lg-0">&ndash;&gt;
-&lt;!&ndash;                                                        <div id="calendar"></div>&ndash;&gt;
-&lt;!&ndash;                                                    </div>&ndash;&gt;
-&lt;!&ndash;                                                </div> &lt;!&ndash; end col &ndash;&gt;&ndash;&gt;
-
-&lt;!&ndash;                                            </div> &lt;!&ndash; end row &ndash;&gt;&ndash;&gt;
-&lt;!&ndash;                                        </div> &lt;!&ndash; end card body&ndash;&gt;&ndash;&gt;
-&lt;!&ndash;                                    </div> &lt;!&ndash; end card &ndash;&gt;&ndash;&gt;
-
-&lt;!&ndash;                                    &lt;!&ndash; Add New Event MODAL &ndash;&gt;&ndash;&gt;
-&lt;!&ndash;                                    <div class="modal fade" id="event-modal" tabindex="-1">&ndash;&gt;
-&lt;!&ndash;                                        <div class="modal-dialog">&ndash;&gt;
-&lt;!&ndash;                                            <div class="modal-content">&ndash;&gt;
-&lt;!&ndash;                                                <form class="needs-validation" name="event-form" id="form-event" novalidate>&ndash;&gt;
-&lt;!&ndash;                                                    <div class="modal-header py-3 px-4 border-bottom-0">&ndash;&gt;
-&lt;!&ndash;                                                        <h5 class="modal-title" id="modal-title">Event</h5>&ndash;&gt;
-&lt;!&ndash;                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>&ndash;&gt;
-&lt;!&ndash;                                                    </div>&ndash;&gt;
-&lt;!&ndash;                                                    <div class="modal-body px-4 pb-4 pt-0">&ndash;&gt;
-&lt;!&ndash;                                                        <div class="row">&ndash;&gt;
-&lt;!&ndash;                                                            <div class="col-12">&ndash;&gt;
-&lt;!&ndash;                                                                <div class="mb-3">&ndash;&gt;
-&lt;!&ndash;                                                                    <label class="control-label form-label">Event Name</label>&ndash;&gt;
-&lt;!&ndash;                                                                    <input class="form-control" placeholder="Insert Event Name" type="text" name="title" id="event-title" required />&ndash;&gt;
-&lt;!&ndash;                                                                    <div class="invalid-feedback">Please provide a valid event name</div>&ndash;&gt;
-&lt;!&ndash;                                                                </div>&ndash;&gt;
-&lt;!&ndash;                                                            </div>&ndash;&gt;
-&lt;!&ndash;                                                            <div class="col-12">&ndash;&gt;
-&lt;!&ndash;                                                                <div class="mb-3">&ndash;&gt;
-&lt;!&ndash;                                                                    <label class="control-label form-label">Category</label>&ndash;&gt;
-&lt;!&ndash;                                                                    <select class="form-select" name="category" id="event-category" required>&ndash;&gt;
-&lt;!&ndash;                                                                        <option value="bg-danger" selected>Danger</option>&ndash;&gt;
-&lt;!&ndash;                                                                        <option value="bg-success">Success</option>&ndash;&gt;
-&lt;!&ndash;                                                                        <option value="bg-primary">Primary</option>&ndash;&gt;
-&lt;!&ndash;                                                                        <option value="bg-info">Info</option>&ndash;&gt;
-&lt;!&ndash;                                                                        <option value="bg-dark">Dark</option>&ndash;&gt;
-&lt;!&ndash;                                                                        <option value="bg-warning">Warning</option>&ndash;&gt;
-&lt;!&ndash;                                                                    </select>&ndash;&gt;
-&lt;!&ndash;                                                                    <div class="invalid-feedback">Please select a valid event category</div>&ndash;&gt;
-&lt;!&ndash;                                                                </div>&ndash;&gt;
-&lt;!&ndash;                                                            </div>&ndash;&gt;
-&lt;!&ndash;                                                        </div>&ndash;&gt;
-&lt;!&ndash;                                                        <div class="row">&ndash;&gt;
-&lt;!&ndash;                                                            <div class="col-6">&ndash;&gt;
-&lt;!&ndash;                                                                <button type="button" class="btn btn-danger" id="btn-delete-event">Delete</button>&ndash;&gt;
-&lt;!&ndash;                                                            </div>&ndash;&gt;
-&lt;!&ndash;                                                            <div class="col-6 text-end">&ndash;&gt;
-&lt;!&ndash;                                                                <button type="button" class="btn btn-light me-1" data-bs-dismiss="modal">Close</button>&ndash;&gt;
-&lt;!&ndash;                                                                <button type="submit" class="btn btn-success" id="btn-save-event">Save</button>&ndash;&gt;
-&lt;!&ndash;                                                            </div>&ndash;&gt;
-&lt;!&ndash;                                                        </div>&ndash;&gt;
-&lt;!&ndash;                                                    </div>&ndash;&gt;
-&lt;!&ndash;                                                </form>&ndash;&gt;
-&lt;!&ndash;                                            </div> &lt;!&ndash; end modal-content&ndash;&gt;&ndash;&gt;
-&lt;!&ndash;                                        </div> &lt;!&ndash; end modal dialog&ndash;&gt;&ndash;&gt;
-&lt;!&ndash;                                    </div>&ndash;&gt;
-&lt;!&ndash;                                    &lt;!&ndash; end modal&ndash;&gt;&ndash;&gt;
-&lt;!&ndash;                                </div>&ndash;&gt;
-&lt;!&ndash;                                &lt;!&ndash; end col-12 &ndash;&gt;&ndash;&gt;
-&lt;!&ndash;                            </div> &lt;!&ndash; end col &ndash;&gt;&ndash;&gt;
-=======-->
                                     <div class="accordion" id="accordionPanelsStayOpenExample">
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="panelsStayOpen-headingOne">
@@ -570,17 +406,6 @@
                                                             <!-- Project name column -->
                                                             <td th:text="${project.projectName}"
                                                                 class="project-name"></td>
-                                                            <!-- Button links column -->
-<!--                                                            <td class="button-links">-->
-<!--                                                                &lt;!&ndash;                                                                    <a class="btn btn-sm btn-primary add-issue-btn" th:attr="data-project-id=${project.id}">Add Issue</a>&ndash;&gt;-->
-<!--                                                                <a class="btn btn-sm btn-primary add-issue-btn" href="#"-->
-<!--                                                                   th:attr="data-project-id=${project.id}"-->
-<!--                                                                   onclick="redirectToMainPage(this)">Add Issue</a>-->
-<!--                                                                <a href="#"-->
-<!--                                                                   class="btn btn-sm btn-secondary show-issues-btn"-->
-<!--                                                                   th:attr="data-project-id=${project.id}">Issues</a>-->
-<!--                                                                <a href="#" class="btn btn-sm btn-info">Board</a>-->
-<!--                                                            </td>-->
                                                             <td class="button-links">
                                                                 <a href="#" class="btn btn-danger btn-delete-project">
                                                                     <i class="ri-close-line"></i>
@@ -603,35 +428,8 @@
                         <!-- Search issue type, category, and project input fields -->
                         <div class="row mb-3">
                             <div class="col-md-3 d-flex justify-content-end">
-                                <!--  --Start for tasks ----- -->
-                                <!-- Check if the user has ROLE_SYSTEM_ADMIN role-->
-<!--                                <button class="btn btn-soft-success"-->
-<!--                                        th:if="${#authorization.expression('hasAnyRole(''ROLE_SYSTEM_ADMIN'', ''ROLE_PROJECT_MANAGER'')')}">-->
-<!--                                    <a th:unless="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}"-->
-<!--                                       href="#" data-bs-toggle="modal" data-bs-target="#projectModal" class="nav-link">-->
-<!--                                        <i class="ri-add-circle-fill"></i>-->
-<!--                                        <span>Add Issue </span>-->
-<!--                                    </a>-->
-<!--                                </button>-->
+
                             </div>
-<!--                            <div class="col-md-3">-->
-<!--                                <select class="form-select" id="searchIssueType">-->
-<!--                                    <option value="">Select Issue Type</option>-->
-<!--                                    &lt;!&ndash; Issue Type options will be dynamically populated using JavaScript &ndash;&gt;-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-3">-->
-<!--                                <select class="form-select" id="searchCategory">-->
-<!--                                    <option value="">Select Issue Category</option>-->
-<!--                                    &lt;!&ndash; Issue category options will be dynamically populated using JavaScript &ndash;&gt;-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-3">-->
-<!--                                <select class="form-select" id="searchProject">-->
-<!--                                    <option value="">Select Project</option>-->
-<!--                                    &lt;!&ndash; Project options will be dynamically populated using JavaScript &ndash;&gt;-->
-<!--                                </select>-->
-<!--                            </div>-->
                         </div>
 
                         <div class="row">
@@ -666,17 +464,6 @@
 <!--                                            <td th:text="${issue.issueType.issueName}"></td>-->
                                             <td th:text="${issue.category.categoryName}"></td>
                                             <td th:text="${issue.issueStatus}"></td>
-<!--                                            <td>-->
-<!--                                                <span class="badge bg-primary" th:text="${issue.issueStatus}"></span>-->
-<!--                                            </td>-->
-
-<!--                                            <td>-->
-<!--                                                <span th:text="${issue.issueStatus}" class="badge badge-"-->
-<!--                                                      th:classappend="${issue.issueStatus == 'OPEN' ? 'primary' :-->
-<!--                                                                       (issue.issueStatus == 'IN_PROGRESS' ? 'warning' :-->
-<!--                                                                       (issue.issueStatus == 'CLOSED' ? 'success' : 'secondary'))}">-->
-<!--                                                </span>-->
-<!--                                            </td>-->
 
                                             <td th:text="${issue.priority}"></td>
                                             <td th:text="${issue.planStartDate}"></td>
@@ -772,115 +559,6 @@
                         }
 
                     </script>
-
-<!--                    <div class="col-xl-12">-->
-<!--                        <div class="col-12">-->
-<!--                            <div class="card">-->
-<!--                                <div class="card-body">-->
-<!--                                    <div class="row">-->
-<!--                                        <div class="col-lg-3">-->
-<!--                                            <div class="d-grid">-->
-<!--                                                <button class="btn btn-lg fs-16 btn-danger" id="btn-new-event">-->
-<!--                                                    <i class="ri-add-circle-fill"></i> Create New Event-->
-<!--                                                </button>-->
-<!--                                            </div>-->
-<!--                                            <div id="external-events" class="mt-3">-->
-<!--                                                <p class="text-muted">Drag and drop your event or click in the-->
-<!--                                                    calendar</p>-->
-<!--                                                <div class="external-event bg-success-subtle text-success"-->
-<!--                                                     data-class="bg-success"><i-->
-<!--                                                        class="ri-focus-fill me-2 vertical-middle"></i>New Theme Release-->
-<!--                                                </div>-->
-<!--                                                <div class="external-event bg-info-subtle text-info"-->
-<!--                                                     data-class="bg-info"><i-->
-<!--                                                        class="ri-focus-fill me-2 vertical-middle"></i>My Event-->
-<!--                                                </div>-->
-<!--                                                <div class="external-event bg-warning-subtle text-warning"-->
-<!--                                                     data-class="bg-warning"><i-->
-<!--                                                        class="ri-focus-fill me-2 vertical-middle"></i>Meet manager-->
-<!--                                                </div>-->
-<!--                                                <div class="external-event bg-danger-subtle text-danger"-->
-<!--                                                     data-class="bg-danger"><i-->
-<!--                                                        class="ri-focus-fill me-2 vertical-middle"></i>Create New theme-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-
-<!--                                        </div> &lt;!&ndash; end col&ndash;&gt;-->
-
-<!--                                        <div class="col-lg-9">-->
-<!--                                            <div class="mt-4 mt-lg-0">-->
-<!--                                                <div id="calendar"></div>-->
-<!--                                            </div>-->
-<!--                                        </div> &lt;!&ndash; end col &ndash;&gt;-->
-
-<!--                                    </div> &lt;!&ndash; end row &ndash;&gt;-->
-<!--                                </div> &lt;!&ndash; end card body&ndash;&gt;-->
-<!--                            </div> &lt;!&ndash; end card &ndash;&gt;-->
-
-<!--                            &lt;!&ndash; Add New Event MODAL &ndash;&gt;-->
-<!--                            <div class="modal fade" id="event-modal" tabindex="-1">-->
-<!--                                <div class="modal-dialog">-->
-<!--                                    <div class="modal-content">-->
-<!--                                        <form class="needs-validation" name="event-form" id="form-event" novalidate>-->
-<!--                                            <div class="modal-header py-3 px-4 border-bottom-0">-->
-<!--                                                <h5 class="modal-title" id="modal-title">Event</h5>-->
-<!--                                                <button type="button" class="btn-close" data-bs-dismiss="modal"-->
-<!--                                                        aria-label="Close"></button>-->
-<!--                                            </div>-->
-<!--                                            <div class="modal-body px-4 pb-4 pt-0">-->
-<!--                                                <div class="row">-->
-<!--                                                    <div class="col-12">-->
-<!--                                                        <div class="mb-3">-->
-<!--                                                            <label class="control-label form-label">Event Name</label>-->
-<!--                                                            <input class="form-control" placeholder="Insert Event Name"-->
-<!--                                                                   type="text" name="title" id="event-title" required/>-->
-<!--                                                            <div class="invalid-feedback">Please provide a valid event-->
-<!--                                                                name-->
-<!--                                                            </div>-->
-<!--                                                        </div>-->
-<!--                                                    </div>-->
-<!--                                                    <div class="col-12">-->
-<!--                                                        <div class="mb-3">-->
-<!--                                                            <label class="control-label form-label">Category</label>-->
-<!--                                                            <select class="form-select" name="category"-->
-<!--                                                                    id="event-category" required>-->
-<!--                                                                <option value="bg-danger" selected>Danger</option>-->
-<!--                                                                <option value="bg-success">Success</option>-->
-<!--                                                                <option value="bg-primary">Primary</option>-->
-<!--                                                                <option value="bg-info">Info</option>-->
-<!--                                                                <option value="bg-dark">Dark</option>-->
-<!--                                                                <option value="bg-warning">Warning</option>-->
-<!--                                                            </select>-->
-<!--                                                            <div class="invalid-feedback">Please select a valid event-->
-<!--                                                                category-->
-<!--                                                            </div>-->
-<!--                                                        </div>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                                <div class="row">-->
-<!--                                                    <div class="col-6">-->
-<!--                                                        <button type="button" class="btn btn-danger"-->
-<!--                                                                id="btn-delete-event">Delete-->
-<!--                                                        </button>-->
-<!--                                                    </div>-->
-<!--                                                    <div class="col-6 text-end">-->
-<!--                                                        <button type="button" class="btn btn-light me-1"-->
-<!--                                                                data-bs-dismiss="modal">Close-->
-<!--                                                        </button>-->
-<!--                                                        <button type="submit" class="btn btn-success"-->
-<!--                                                                id="btn-save-event">Save-->
-<!--                                                        </button>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                        </form>-->
-<!--                                    </div> &lt;!&ndash; end modal-content&ndash;&gt;-->
-<!--                                </div> &lt;!&ndash; end modal dialog&ndash;&gt;-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash; end modal&ndash;&gt;-->
-<!--                        </div>-->
-<!--                        &lt;!&ndash; end col-12 &ndash;&gt;-->
-<!--                    </div> &lt;!&ndash; end col &ndash;&gt;-->
                 </div>
 
                 <script>
@@ -1234,57 +912,6 @@
         createIssue();
     });
 
-    // function createIssue() {
-    //     // Retrieve the project ID from the select element
-    //     var projectId = $('#projectSelect').val();
-    //     console.log("Project ID " + projectId);
-    //
-    //     // Create a new FormData object
-    //     var formData = new FormData(document.getElementById('issueForm'));
-    //
-    //     // Add the project ID to the form data
-    //     formData.append('projectId', projectId);
-    //
-    //     // Add selected user IDs to form data
-    //     const selectedUsers = document.getElementById('userSelect').selectedOptions;
-    //     const userIds = Array.from(selectedUsers).map(option => option.value);
-    //     formData.append('userIds', userIds.join(','));
-    //
-    //     // Make AJAX request to save the issue
-    //     $.ajax({
-    //         url: '/issue/process_issue', // URL to the controller endpoint for saving issues
-    //         method: 'POST', // HTTP method
-    //         data: formData, // Form data
-    //         contentType: false, // Set to false when using FormData
-    //         processData: false, // Set to false when using FormData
-    //         success: function (response) {
-    //             // Handle success response
-    //             console.log('Issue created successfully:', response);
-    //             // Show success message using SweetAlert
-    //             Swal.fire({
-    //                 title: 'Success!',
-    //                 text: 'Issue created successfully.',
-    //                 icon: 'success',
-    //                 confirmButtonText: 'OK'
-    //             }).then(() => {
-    //                 // Optionally, reload the page after successful creation
-    //                 location.reload();
-    //             });
-    //         },
-    //         error: function (xhr, status, error) {
-    //             // Handle error
-    //             console.error('Failed to create issue:', error);
-    //             // Show error message using SweetAlert
-    //             Swal.fire({
-    //                 title: 'Error!',
-    //                 text: 'Failed to create issue. Please try again later.',
-    //                 icon: 'error',
-    //                 confirmButtonText: 'OK'
-    //             });
-    //         }
-    //     });
-    // }
-
 </script>
 
 
@@ -1613,11 +1240,5 @@
 <!-- Datatable Demo Aapp js -->
 <script src="/js/pages/demo.datatable-init.js"></script>
 
-<!-- Typehead Plugin js -->
-<!--        <script src="/libs/handlebars/handlebars.min.js"></script>-->
-<!--        <script src="/libs/typeahead.js/typeahead.bundle.min.js"></script>-->
-
 </body>
-
-<!-- Mirrored from coderthemes.com/jidox/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:00:39 GMT -->
 </html>

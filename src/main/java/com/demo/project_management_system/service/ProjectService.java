@@ -121,6 +121,31 @@ public class ProjectService {
         return projectRepository.existsById(id);
     }
 
+    public void updateProject(Project project) {
+        // You need to fetch the existing project from the database first
+        // Make sure the project ID is not null or 0
+        if (project.getId() != null && project.getId() > 0) {
+            // Fetch the existing project from the database
+            Project existingProject = projectRepository.findById(project.getId()).orElse(null);
+
+            // Check if the project exists
+            if (existingProject != null) {
+                // Update the project details
+                existingProject.setProjectName(project.getProjectName());
+                existingProject.setProjectStartDate(project.getProjectStartDate());
+                existingProject.setProjectDueDate(project.getProjectDueDate());
+
+                // Save the updated project to the database
+                projectRepository.save(existingProject);
+            } else {
+                // Handle case where project is not found
+                throw new RuntimeException("Project not found with ID: " + project.getId());
+            }
+        } else {
+            // Handle case where project ID is null or invalid
+            throw new IllegalArgumentException("Invalid project ID: " + project.getId());
+        }
+    }
 
 
 //    public String createPjId() {

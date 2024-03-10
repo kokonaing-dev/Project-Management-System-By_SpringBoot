@@ -1,10 +1,9 @@
 package com.demo.project_management_system.controller;
 
-import com.demo.project_management_system.entity.Project;
-import com.demo.project_management_system.entity.User;
-import com.demo.project_management_system.service.IssueService;
-import com.demo.project_management_system.service.ProjectService;
-import com.demo.project_management_system.service.UserService;
+import com.demo.project_management_system.dto.CategoryData;
+import com.demo.project_management_system.dto.IssueTypeData;
+import com.demo.project_management_system.entity.*;
+import com.demo.project_management_system.service.*;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,13 @@ public class ProjectController {
 
     @Autowired
     private IssueService issueService;
+
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private IssueTypeService issueTypeService;
 
 //    @PostMapping(value = "/project/create")
 //    public ResponseEntity<?> createProject(@ModelAttribute("project") Project project,
@@ -69,6 +75,7 @@ public class ProjectController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during project creation");
 //        }
 //    }
+
 
 
     @PostMapping(value = "/project/create")
@@ -169,16 +176,113 @@ public class ProjectController {
         Optional<Project> optionalProject = Optional.ofNullable(projectService.getProjectById(projectId));
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
+
+            // Fetch project status using your service method
+            String projectStatus = project.calculateProjectStatus(); // Assuming you have a method to calculate project status
+            model.addAttribute("projectStatus", projectStatus); // Add project status to the model
+
+            int inProgressCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.IN_PROGRESS, projectId);
+            int openCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.OPEN,  projectId);
+            int solvedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.SOLVED,  projectId);
+            int closedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.CLOSED, projectId);
+            int pendingCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.PENDING, projectId);
+
+
             int totalIssues = issueService.getTotalIssuesByProjectId(projectId);
             int totalAssignedUsers = userService.getTotalAssignedUsersByProjectId(projectId);
+
             model.addAttribute("project", project);
             model.addAttribute("totalIssues", totalIssues);
             model.addAttribute("totalAssignedUsers", totalAssignedUsers);
+            model.addAttribute("inProgressCount", inProgressCount);
+            model.addAttribute("openCount", openCount);
+            model.addAttribute("solvedCount", solvedCount);
+            model.addAttribute("closedCount", closedCount);
+            model.addAttribute("pendingCount", pendingCount);
+
+
+            // Fetch issue types data
+            List<IssueType> issueTypes = issueTypeService.getAllIssueTypes(); // Assuming you have a service method to fetch all issue types
+
+            // Fetch mapping of issue types to statuses
+            Map<IssueType, Set<IssueStatus>> issueTypeStatusMapping = issueTypeService.getIssueTypeStatusMapping(); // Assuming you have a service method to fetch issue type to status mapping
+
+            // Create a map to store issue types counts by status
+            Map<IssueStatus, Map<String, Integer>> issueTypeDataByStatus = new HashMap<>();
+
+            // Populate issue type data by status
+            for (IssueType issueType : issueTypes) {
+                Set<IssueStatus> statuses = issueTypeStatusMapping.getOrDefault(issueType, Collections.emptySet());
+                for (IssueStatus status : statuses) {
+                    issueTypeDataByStatus.putIfAbsent(status, new HashMap<>());
+                    issueTypeDataByStatus.get(status).put(issueType.getIssueName(), issueService.getIssueCountByTypeAndStatus(issueType.getId(), status)); // Assuming you have a service method to get issue count by type and status
+                }
+            }
+            // Add issue type data to model
+            model.addAttribute("issueTypeDataByStatus", issueTypeDataByStatus);
+            // Add logic to handle the request with the project id
+
+            // Fetch categories data
+            List<Category> categories = categoryService.getAllCategories(); // Assuming you have a service method to fetch all categories
+
+            // Fetch mapping of issue types to statuses
+            Map<Category, Set<IssueStatus>> categoryStatusMapping = categoryService.getCategoryStatusMapping();
+
+            // Create a map to store category data by status
+            Map<IssueStatus, Map<String, Integer>> categoryDataByStatus = new HashMap<>();
+
+            // Populate category data by status
+            for (Category category : categories) {
+                Set<IssueStatus> statuses = categoryStatusMapping.getOrDefault(category, Collections.emptySet());
+                for (IssueStatus status : statuses) {
+                    categoryDataByStatus.putIfAbsent(status, new HashMap<>());
+                    categoryDataByStatus.get(status).put(category.getCategoryName(), issueService.getIssueCountByCategoryAndStatus(category.getId(), status)); // Assuming you have a service method to get issue count by category and status
+                }
+            }
+
+            // Add category data to model
+            model.addAttribute("categoryDataByStatus", categoryDataByStatus);
+
+
         } else {
             // Handle project not found
         }
-
-        /* Add logic to handle the request with the project id */
         return "project-detail"; // return the name of your homepage template
     }
+
+    @PostMapping("/editProject")
+    public String updateProject(@ModelAttribute("project") Project project) {
+        // Update the project details using the project service
+        projectService.updateProject(project);
+        // Redirect to a suitable page after updating the project
+        return "redirect:/projectDetail/" + project.getId(); // Redirect to the project detail page
+    }
+
+    @GetMapping("/api/issueTypeData")
+    @ResponseBody
+    public List<IssueTypeData> getIssueTypeData() {
+        List<Object[]> rawData = issueService.getIssueTypeData(); // Assuming you have a method to fetch issue type data
+        List<IssueTypeData> issueTypeData = new ArrayList<>();
+        for (Object[] row : rawData) {
+            String name = (String) row[0];
+            Long count = (Long) row[1];
+            issueTypeData.add(new IssueTypeData(name, count));
+        }
+        return issueTypeData;
+    }
+
+    @GetMapping("/api/categoryData")
+    @ResponseBody
+    public List<CategoryData> getCategoryData() {
+        List<Object[]> rawData = issueService.getCategoryData(); // Assuming you have a method to fetch issue type data
+        List<CategoryData> categoryData = new ArrayList<>();
+        for (Object[] row : rawData) {
+            String name = (String) row[0];
+            Long count = (Long) row[1];
+            categoryData.add(new CategoryData(name, count));
+        }
+        return categoryData;
+    }
+
+
 }

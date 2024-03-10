@@ -209,7 +209,7 @@
                     <div class="col-2 mb-2">
                         <label for="search-select"></label>
                         <select id="search-select" class="form-control" data-control="select2" data-placeholder="Select an option">
-                            <option th:each="type : ${issueTypeList}" th:value="${type.id}" th:text="${type.issueName}"></option>
+                            <option th:each="type : ${issueTypes}" th:value="${type.id}" th:text="${type.issueName}"></option>
                         </select>
                     </div>
 
@@ -1144,7 +1144,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">IssueType</label>
-                                <select class="form-select" th:field="*{issueType}">
+                                <select id="issueType" class="form-select" th:field="*{issueType}">
                                     <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}" th:text="${issueType.issueName}"></option>
                                 </select>
                             </div>
@@ -1152,7 +1152,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Category</label>
-                                <select class="form-select" th:field="*{category}">
+                                <select id="category" class="form-select" th:field="*{category}">
                                     <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
                                 </select>
                             </div>
@@ -1180,7 +1180,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 edit">
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="attachments" class="form-label">Attachments</label>
                                 <input type="file" class="form-control" id="attachments" name="attachments" multiple>
@@ -1336,8 +1336,14 @@
         function isMemberRestricted(source, target) {
             // Define the restricted transitions
             const restrictedTransitionsForMember = [
+                { source: 'task-list-one', target: 'task-list-five' }, // OPEN to CLOSED
+                { source: 'task-list-two', target: 'task-list-five' }, // IN_PROGRESS to CLOSED
+                { source: 'task-list-three', target: 'task-list-five' }, // SOLVED to CLOSED
                 { source: 'task-list-four', target: 'task-list-five' }, // PENDING to CLOSED
-                { source: 'task-list-five', target: 'task-list-four' }  // CLOSED to PENDING
+                { source: 'task-list-five', target: 'task-list-four' },  // CLOSED to PENDING
+                { source: 'task-list-five', target: 'task-list-three' },  // CLOSED to SOLVED
+                { source: 'task-list-five', target: 'task-list-two' },  // CLOSED to IN_PROGRESS
+                { source: 'task-list-five', target: 'task-list-one' }  // CLOSED to OPEN
             ];
 
             // Check if the current source and target match any restricted transition
@@ -1346,6 +1352,97 @@
     });
 </script>
 
+
+<script th:unless="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get all task containers
+        const taskContainers = document.querySelectorAll('.task-list-items');
+
+        // Initialize Dragula for all task containers
+        const drake = dragula(Array.from(taskContainers), {
+            // Add your options here if needed
+        });
+
+        // Add event listener for when an item is dropped
+        drake.on('drop', function (el, target, source, sibling) {
+            // Get the dragged issue ID
+            const draggedIssueId = el.getAttribute('id');
+            console.log("Dragged Issue ID: " + draggedIssueId);
+
+            // Get the target task list
+            const targetTaskList = target.id;
+            console.log("Target Task List: " + targetTaskList);
+
+            // Define the new issueStatus based on the target task list
+            let newIssueStatus;
+            switch (targetTaskList) {
+                case 'task-list-one':
+                    newIssueStatus = 'OPEN';
+                    break;
+                case 'task-list-two':
+                    newIssueStatus = 'IN_PROGRESS';
+                    break;
+                case 'task-list-three':
+                    newIssueStatus = 'SOLVED';
+                    break;
+                case 'task-list-four':
+                    newIssueStatus = 'PENDING';
+                    break;
+                case 'task-list-five':
+                    newIssueStatus = 'CLOSED';
+                    break;
+                default:
+                    break;
+            }
+
+            // Perform a fetch request to update the issueStatus
+            fetch('/updateIssueStatus', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    issueId: draggedIssueId,
+                    newIssueStatus: newIssueStatus
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update issue status');
+                    }
+                    console.log('Issue status updated successfully');
+
+                    // Update the issue status in the DOM
+                    const statusElement = el.querySelector('.float-end.badge.bg-danger-subtle.text-success');
+                    if (statusElement) {
+                        statusElement.textContent = newIssueStatus;
+                        console.log('Issue status updated in the DOM');
+                        // Auto-reload the page after updating status
+                        // setTimeout(() => {
+                        //     window.location.reload();
+                        // }, 2000); // Reload after 2 seconds (adjust the time as needed)
+                    } else {
+                        console.error('Status element not found in the dragged issue');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating issue status:', error);
+                });
+            // Update issue counts after drop
+            updateIssueCounts();
+        });
+        function updateIssueCounts() {
+            // Iterate over task containers to update issue counts
+            taskContainers.forEach(container => {
+                const countElement = container.previousElementSibling.querySelector('span');
+                if (countElement) {
+                    const issueCount = container.querySelectorAll('.card').length;
+                    countElement.textContent = issueCount;
+                }
+            });
+        }
+    });
+</script>
 
 
 
@@ -1379,11 +1476,18 @@
             $('#issueForm').attr('action', '/issue/edit/' + issue.id);
             $('#NewTaskModalLabel').text('Edit Task');
             $('#createIssueBtn').text('Save Changes');
+
+
             $('#subject').val(issue.subject);
-            $('#description').val(issue.description);
+            $('#task-description').val(issue.description);
             $('#priority').val(issue.priority);
             $('#planStartDate').val(issue.planStartDate);
             $('#planDueDate').val(issue.planDueDate);
+
+            // Populate category
+            $('#category').val(issue.category.id);
+
+
 
             if (isEditing) {
                 // Hide the div containing the select element when editing
@@ -1421,6 +1525,8 @@
                 subject: $('#subject').val(),
                 description: $('#task-description').val(),
                 priority: $('#priority').val(),
+                planStartDate: $('#planStartDate').val(),
+                planDueDate: $('#planDueDate').val(),
                 category: {
                     id: $('#category').val(),
                     categoryName: $('#category option:selected').text()

@@ -340,9 +340,14 @@ public class UserController {
         return "usermanage";
     }
 
+    @GetMapping(value = "/charts-apex-bar")
+    public String chartBar(){
+        return "charts-apex-bar";
+    }
 
-
-
-
+    @GetMapping(value = "charts-apex-pie")
+    public String chartPie(){
+        return "charts-apex-pie";
+    }
 
 }

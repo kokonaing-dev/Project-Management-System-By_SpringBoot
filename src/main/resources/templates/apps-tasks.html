@@ -436,7 +436,7 @@
                                                                 <span th:case="'Bug'"
                                                                       class="badge bg-danger-subtle text-danger p-1"
                                                                       th:text="${issue.issueType.issueName}"></span>
-                                                                <span th:case="'Request'"
+                                                         .       <span th:case="'Request'"
                                                                       class="badge bg-info-subtle text-info p-1"
                                                                       th:text="${issue.issueType.issueName}"></span>
                                                                 <!-- Add more cases for other issue names -->
@@ -507,6 +507,7 @@
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
                                                          <th>Subject</th>
+                                                        <th style="display: none;">Description</th>
                                                         <th>Status
                                                             <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
                                                         </th>
@@ -514,6 +515,8 @@
                                                             <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
                                                         </th>
                                                         <th>Due Date</th>
+                                                        <th style="display: none;">Attachments</th>
+                                                        <th style="display: none;">Members</th>
                                                         <th>Details</th>
                                                     </tr>
                                                     </thead>
@@ -542,6 +545,8 @@
 
                                                         <td th:text="${issue.subject}"></td>
 
+                                                        <td th:text="${issue.description}"></td>
+
                                                         <td>
                                                             <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
                                                                 <span th:text="${issue.issueStatus}"></span>
@@ -569,6 +574,24 @@
                                                         </td>
 
                                                         <td th:text="${issue.planDueDate}"></td>
+
+                                                        <td style="display: none;">
+                                                                <span th:if="${issue.attachmentFileNames != null}">
+                                                                    <ul>
+                                                                        <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">
+                                                                            <li>
+                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>
+                                                                            </li>
+                                                                        </span>
+                                                                    </ul>
+                                                                </span>
+                                                        </td>
+
+                                                        <td style="display: none;">
+                                                                <span th:each="user, iterStat : ${issue.users}">
+                                                                    <span th:text="${user.username + (iterStat.last ? '' : ', ')}"></span>
+                                                                </span>
+                                                        </td>
 
 
                                                         <td>
@@ -610,9 +633,12 @@
                                                             <th>Project</th>
                                                             <th>Issue Type</th>
                                                             <th>Subject</th>
+                                                            <th style="display:none;">Description</th>
                                                             <th>Status</th>
                                                             <th>Priority</th>
                                                             <th>Due Date</th>
+                                                            <th style="display: none;">Attachments</th>
+                                                            <th style="display: none;">Members</th>
                                                             <th>Details</th>
                                                         </tr>
                                                         </thead>
@@ -623,11 +649,32 @@
 
                                                             <td th:text="${issue.subject}"></td>
 
+                                                            <td th:text="${issue.description}"></td>
+
                                                             <td th:text="${issue.issueStatus}"></td>
 
                                                             <td th:text="${issue.priority}"></td>
 
                                                             <td th:text="${issue.planDueDate}"></td>
+
+                                                            <td style="display: none;">
+                                                                <span th:if="${issue.attachmentFileNames != null}">
+                                                                    <ul>
+                                                                        <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">
+                                                                            <li>
+                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>
+                                                                            </li>
+                                                                        </span>
+                                                                    </ul>
+                                                                </span>
+                                                            </td>
+
+                                                            <td style="display: none;">
+                                                                <span th:each="user, iterStat : ${issue.users}">
+                                                                    <span th:text="${user.username + (iterStat.last ? '' : ', ')}"></span>
+                                                                </span>
+                                                            </td>
+
 
                                                             <td>
                                                                 <a href="#" th:id="'moreInfo_' + ${issue.id}"
@@ -668,6 +715,7 @@
                                                         <tr>
                                                             <th>Assignee</th>
                                                             <th>Photo</th>
+                                                            <th style="display:none;">Email</th>
                                                             <th>Project</th>
                                                             <th>Issue Type</th>
                                                             <th>Subject</th>
@@ -683,6 +731,9 @@
                                                             </td>
                                                             <td>
                                                                 <img th:src="${user.photosImagePath}" alt="User Photo" style="width:50px; height:50px;">
+                                                            </td>
+                                                            <td style="display: none;">
+                                                                <span th:text="${user.email}"></span>
                                                             </td>
                                                             <td>
                                                                 <ul>
@@ -1234,9 +1285,37 @@
 
 <script>
     new DataTable('#overdue-tasks', {
+        columnDefs: [
+            { targets: [3], visible: false },
+            { targets: [7], visible: false },
+            { targets: [8], visible: false },
+        ],
         layout: {
             topStart: {
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'print',
+                        customize: function(win) {
+                            $(win.document.body).find('table thead tr th:nth-child(9), table tbody tr td:nth-child(2)').hide();
+                        }
+                    }
+                ]
             }
         }
     });
@@ -1244,9 +1323,37 @@
 
 <script>
     new DataTable('#closed-tasks', {
+        columnDefs: [
+            { targets: [3], visible: false },
+            { targets: [7], visible: false },
+            { targets: [8], visible: false },
+        ],
         layout: {
             topStart: {
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: { columns: ':not(:eq(9))' }
+                    },
+                    {
+                        extend: 'print',
+                        customize: function(win) {
+                            $(win.document.body).find('table thead tr th:nth-child(9), table tbody tr td:nth-child(2)').hide();
+                        }
+                    }
+                ]
             }
         }
     });
@@ -1255,13 +1362,40 @@
 
 <script>
     new DataTable('#stack-members', {
+        columnDefs: [
+            { targets: [2], visible: false } // Hide the third column (Email)
+        ],
         layout: {
             topStart: {
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for copying
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for CSV
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for Excel
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for PDF
+                    },
+                    {
+                        extend: 'print',
+                        customize: function(win) {
+                            $(win.document.body).find('table thead tr th:nth-child(2), table tbody tr td:nth-child(2)').hide();
+                        }
+                    }
+                ]
             }
         }
     });
 </script>
+
 
 
 <!-- Vendor js -->
