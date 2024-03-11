@@ -1,16 +1,14 @@
 package com.demo.project_management_system.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -27,13 +25,20 @@ public class Project {
     @Column(unique = true)
     private String projectName;
 
+    @Column(unique = true)
+    private String projectKey;
+
     @JsonIgnore
     private LocalDate projectStartDate;
 
     @JsonIgnore
-    private LocalDate projectEndDate;
+    private LocalDate projectDueDate;
 
-    @JsonIgnore
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     @ManyToMany(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
     @JoinTable(name = "user_project",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -63,5 +68,44 @@ public class Project {
 
     @Transient
     private int numberOfIssues;
+
+    public String calculateProjectStatus() {
+        int totalIssues = issues.size();
+        int inProgressCount = 0;
+        int closedCount = 0;
+        int solvedCount = 0;
+
+        for (Issue issue : issues) {
+            switch (issue.getIssueStatus()) {
+                case IN_PROGRESS:
+                    inProgressCount++;
+                    break;
+                case CLOSED:
+                    closedCount++;
+                    break;
+                case SOLVED:
+                    solvedCount++;
+                    break;
+                default:
+                    // Do nothing or handle other statuses
+                    break;
+            }
+        }
+
+        // Determine project status based on the counts and other conditions
+        if (inProgressCount == totalIssues) {
+            return "Working in Progress";
+        } else if (closedCount == totalIssues) {
+            return "Done";
+        } else if (inProgressCount > 0 || (closedCount > 0 && inProgressCount + closedCount < totalIssues)) {
+            return "Working in Progress";
+        } else if (solvedCount == totalIssues) {
+            return "Pending";
+        } else if (projectStartDate.isAfter(LocalDate.now())) {
+            return "Coming Soon";
+        } else {
+            return "Other"; // Or any default status you want
+        }
+    }
 
 }

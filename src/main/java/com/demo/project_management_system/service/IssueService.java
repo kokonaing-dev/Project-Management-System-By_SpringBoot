@@ -1,23 +1,28 @@
 package com.demo.project_management_system.service;
 
 import com.demo.project_management_system.entity.Issue;
+import com.demo.project_management_system.entity.IssueStatus;
 import com.demo.project_management_system.entity.IssueType;
 import com.demo.project_management_system.entity.Project;
 import com.demo.project_management_system.repository.IssueRepository;
+import com.demo.project_management_system.repository.IssueTypeRepository;
+import com.demo.project_management_system.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class IssueService {
     @Autowired
     private IssueRepository issueRepository;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private IssueTypeRepository issueTypeRepository;
     public int getTotalIssuesByProjectId(Long projectId) {
         return issueRepository.countIssuesByProjectId(projectId);
     }
@@ -31,10 +36,24 @@ public class IssueService {
         return issueRepository.findById(id);
     }
 
+//    public Set<Issue> getAllIssues() {
+//        List<Issue> issueList = issueRepository.findAll();
+//        return new HashSet<>(issueList);
+//    }
+
     public Set<Issue> getAllIssues() {
-        List<Issue> issueList = issueRepository.findAll();
-        return new HashSet<>(issueList);
+        // Fetch active projects
+        List<Project> activeProjects = projectRepository.findByStatus("ACTIVE");
+
+        // Collect issues from active projects
+        Set<Issue> issuesFromActiveProjects = new HashSet<>();
+        for (Project project : activeProjects) {
+            issuesFromActiveProjects.addAll(project.getIssues());
+        }
+
+        return issuesFromActiveProjects;
     }
+
 
     public void delete(long id) {
         issueRepository.deleteById(id);
@@ -79,5 +98,23 @@ public class IssueService {
 
     public boolean existsByProjectAndIssueTypeAndSubject(Project project, IssueType issueType, String subject) {
         return issueRepository.existsByProjectAndIssueTypeAndSubject(project, issueType, subject);
+    }
+
+    public int getIssuesCountByStatusAndProjectId(IssueStatus issueStatus, Long projectId) {
+        return issueRepository.countByIssueStatusAndProjectId(issueStatus, projectId);
+    }
+
+    public int getIssueCountByTypeAndStatus(Long issueTypeId, IssueStatus status) {
+        return issueRepository.countByIssueTypeIdAndIssueStatus(issueTypeId, status);
+    }
+    public List<Object[]> getIssueTypeData() {
+        return issueRepository.countByIssueTypeGroupByIssueTypeName();
+}
+
+    public int getIssueCountByCategoryAndStatus(Long categoryId, IssueStatus status) {
+        return issueRepository.countByIssueTypeIdAndIssueStatus(categoryId, status);
+    }
+    public List<Object[]> getCategoryData() {
+        return issueRepository.countByCategoryGroupByCategoryName();
     }
 }

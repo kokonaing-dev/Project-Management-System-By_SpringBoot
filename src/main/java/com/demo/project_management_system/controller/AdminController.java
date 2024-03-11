@@ -33,6 +33,9 @@ public class AdminController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private RoleService roleService;
+
 
 
     @GetMapping("/userList")
@@ -63,9 +66,45 @@ public class AdminController {
         // Pass the user object to the view
         model.addAttribute("loggedInUser", loggedInUser);
 
+        // Retrieve the user by ID
         User user = userService.getUserById(userId);
         model.addAttribute("user", user);
+
+        // Check if the user is equal to the loggedInUser
+        if (user.getId() == loggedInUser.getId()) {
+            // Redirect to the profile page for the logged-in user
+            return "redirect:/pages-profile";
+        }
+
+        // Pass the loggedInUser object to the view
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        // Retrieve the active projects associated with the user
+        Set<Project> activeProjects = userService.getActiveProjectsByUser(user);
+
+        // Calculate project status for each active project
+        for (Project project : activeProjects) {
+            String projectStatus = project.calculateProjectStatus();
+            project.setStatus(projectStatus);
+        }
+
+        // Add the active projects to the model
+        model.addAttribute("userProjects", activeProjects);
+
+        // Fetch the available roles from the database
+        List<Role> roles = roleService.getAllRoles();
+        model.addAttribute("roles", roles);
+
         return "user-profile";
+    }
+
+    @PostMapping("/updateProfile")
+    @ResponseBody
+    public ResponseEntity<String> updateProfile(@RequestBody User user) {
+        // Update user profile in the database using userService
+        userService.updateUser(user);
+        // Return a success response
+        return ResponseEntity.ok().body("Profile updated successfully");
     }
 
     @DeleteMapping(value = "/user/deleteUser/{id}")
@@ -144,7 +183,7 @@ public class AdminController {
             model.addAttribute("members", members);
 
             System.out.println("MMMMMMMMMMMMMMM " + members);
-//            return "project-list";
+
         }
 
         return "project-list";

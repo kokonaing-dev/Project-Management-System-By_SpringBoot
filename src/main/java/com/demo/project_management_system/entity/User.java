@@ -76,6 +76,24 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    private Set<Issue> issues;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                // Include other simple attributes as needed
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Project> projects;
 
     @JsonIgnore

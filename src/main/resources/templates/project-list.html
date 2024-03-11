@@ -1,621 +1,797 @@
 <!DOCTYPE html>
-<html  xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.thymeleaf.org ">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org " lang="en">
 
-    
-<!-- Mirrored from coderthemes.com/ubold/layouts/default/project-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:28:44 GMT -->
 <head>
-        <meta charset="utf-8" />
-        <title>Project Listing | Ubold - Responsive Bootstrap 5 Admin Dashboard</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-        <meta content="Coderthemes" name="author" />
+    <meta charset="utf-8"/>
+    <title> PMS </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description"/>
+    <meta content="Coderthemes" name="author"/>
 
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="/images/favicon.ico">
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
 
-        <!-- Theme Config Js -->
-        <script src="/js/config.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
 
-        <!-- Bootstrap css -->
-        <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    <!-- Theme Config Js -->
+    <script src="/js/config.js"></script>
 
-        <!-- App css -->
-        <link href="/css/app.min.css" rel="stylesheet" type="text/css" />
+    <!-- Select2 css -->
+    <link href="/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css"/>
 
-        <!-- Icons css -->
-        <link href="/css/icons.min.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+    <!-- Daterangepicker css -->
+    <link rel="stylesheet" href="/libs/daterangepicker/daterangepicker.css">
 
-        <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Favicon-->
+    <!-- Fullcalendar css -->
+    <link href="/libs/fullcalendar/main.min.css" rel="stylesheet" type="text/css"/>
 
-        <!-- Add this to your HTML file, preferably in the <head> section -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <!-- Bootstrap Touchspin css -->
+    <link href="/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet" type="text/css"/>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
-        <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+    <!-- Flatpickr Timepicker css -->
+    <link href="/libs/flatpickr/flatpickr.min.css" rel="stylesheet" type="text/css"/>
 
-        <!-- DataTables CSS -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <!-- Bootstrap css -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 
-        <!-- jQuery -->
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- App css -->
+    <link href="/css/app.min.css" rel="stylesheet" type="text/css" id="app-style"/>
 
-        <!-- DataTables JavaScript -->
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <!-- Icons css -->
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
 
-    <style>
-        /* Basic styling for the project card */
-        .project-card {
-            position: relative;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Favicon-->
 
-        /* Hover effect */
-        .project-card:hover {
-            background-color: #4cbd9b;
-            color: white;
-        }
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
 
-        /* Styling for project details */
-        .project-details {
-            margin-bottom: 5px;
-        }
+    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-        /* Styling for action buttons */
-        .action-buttons {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            display: none; /* Initially hide the buttons */
-        }
 
-        .project-card:hover .action-buttons {
-            display: block; /* Show buttons on hover */
-        }
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
 
-        .action-buttons button {
-            margin-right: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-    </style>
+    <!--    jsGrid link and script-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css"/>
+
 </head>
 
 <body>
+<!-- Begin page -->
+<div class="wrapper">
 
-        <!-- Begin page -->
-        <div id="wrapper">
+    <!-- ========== Topbar Start ========== -->
+    <div th:insert="~{/top-bar :: top-bar}"></div>
+    <!-- ========== Topbar End ========== -->
 
-            <!-- ========== Topbar Start ========== -->
-            <div th:insert="~{/top-bar :: top-bar}">  </div>
-            <!-- ========== Topbar End ========== -->
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:insert="~{/leftside-menu :: leftside-menu}"></div>
+    <!-- ========== Left Sidebar End ========== -->
 
-            <!-- ========== Left Sidebar Start ========== -->
-            <div th:insert="~{/leftside-menu :: leftside-menu}"> </div>
-            <!-- ========== Left Sidebar End ========== -->
 
-            <!-- ============================================================== -->
-            <!-- Start Page Content here -->
-            <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Start Page Content here -->
+    <!-- ============================================================== -->
 
-            <div class="content-page">
+    <div class="content-page">
+        <div class="content">
 
-                <div class="content">
+            <!-- Start Content-->
+            <div class="container-fluid">
 
-                    <!-- Start Content-->
-                    <div class="container-fluid">
-
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
-                                    <h3 class="page-title fw-bold">Projects List</h3>
-                                    <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-<!--                                        <li class="breadcrumb-item"><a href="/project-detail">Projects</a></li>-->
-                                        <li class="breadcrumb-item active">Projects List</li>
-                                    </ol>
-                                </div>
+                <!-- Create Project-->
+                <div class="modal fade" id="createproject" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header py-3 px-4 border-bottom-0">
+                                <h4 class="modal-title  fw-bold" id="createprojectLabel"> Create Project</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        id="closeModalBtn"></button>
                             </div>
-                        </div>
-                        <!-- end page title -->
+                            <form id="createProjectForm" th:object="${project}" class="needs-validation" novalidate>
+                                <div class="modal-body">
+                                    <div id="errorMessage" class="text-danger"></div>
 
-                        <div class="row mb-2">
-                            <div class="col-sm-4">
-                                <button type="button" th:unless="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}" class="btn btn btn-dark w-sm-100 rounded-pill waves-effect waves-light mb-3" data-bs-toggle="modal" data-bs-target="#createproject">
-                                    <i class="ri-add-circle-fill"></i>
-                                    Create Project
-                                </button>
-                            </div>
-
-                        </div>
-                        <!-- end row-->
-
-                        <div class="row">
-                            <div class="col-6 project-card" th:each="project : ${projectList}">
-                                <img src="/pj.png" style="width: 50px; height: 50px;"  alt="photo"/>
-                                <span th:text="${project.projectName}"></span>
-                            </div>
-                        </div>
-
-
-                        <div class="row">
-                            <div th:each="project : ${projects}" class="col-lg-3">
-                                <div class="card project-box">
-                                    <div class="card-body">
-                                        <div class="dropdown float-end">
-                                            <a href="#" class="dropdown-toggle card-drop arrow-none" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="ri-more-fill m-0 text-muted h3"></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" onclick="populateModal('${project.id}', '${project.projectName}', '${project.projectStartDate}', '${project.projectEndDate}')"><i class="ri-edit-fill text-success"></i> <span>Edit</span></a>
-                                                <a class="dropdown-item" th:href="@{'/projects/delete/' + ${project.id}}"><i class="ri-delete-bin-fill text-danger"></i> <span>Delete</span></a>
-                                                <a class="dropdown-item" href="#"><i class="ri-user-add-fill text-primary"></i> <span>Add Members</span> </a>
-                                            </div>
-                                        </div> <!-- end dropdown -->
-
-                                        <!-- Title-->
-                                        <h4 class="mt-0"><a th:href="@{'/project-detail/' + ${project.id}}" class="text-dark" th:text="${project.projectName}">New Admin Design</a></h4>
-                                        <p class="mb-1">
-                                            <span class="pe-2" th:text="${project.id}"></span>
-                                            <span class="pe-2 project-start-date" th:text="${project.projectStartDate}"></span>
-                                            <span class="pe-2 project-end-date" th:text="${project.projectEndDate}"></span>
-                                            <div class="row g-2 pt-4">
-                                                <div class="col-6">
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="ri-bug-line"></i>
-                                                        <span class="ms-2"><b th:text="${#lists.size(project.issues)}"></b>  Tasks</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="ri-calendar-schedule-line"></i>
-                                                        <span class="ms-2 date-difference"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="ri-group-line"></i>
-                                                        <span class="ms-2" th:text="${#lists.size(project.users)}">Members</span>
-                                                    </div>
-                                                </div>
-<!--                                                <div class="col-6">-->
-<!--                                                    <div class="d-flex align-items-center">-->
-<!--                                                        <i class="ri-chat-1-line"></i>-->
-<!--                                                        <span class="ms-2"></span>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-                                            </div>
-                                        </p>
+                                    <div class="mb-3">
+                                        <label for="projectName" class="form-label">Project Name</label>
+                                        <input type="text" class="form-control" id="projectName"
+                                               th:field="*{projectName}" placeholder="Enter Project Name" required>
+                                        <div class="invalid-feedback">Please enter a project name.</div>
                                     </div>
-                                </div> <!-- end card box-->
-                            </div><!-- end col-->
-                        </div>
-                        <!-- end row -->
 
-
-                        <!-- Create Project-->
-                        <div class="modal fade" id="createproject" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title  fw-bold" id="createprojectlLabel"> Create Project</h4>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <div class="mb-3">
+                                        <label for="projectName" class="form-label">Project Key</label>
+                                        <input type="text" class="form-control" id="projectKey"
+                                               th:field="*{projectKey}" placeholder="Enter Project Key" required>
+                                        <div class="invalid-feedback">Please enter a project name.</div>
                                     </div>
-                                    <form id="createProjectForm" th:object="${project}">
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="projectName" class="form-label">Project Name</label>
-                                                <input type="text" class="form-control" id="projectName" th:field="*{projectName}" placeholder="Enter Project Name">
-                                                <div id="projectNameError" class="text-danger"></div><!-- Error message for project name -->
+
+                                    <div class="deadline-form">
+                                        <div class="row g-3 mb-3">
+                                            <div class="col">
+                                                <label for="projectStartDate" class="form-label">Project Start
+                                                    Date</label>
+                                                <input type="date" class="form-control" id="projectStartDate"
+                                                       th:field="*{projectStartDate}" required>
+                                                <div class="invalid-feedback">Please select a start date.</div>
+
                                             </div>
-
-                                            <div class="deadline-form">
-                                                <div class="row g-3 mb-3">
-                                                    <div class="col">
-                                                        <label for="projectStartDate" class="form-label">Project Start Date</label>
-                                                        <input type="date" class="form-control" id="projectStartDate" th:field="*{projectStartDate}">
-                                                        <div id="projectStartDateError" class="text-danger"></div><!-- Error message for project start date -->
-                                                    </div>
-
-                                                    <div class="col">
-                                                        <label for="projectEndDate" class="form-label">Project End Date</label>
-                                                        <input type="date" class="form-control" id="projectEndDate" th:field="*{projectEndDate}">
-                                                        <div id="projectEndDateError" class="text-danger"></div><!-- Error message for project end date -->
-                                                    </div>
-                                                    <div id="projectDateError" class="text-danger"></div>
-                                                </div>
-
-
-                                                <div class="row g-3 mb-3">
-
-                                                    <div class="col-sm-12">
-                                                        <!-- Hidden field to carry the logged-in user's ID -->
-                                                        <input type="hidden" name="loggedInUserId" th:value="${loggedInUser.id}">
-
-                                                        <label  class="form-label">Task Assign Person</label>
-                                                        <select name="countries" id="countries" multiple>
-                                                            <!-- <option selected disabled>Choose Person</option> -->
-
-                                                            <!-- Loop through projectManagersAndMembers -->
-                                                            <option th:each="user : ${projectManagersAndMembers}"
-                                                                    th:value="${user.id}"
-                                                                    th:text="${user.username} + ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'MANAGER' : 'Member'}) + '</span>'">
-                                                            </option>
-
-                                                            <!-- Loop through members -->
-                                                            <option th:each="user : ${members}"
-                                                                    th:value="${user.id}"
-                                                                    th:text="${user.username} + ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'MANAGER' : 'Member'}) + '</span>'">
-                                                            </option>
-                                                        </select>
-<!--                                                        <select name="countries" id="countries" multiple>-->
-<!--&lt;!&ndash;                                                                <option selected disabled>Choose Person</option>&ndash;&gt;-->
-<!--                                                            <option-->
-<!--                                                                    th:each="user : ${projectManagersAndMembers}"-->
-<!--                                                                    th:value="${user.id}" th:text="${user.username}">-->
-<!--                                                            </option>-->
-<!--                                                            <option-->
-<!--                                                                    th:each="user : ${members}"-->
-<!--                                                                    th:value="${user.id}" th:text="${user.username}">-->
-<!--                                                            </option>-->
-<!--                                                        </select>-->
-                                                        <div id="assignPersonError" class="text-danger"></div><!-- Error message for assignee selection -->
-                                                        <script>
-                                                            new MultiSelectTag('countries', {
-                                                                rounded: true,    // default true
-                                                                shadow: true,      // default false
-                                                                placeholder: 'Search',  // default Search...
-                                                                tagColor: {
-                                                                    textColor: '#327b2c',
-                                                                    borderColor: '#92e681',
-                                                                    bgColor: '#eaffe6',
-                                                                },
-                                                                onChange: function(values) {
-                                                                    console.log(values)
-                                                                }
-                                                            })
-                                                        </script>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary">Create</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Update Project -->
-                        <div class="modal fade" id="updateproject" tabindex="-1" role="dialog" aria-labelledby="updateprojectLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title fw-bold" id="updateprojectLabel">Update Project</h4>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form id="updateProjectForm" th:action="@{/projects/update}" method="post">
-                                        <div class="modal-body">
-                                            <!-- Project ID (hidden field) -->
-                                            <input type="hidden" id="projectId" name="projectId" th:value="${project.id}" />
-
-                                            <!-- Project Name -->
-                                            <div class="mb-3">
-                                                <label for="updateProjectName" class="form-label">Project Name</label>
-                                                <input type="text" class="form-control" id="updateProjectName" name="updateProjectName" th:value="${project.projectName}" >
-                                            </div>
-
-                                            <!-- Project Start Date -->
-                                            <div class="mb-3">
-                                                <label for="updateProjectStartDate" class="form-label">Project Start Date</label>
-                                                <input type="date" class="form-control" id="updateProjectStartDate" name="updateProjectStartDate" th:value="${#dates.format(project.projectStartDate, 'yyyy-MM-dd')}">
-                                            </div>
-
-                                            <!-- Project End Date -->
-                                            <div class="mb-3">
-                                                <label for="updateProjectEndDate" class="form-label">Project End Date</label>
-                                                <input type="date" class="form-control" id="updateProjectEndDate" name="updateProjectEndDate" th:value="${#dates.format(project.projectEndDate, 'yyyy-MM-dd')}" >
+                                            <div class="col">
+                                                <label for="projectDueDate" class="form-label">Project Due Date</label>
+                                                <input type="date" class="form-control" id="projectDueDate"
+                                                       th:field="*{projectDueDate}" required>
+                                                <div class="invalid-feedback">Please select due date.</div>
                                             </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary">Update</button>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-sm-12">
+                                                <!-- Hidden field to carry the logged-in user's ID -->
+                                                <input type="hidden" name="loggedInUserId"
+                                                       th:value="${loggedInUser.id}">
+
+                                                <label class="form-label">Task Assign Person</label>
+                                                <select name="countries" id="countries" multiple="multiple" required>
+                                                    <!-- Loop through projectManagersAndMembers -->
+                                                    <option
+                                                            th:each="user : ${projectManagersAndMembers}"
+                                                            th:value="${user.id}"
+                                                            th:text="${user.username} + ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'Manager' : 'Member'}) + '</span>'">
+                                                    </option>
+                                                    <!-- Loop through members -->
+                                                    <option
+                                                            th:each="user : ${members}"
+                                                            th:value="${user.id}"
+                                                            th:text="${user.username}+ ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'Manager' : 'Member'}) + '</span>'">
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback">Please select at least one person.</div>
+
+
+                                                <script>
+                                                    new MultiSelectTag('countries', {
+                                                        rounded: true,    // default true
+                                                        shadow: true,      // default false
+                                                        placeholder: 'Search',  // default Search...
+                                                        tagColor: {
+                                                            textColor: '#327b2c',
+                                                            borderColor: '#92e681',
+                                                            bgColor: '#eaffe6',
+                                                        },
+                                                        onChange: function (values) {
+                                                            console.log(values)
+                                                        }
+                                                    })
+                                                </script>
+                                            </div>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                            id="cancelBtn">Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box justify-content-between d-flex align-items-lg-center flex-lg-row flex-column">
+                            <h4 class="page-title">Project Lists</h4>
+                            <form class="d-flex mb-xxl-0 mb-2">
+                                <div class="input-group">
+                                    <input type="text" class="form-control shadow border-0" id="dash-daterange"/>
+                                    <span class="input-group-text bg-primary border-primary text-white">
+                                                <i class="ri-calendar-todo-fill fs-13"></i>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <div class="mb-2 p-0"
+                         th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'') or hasRole(''ROLE_PROJECT_MANAGER'')')}">
+                        <button type="button" class="btn btn-sm btn-soft-info rounded-pill"
+                                data-bs-toggle="modal" data-bs-target="#createproject">
+                                                    <span class="rounded rounded-3">
+                                                        <i class="ri-add-circle-fill" style="font-size: 18px;"></i>
+                                                    </span>
+                            <span> Create Project</span>
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <table id="project-table" class="display nowrap" style="width:100%;">
+                                    <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Project Name</th>
+                                        <th>Project Key</th>
+                                        <th>Members</th>
+                                        <th style="display: none;">MemberList</th>
+                                        <th>Start Date</th>
+                                        <th>Due Date</th>
+                                        <th>Create At</th>
+                                        <th>Edit</th>
+                                        <th>View Details</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr th:each="project, iterStat : ${projectList}">
+                                        <td th:text="${project.id}"></td>
+                                        <td th:text="${project.projectName}"></td>
+                                        <td th:text="${project.projectKey}"></td>
+                                        <td></td>
+                                        <td style="display: none;">
+                                            <span th:each="user, iterStat : ${project.users}">
+                                                <span th:text="${user.username + (iterStat.last ? '' : ', ')}"></span>
+                                            </span>
+                                        </td>
+                                        <td th:text="${project.projectStartDate}"></td>
+                                        <td th:text="${project.projectDueDate}"></td>
+                                        <td th:text="${project.createdAt}"></td>
+                                        <td>
+                                            <a th:href="@{'/editProject/' + ${project.id}}"
+                                               th:id="${project.id}">Edit</a>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{'/projectDetail/' + ${project.id}}" th:id="${project.id}">View</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div>
+                </div>
+
+            </div>
+            <!-- container -->
+
+        </div>
+        <!-- content -->
+
+        <!-- Footer Start -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <script>document.write(new Date().getFullYear())</script>
+                        © FML -
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end footer-links d-none d-md-block">
+                            <a href="javascript: void(0);">About</a>
+                            <a href="javascript: void(0);">Support</a>
+                            <a href="javascript: void(0);">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end Footer -->
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
+
+</div>
+<!-- END wrapper -->
+
+
+<!-- Theme Settings -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
+    <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
+        <h5 class="text-white m-0">Theme Settings</h5>
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body p-0">
+        <div data-simplebar class="h-100">
+            <div class="card mb-0 p-3">
+                <div class="alert alert-warning" role="alert">
+                    <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+                </div>
+
+                <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical"
+                               class="form-check-input">
+                        <label class="form-check-label" for="customizer-layout01">Vertical</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal"
+                               class="form-check-input">
+                        <label class="form-check-label" for="customizer-layout02">Horizontal</label>
+                    </div>
+                </div>
+
+                <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light"
+                               value="light">
+                        <label class="form-check-label" for="layout-color-light">Light</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark"
+                               value="dark">
+                        <label class="form-check-label" for="layout-color-dark">Dark</label>
+                    </div>
+                </div>
+
+                <div id="layout-width">
+                    <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                   id="layout-mode-fluid" value="fluid">
+                            <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
+                        </div>
+
+                        <div id="layout-boxed">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                       id="layout-mode-boxed" value="boxed">
+                                <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
                             </div>
                         </div>
 
-
-                    </div> <!-- container -->
-
-                </div> <!-- content -->
-
-                <!-- Footer Start -->
-                <footer class="footer">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div><script>document.write(new Date().getFullYear())</script> © PMS - <a href="https://coderthemes.com/" target="_blank">G-3</a></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-none d-md-flex gap-4 align-item-center justify-content-md-end footer-links">
-                                    <a href="javascript: void(0);">About</a>
-                                    <a href="javascript: void(0);">Support</a>
-                                    <a href="javascript: void(0);">Contact Us</a>
-                                </div>
+                        <div id="layout-detached">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                       id="data-layout-detached" value="detached">
+                                <label class="form-check-label" for="data-layout-detached">Detached</label>
                             </div>
                         </div>
                     </div>
-                </footer>
-                <!-- end Footer -->
+                </div>
+
+                <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-light"
+                               value="light">
+                        <label class="form-check-label" for="topbar-color-light">Light</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-dark"
+                               value="dark">
+                        <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color" id="topbar-color-brand"
+                               value="brand">
+                        <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-light" value="light">
+                            <label class="form-check-label" for="leftbar-color-light">Light</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-dark" value="dark">
+                            <label class="form-check-label" for="leftbar-color-dark">Dark</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-brand" value="brand">
+                            <label class="form-check-label" for="leftbar-color-brand">Brand</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sidebar-size">
+                    <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-default" value="default">
+                            <label class="form-check-label" for="leftbar-size-default">Default</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-compact" value="compact">
+                            <label class="form-check-label" for="leftbar-size-compact">Compact</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-small" value="condensed">
+                            <label class="form-check-label" for="leftbar-size-small">Condensed</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-small-hover" value="sm-hover">
+                            <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-full" value="full">
+                            <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-fullscreen" value="fullscreen">
+                            <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="layout-position">
+                    <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
+
+                    <div class="btn-group checkbox" role="group">
+                        <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed"
+                               value="fixed">
+                        <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
+
+                        <input type="radio" class="btn-check" name="data-layout-position"
+                               id="layout-position-scrollable" value="scrollable">
+                        <label class="btn btn-soft-primary w-sm ms-0"
+                               for="layout-position-scrollable">Scrollable</label>
+                    </div>
+                </div>
+
+                <div id="sidebar-user">
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
+                        <div class="form-check form-switch">
+                            <input type="checkbox" class="form-check-input" name="sidebar-user" id="sidebaruser-check">
+                        </div>
+                    </div>
+                </div>
 
             </div>
-
-            <!-- ============================================================== -->
-            <!-- End Page content -->
-            <!-- ============================================================== -->
-
-
         </div>
-        <!-- END wrapper -->
+    </div>
+</div>
 
-        <script>
-            function populateModal(id, name, startDate, endDate) {
-                // Set the project details in the modal fields
-                document.getElementById('projectId').value = id;
-                document.getElementById('updateProjectName').value = name;
-                document.getElementById('updateProjectStartDate').value = startDate;
-                document.getElementById('updateProjectEndDate').value = endDate;
 
-                // Show the modal
-                $('#updateproject').modal('show');
+<!-- Include jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<script>
+
+    document.getElementById('closeModalBtn').addEventListener('click', function () {
+        // Reload the window when the modal is dismissed
+        window.location.reload();
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', function () {
+        // Reload the window when the modal is dismissed using Cancel button
+        window.location.reload();
+    });
+
+
+    const validateField = (fieldValue, errorMessageElement, errorMessage) => {
+        if (fieldValue === '') {
+            errorMessageElement.innerText = errorMessage;
+            return false;
+        }
+        errorMessageElement.innerText = ''; // Clear error message
+        return true;
+    };
+
+    document.getElementById('createProjectForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Extract form data
+        const formData = new FormData(this);
+
+        // Get the value of the loggedInUserId hidden field
+        const loggedInUserId = formData.get('loggedInUserId');
+        console.log('Logged In User ID:', loggedInUserId);
+        // Append to formData
+        formData.append('loggedInUserId', loggedInUserId);
+
+        // Check if at least one assignee is selected
+        const selectedUsers = document.getElementById('countries').selectedOptions;
+        // Add selected user IDs to form data
+        // const selectedUsers = document.getElementById('countries').selectedOptions;
+        const userIds = Array.from(selectedUsers).map(option => option.value);
+        formData.append('userIds', userIds.join(','));
+
+        // Make POST request using Fetch API
+        fetch('/project/create', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text(); // Return error message from response body
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Check if data is an error message
+                if (typeof data === 'string') {
+                    // Handle error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data,
+                        showConfirmButton: true,
+                    });
+                } else {
+                    // Handle success response from the server
+                    console.log('Success:', data);
+                    // Show SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Project Created Successfully',
+                        text: 'Your project has been created successfully!',
+                        showConfirmButton: true,
+                    }).then(() => {
+                        // Optional: Redirect to another page or perform other actions
+                        window.location.reload(); // Reload the page after clicking OK
+                    });
+                }
+            })
+            .catch(error => {
+                // Handle error
+                console.error('Error:', error);
+
+
+                // Show error message using SweetAlert
+                // Swal.fire({
+                //     icon: 'error',
+                //     title: 'Error',
+                //     text: error, // Display the error message from the response body
+                //     showConfirmButton: true,
+                // });
+            });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var projectBoxes = document.querySelectorAll('.project-box');
+
+        projectBoxes.forEach(function (projectBox) {
+            var startDateElement = projectBox.querySelector('.project-start-date');
+            var endDateElement = projectBox.querySelector('.project-end-date');
+            var dateDifferenceElement = projectBox.querySelector('.date-difference');
+
+            // Extract start date and end date from the corresponding elements
+            var startDate = new Date(startDateElement.innerText);
+            var endDate = new Date(endDateElement.innerText);
+
+            // Calculate the time difference and days difference
+            var timeDiff = endDate - startDate;
+            var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            // Display the result in months or days
+            if (daysDiff >= 30) {
+                var monthsDiff = Math.floor(daysDiff / 30);
+                dateDifferenceElement.innerText = monthsDiff + (monthsDiff === 1 ? ' Month' : ' Months');
+            } else {
+                dateDifferenceElement.innerText = daysDiff + (daysDiff === 1 ? ' Day' : ' Days');
             }
+        });
+    });
 
-            const validateField = (fieldValue, errorMessageElement, errorMessage) => {
-                if (fieldValue === '') {
-                    errorMessageElement.innerText = errorMessage;
-                    return false;
-                }
-                errorMessageElement.innerText = ''; // Clear error message
-                return true;
-            };
-            document.getElementById('createProjectForm').addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                // Extract form data
-                const formData = new FormData(this);
-
-                // Validate project name
-                const projectName = formData.get('projectName').trim();
-                const projectNameValid = validateField(projectName, document.getElementById('projectNameError'), 'Project name is required');
-
-
-                // Validate project start date
-                const startDate = formData.get('projectStartDate').trim();
-                const startDateValid = validateField(startDate, document.getElementById('projectStartDateError'), 'Project start date is required');
-
-                // Validate project end date
-                const endDate = formData.get('projectEndDate').trim();
-                const endDateValid = validateField(endDate, document.getElementById('projectEndDateError'), 'Project end date is required');
-
-                // Check if project start date is after end date
-                let dateRangeValid = true;
-                if (startDateValid && endDateValid && startDate !== '' && endDate !== '') {
-                    const startDateObj = new Date(startDate);
-                    const endDateObj = new Date(endDate);
-                    dateRangeValid = startDateObj <= endDateObj;
-                    document.getElementById('projectStartDateError').innerText = dateRangeValid ? '' : 'Project start date cannot be after project end date';
-                }
-
-                // Get the value of the loggedInUserId hidden field
-                const loggedInUserId = formData.get('loggedInUserId');
-                console.log('Logged In User ID:', loggedInUserId);
-                // Append to formData
-                formData.append('loggedInUserId', loggedInUserId);
-
-                // Check if at least one assignee is selected
-                const selectedUsers = document.getElementById('countries').selectedOptions;
-                const assigneeValid = selectedUsers.length > 0;
-                document.getElementById('assignPersonError').innerText = assigneeValid ? '' : 'At least one assignee must be selected';
-
-                // Stop form submission if any validation fails
-                if (!projectNameValid || !startDateValid || !endDateValid || !dateRangeValid || !assigneeValid) {
-                    return;
-                }
-
-
-                // Clear previous error messages
-                // document.getElementById('projectNameError').innerText = '';
-                // document.getElementById('assignPersonError').innerText = '';
-
-
-                // Add selected user IDs to form data
-                // const selectedUsers = document.getElementById('countries').selectedOptions;
-                const userIds = Array.from(selectedUsers).map(option => option.value);
-                formData.append('userIds', userIds.join(','));
-
-                // Make POST request using Fetch API
-                fetch('/project/create', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.text().then(errorMessage => {
-                                if (errorMessage === 'Project with the same name already exists') {
-                                    throw new Error('ProjectExistsError'); // Custom error for project name duplication
-                                } else {
-                                    throw new Error(errorMessage); // Regular error handling
-                                }
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Handle success response from the server
+    function confirmDelete(projectId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this project!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Use template literals for string interpolation
+                $.ajax({
+                    url: `/projects/delete/${projectId}`, // Use template literals for dynamic URL
+                    type: 'GET',
+                    success: function (data) {
                         console.log('Success:', data);
 
-                        // Show SweetAlert
+                        // Show success message
                         Swal.fire({
                             icon: 'success',
-                            title: 'Project Created Successfully',
-                            text: 'Your project has been created successfully!',
-                            showConfirmButton: true,
-                            // timer: 2000 // Close alert after 2 seconds
+                            title: 'Project Deleted Successfully',
+                            text: 'Your project has been deleted successfully!',
+                            showConfirmButton: true
                         }).then(() => {
-                            //     // Reload the page after clicking OK
-                            window.location.reload();
+                            // Optionally, remove the deleted project card from the UI
+                            // $(`#project-${projectId}`).remove();
+                            // Alternatively, you can reload the page after clicking OK
+                            // window.location.reload();
                         });
-                    })
-                    .catch(error => {
-                        // Handle error
-                        console.error('Error:', error);
-                        if (error.message === 'ProjectExistsError') {
-                            // Show specific error message for project name duplication
-                            document.getElementById('projectNameError').innerText = 'Project with the same name already exists';
-                        } else {
-                            // Show generic error message
-                            error.json().then(data => {
-                                document.getElementById('projectNameError').innerText = data.message || 'An error occurred';
-                            }).catch(() => {
-                                document.getElementById('projectNameError').innerText = 'An error occurred';
-                            });
-                        }
-                        // Clear the field value after showing the error
-                        document.getElementById('projectName').value = '';
-                    });
-            });
-
-            document.addEventListener('DOMContentLoaded', function () {
-                var projectBoxes = document.querySelectorAll('.project-box');
-
-                projectBoxes.forEach(function (projectBox) {
-                    var startDateElement = projectBox.querySelector('.project-start-date');
-                    var endDateElement = projectBox.querySelector('.project-end-date');
-                    var dateDifferenceElement = projectBox.querySelector('.date-difference');
-
-                    // Extract start date and end date from the corresponding elements
-                    var startDate = new Date(startDateElement.innerText);
-                    var endDate = new Date(endDateElement.innerText);
-
-                    // Calculate the time difference and days difference
-                    var timeDiff = endDate - startDate;
-                    var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-                    // Display the result in months or days
-                    if (daysDiff >= 30) {
-                        var monthsDiff = Math.floor(daysDiff / 30);
-                        dateDifferenceElement.innerText = monthsDiff + (monthsDiff === 1 ? ' Month' : ' Months');
-                    } else {
-                        dateDifferenceElement.innerText = daysDiff + (daysDiff === 1 ? ' Day' : ' Days');
-                    }
-                });
-            });
-
-            function confirmDelete(projectId) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You will not be able to recover this project!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Use template literals for string interpolation
-                        $.ajax({
-                            url: `/projects/delete/${projectId}`, // Use template literals for dynamic URL
-                            type: 'GET',
-                            success: function(data) {
-                                console.log('Success:', data);
-
-                                // Show success message
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Project Deleted Successfully',
-                                    text: 'Your project has been deleted successfully!',
-                                    showConfirmButton: true
-                                }).then(() => {
-                                    // Optionally, remove the deleted project card from the UI
-                                    // $(`#project-${projectId}`).remove();
-                                    // Alternatively, you can reload the page after clicking OK
-                                    // window.location.reload();
-                                });
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Error deleting project:', error);
-                                // Show error message
-                                Swal.fire(
-                                    'Error!',
-                                    'Failed to delete the project.',
-                                    'error'
-                                );
-                            }
-                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error deleting project:', error);
+                        // Show error message
+                        Swal.fire(
+                            'Error!',
+                            'Failed to delete the project.',
+                            'error'
+                        );
                     }
                 });
             }
+        });
+    }
 
-            // JavaScript to handle form submission for updating project details
-            $('#updateProjectForm').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
+    // JavaScript to handle form submission for updating project details
+    $('#updateProjectForm').submit(function (event) {
+        event.preventDefault(); // Prevent default form submission
 
-                // Get form data
-                var projectId = $('#projectId').val();
-                var projectName = $('#updateProjectName').val();
-                var projectStartDate = $('#updateProjectStartDate').val();
-                var projectEndDate = $('#updateProjectEndDate').val();
+        // Get form data
+        var projectId = $('#projectId').val();
+        var projectName = $('#updateProjectName').val();
+        var projectStartDate = $('#updateProjectStartDate').val();
+        var projectDueDate = $('#updateProjectDueDate').val();
 
-                // Ajax request to update project details
-                $.ajax({
-                    url: '/projects/update/' + projectId,
-                    type: 'POST',
-                    data: {
-                        projectName: projectName,
-                        projectStartDate: projectStartDate,
-                        projectEndDate: projectEndDate
+        // Ajax request to update project details
+        $.ajax({
+            url: '/projects/update/' + projectId,
+            type: 'POST',
+            data: {
+                projectName: projectName,
+                projectStartDate: projectStartDate,
+                projectDueDate: projectDueDate
+            },
+            success: function (data) {
+                // Handle success response
+                console.log('Project updated successfully:', data);
+                // Reload the page or update the project details in the UI
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                // Handle error response
+                console.error('Error updating project:', error);
+                // Display error message to the user
+                alert('Error updating project. Please try again.');
+            }
+        });
+    });
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
+        integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script type="text/javascript" src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.dataTables.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+
+<script>
+    new DataTable('#project-table', {
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
                     },
-                    success: function(data) {
-                        // Handle success response
-                        console.log('Project updated successfully:', data);
-                        // Reload the page or update the project details in the UI
-                        window.location.reload();
+                    {
+                        extend: 'csv',
+                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
                     },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error('Error updating project:', error);
-                        // Display error message to the user
-                        alert('Error updating project. Please try again.');
+                    {
+                        extend: 'excel',
+                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
                     }
-                });
-            });
+                ]
+            }
+        }
+    });
+</script>
 
-            $(document).ready(function() {
-                $('#projectTable').DataTable();
-            });
+<!-- Vendor js -->
+<script src="/js/vendor.min.js"></script>
+
+<!-- App js -->
+<script src="/js/app.min.js"></script>
 
 
-        </script>
+<!-- dragula js-->
+<script src="/libs/dragula/dragula.min.js"></script>
+
+<!-- demo js -->
+<script src="/js/pages/component.dragula.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
+<!-- Dashboard App js -->
+<script src="/js/pages/demo.dashboard.js"></script>
 
-        <!-- Vendor js -->
-        <script src="/js/vendor.min.js"></script>
+<!--  Select2 Plugin Js -->
+<script src="/libs/select2/js/select2.min.js"></script>
 
-        <!-- App js -->
-        <script src="/js/app.min.js"></script>
+<!-- Daterangepicker js -->
+<script src="/libs/daterangepicker/moment.min.js"></script>
+<script src="/libs/daterangepicker/daterangepicker.js"></script>
+
+<!-- Fullcalendar js -->
+<script src="/libs/fullcalendar/main.min.js"></script>
+
+<!-- Calendar App Demo js -->
+<script src="/js/pages/demo.calendar.js"></script>
+
+<!-- Input Mask Plugin js -->
+<script src="/libs/jquery-mask-plugin/jquery.mask.min.js"></script>
+
+<!-- Bootstrap Touchspin Plugin js -->
+<script src="/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+
+<!-- Bootstrap Maxlength Plugin js -->
+<script src="/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/socket.js"></script>
 
 </body>
-
-<!-- Mirrored from coderthemes.com/ubold/layouts/default/project-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 01 Feb 2024 20:28:44 GMT -->
 </html>

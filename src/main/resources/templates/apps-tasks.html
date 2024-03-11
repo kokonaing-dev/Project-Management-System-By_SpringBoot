@@ -236,22 +236,24 @@
                                         <!-- task -->
                                         <div class="table-responsive">
                                             <div class="row justify-content-sm-between">
-                                                <table id="today-tasks" class="table table-striped nowrap" style="width:100%">
+                                                <table id="today-tasks" class="table table-striped nowrap"
+                                                       style="width:100%">
                                                     <thead>
                                                     <tr>
-                                                        <th>No</th>
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
                                                         <th>Subject</th>
                                                         <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
-                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Priority
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
                                                         <th>Due Date</th>
                                                         <th>Details</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr th:each="issue : ${todayIssues}">
-                                                        <td th:text="${issue.id}"></td>
                                                         <td th:text="${issue.project.projectName}"></td>
                                                         <td>
                                                             <span th:switch="${issue.issueType.issueName}"
@@ -294,15 +296,26 @@
                                                                         th:selected="${issue.issueStatus.ordinal() == 3}">
                                                                     PENDING
                                                                 </option>
-                                                                <option value="CLOSED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
-                                                                    CLOSED
-                                                                </option>
+                                                                <th:block
+                                                                        th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                    <!-- Exclude the CLOSED option for ROLE_MEMBER -->
+                                                                </th:block>
+                                                                <th:block
+                                                                        th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                    <option value="CLOSED"
+                                                                            th:selected="${issue.issueStatus.ordinal() == 4}">
+                                                                        CLOSED
+                                                                    </option>
+                                                                </th:block>
                                                             </select>
                                                         </td>
 
                                                         <td>
-                                                            <select class="priorityDropdown form-select"
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.priority}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="priorityDropdown form-select"
                                                                     th:id="${issue.id}">
                                                                 <option value="HIGH"
                                                                         th:selected="${issue.priority.ordinal() == 0}">
@@ -319,7 +332,7 @@
                                                             </select>
                                                         </td>
 
-                                                        <td th:text="${issue.actualEndDate}"></td>
+                                                        <td th:text="${issue.planDueDate}"></td>
 
                                                         <td>
                                                             <a href="#" th:id="'moreInfo_' + ${issue.id}"
@@ -335,7 +348,6 @@
                                             </div>
                                         </div>
                                         <!-- end task -->
-
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card -->
                             </div> <!-- end .collapse-->
@@ -415,22 +427,24 @@
                                         <!-- task -->
                                         <div class="table-responsive">
                                             <div class="row justify-content-sm-between">
-                                                <table id="upcoming-tasks" class="table table-striped nowrap" style="width:100%">
+                                                <table id="upcoming-tasks" class="table table-striped nowrap"
+                                                       style="width:100%">
                                                     <thead>
                                                     <tr>
-                                                        <th>No</th>
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
                                                         <th>Subject</th>
-                                                        <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
-                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Status</th>
+                                                        <th>Priority
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
                                                         <th>Due Date</th>
                                                         <th>Details</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr th:each="issue : ${upcomingIssues}">
-                                                        <td th:text="${issue.id}"></td>
                                                         <td th:text="${issue.project.projectName}"></td>
                                                         <td>
                                                             <span th:switch="${issue.issueType.issueName}"
@@ -441,9 +455,9 @@
                                                                 <span th:case="'Bug'"
                                                                       class="badge bg-danger-subtle text-danger p-1"
                                                                       th:text="${issue.issueType.issueName}"></span>
-                                                                <span th:case="'Request'"
-                                                                      class="badge bg-info-subtle text-info p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                         .       <span th:case="'Request'"
+                                                                       class="badge bg-info-subtle text-info p-1"
+                                                                       th:text="${issue.issueType.issueName}"></span>
                                                                 <!-- Add more cases for other issue names -->
                                                                 <span th:case="*"
                                                                       class="badge bg-warning-subtle text-warning p-1"
@@ -454,34 +468,14 @@
 
                                                         <td th:text="${issue.subject}"></td>
 
-                                                        <td>
-                                                            <select class="issueStatusDropdown form-select"
-                                                                    th:id="${issue.id}">
-                                                                <option value="OPEN"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 0}">
-                                                                    OPEN
-                                                                </option>
-                                                                <option value="IN_PROGRESS"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 1}">
-                                                                    IN_PROGRESS
-                                                                </option>
-                                                                <option value="SOLVED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 2}">
-                                                                    SOLVED
-                                                                </option>
-                                                                <option value="PENDING"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 3}">
-                                                                    PENDING
-                                                                </option>
-                                                                <option value="CLOSED"
-                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
-                                                                    CLOSED
-                                                                </option>
-                                                            </select>
-                                                        </td>
+                                                        <td th:text="${issue.issueStatus}"></td>
 
                                                         <td>
-                                                            <select class="priorityDropdown form-select"
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.priority}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="priorityDropdown form-select"
                                                                     th:id="${issue.id}">
                                                                 <option value="HIGH"
                                                                         th:selected="${issue.priority.ordinal() == 0}">
@@ -498,7 +492,7 @@
                                                             </select>
                                                         </td>
 
-                                                        <td th:text="${issue.actualEndDate}"></td>
+                                                        <td th:text="${issue.planDueDate}"></td>
 
                                                         <td>
                                                             <a href="#" th:id="'moreInfo_' + ${issue.id}"
@@ -513,14 +507,13 @@
                                             </div>
                                         </div>
                                         <!-- end task -->
-
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card -->
                             </div> <!-- end collapse-->
                         </div>
                         <!-- end upcoming tasks -->
 
-                        <!-- start other tasks -->
+                        <!-- start overdue tasks -->
                         <div class="mt-4 mb-4">
                             <h5 class="m-0 pb-2">
                                 <a class="text-dark" data-bs-toggle="collapse" href="#overdueTasks" role="button"
@@ -540,20 +533,26 @@
                                                 <table id="overdue-tasks" class="display nowrap" style="width:100%">
                                                     <thead>
                                                     <tr>
-                                                        <th>No</th>
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
-                                                         <th>Subject</th>
-                                                        <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
-                                                        <th>Priority<i class="fa-solid fa-pen-to-square ms-2"></i></th>
+                                                        <th>Subject</th>
+                                                        <th style="display: none;">Description</th>
+                                                        <th>Status
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
+                                                        <th>Priority
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
+                                                        </th>
                                                         <th>Due Date</th>
+                                                        <th style="display: none;">Attachments</th>
+                                                        <th style="display: none;">Members</th>
                                                         <th>Details</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr th:each="issue : ${overdueTasks}"
-                                                        th:if="${#lists.size(issue.users) > 1}">
-                                                        <td th:text="${issue.id}"></td>
+                                                    <tr th:each="issue : ${overdueTasks}">
                                                         <td th:text="${issue.project.projectName}"></td>
                                                         <td>
                                                             <span th:switch="${issue.issueType.issueName}"
@@ -577,8 +576,14 @@
 
                                                         <td th:text="${issue.subject}"></td>
 
+                                                        <td th:text="${issue.description}"></td>
+
                                                         <td>
-                                                            <select class="issueStatusDropdown form-select"
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.issueStatus}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="issueStatusDropdown form-select"
                                                                     th:id="${issue.id}">
                                                                 <option value="OPEN"
                                                                         th:selected="${issue.issueStatus.ordinal() == 0}">
@@ -604,7 +609,11 @@
                                                         </td>
 
                                                         <td>
-                                                            <select class="priorityDropdown form-select"
+                                                            <div th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <span th:text="${issue.priority}"></span>
+                                                            </div>
+                                                            <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                                    class="priorityDropdown form-select"
                                                                     th:id="${issue.id}">
                                                                 <option value="HIGH"
                                                                         th:selected="${issue.priority.ordinal() == 0}">
@@ -621,17 +630,25 @@
                                                             </select>
                                                         </td>
 
+                                                        <td th:text="${issue.planDueDate}"></td>
 
-                                                        <td>
-                                                            <input type="date" class="form-control start-date"
-                                                                   th:id="${issue.id}"
-                                                                   th:value="${issue.actualStartDate}"/>
+                                                        <td style="display: none;">
+                                                                <span th:if="${issue.attachmentFileNames != null}">
+                                                                    <ul>
+                                                                        <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">
+                                                                            <li>
+                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}"
+                                                                                   th:text="${attachmentFileName}">Download</a>
+                                                                            </li>
+                                                                        </span>
+                                                                    </ul>
+                                                                </span>
                                                         </td>
 
-                                                        <td>
-                                                            <input type="date" class="form-control end-date"
-                                                                   th:id="${issue.id}"
-                                                                   th:value="${issue.actualEndDate}"/>
+                                                        <td style="display: none;">
+                                                                <span th:each="user, iterStat : ${issue.users}">
+                                                                    <span th:text="${user.username + (iterStat.last ? '' : ', ')}"></span>
+                                                                </span>
                                                         </td>
 
 
@@ -653,162 +670,69 @@
                             </div>
 
 
-                            <!-- start stack members -->
+                            <!-- start closed tasks -->
                             <div class="mt-4 mb-4">
                                 <h5 class="m-0 pb-2">
-                                    <a class="text-dark" data-bs-toggle="collapse" href="#stackMembers" role="button"
-                                       aria-expanded="false" aria-controls="stackMembers">
-                                        <i class='ri-arrow-down-s-line fs-18'></i>Stack Members <span
-                                            class="text-muted">(</span><span class="text-muted"></span><span
+                                    <a class="text-dark" data-bs-toggle="collapse" href="#closedTasks" role="button"
+                                       aria-expanded="false" aria-controls="closedTasks">
+                                        <i class='ri-arrow-down-s-line fs-18'></i>Closed Tasks <span
+                                            class="text-muted">(</span><span class="text-muted"
+                                                                             th:text="${closedIssuesCount}"></span><span
                                             class="text-muted">)</span>
                                     </a>
                                 </h5>
-                                <div class="collapse show" id="stackMembers">
+                                <div class="collapse show" id="closedTasks">
                                     <div class="card mb-0">
                                         <div class="card-body">
                                             <div class="table-responsive">
                                                 <div class="row justify-content-sm-between">
-                                                    <table id="stack-members" class="display nowrap" style="width:100%">
+                                                    <table id="closed-tasks" class="display nowrap" style="width:100%">
                                                         <thead>
                                                         <tr>
-                                                            <th>No</th>
                                                             <th>Project</th>
                                                             <th>Issue Type</th>
                                                             <th>Subject</th>
-                                                            <th>Assignee</th>
-                                                            <th>Status</th>
-                                                            <th>Due Date</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr th:each="issue : ${issues}">
-                                                            <td th:text="${issue.id}"></td>
-                                                            <td th:text="${issue.project.projectName}"></td>
-                                                            <!-- <td th:text="${projectIssueCounts[issue.project]}"></td>-->
-                                                            <td>
-                                                                    <span th:switch="${issue.issueType.issueName}"
-                                                                          style="font-size: 17px;">
-                                                                        <span th:case="'Task'"
-                                                                              class="badge bg-success-subtle text-success p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <span th:case="'Bug'"
-                                                                              class="badge bg-danger-subtle text-danger p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <span th:case="'Request'"
-                                                                              class="badge bg-info-subtle text-info p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <!-- Add more cases for other issue names -->
-                                                                        <span th:case="*"
-                                                                              class="badge bg-warning-subtle text-warning p-1"
-                                                                              th:text="${issue.issueType.issueName}"></span>
-                                                                        <!-- Default case: In case none of the specified cases match -->
-                                                                    </span>
-                                                            </td>
-
-                                                            <td th:text="${issue.subject}"></td>
-
-                                                            <td>
-                                                                <span th:each="user, iterStat : ${issue.users}">
-                                                                    <span th:text="${user.username}"></span>
-                                                                    <span th:if="${!iterStat.last}">, </span>
-                                                                </span>
-                                                            </td>
-
-
-                                                            <td th:text="${issue.issueStatus}"></td>
-
-                                                            <td th:text="${issue.actualEndDate}"></td>
-
-
-<!--                                                            <td>-->
-<!--                                                                <span th:if="${issue.attachmentFileNames != null}">-->
-<!--                                                                    <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">-->
-<!--                                                                        <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>-->
-<!--                                                                        <span th:if="${!iterStat.last}">, </span>-->
-<!--                                                                    </span>-->
-<!--                                                                </span>-->
-<!--                                                            </td>-->
-
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <!-- start solved tasks -->
-                            <div class="mt-4 mb-4">
-                                <h5 class="m-0 pb-2">
-                                    <a class="text-dark" data-bs-toggle="collapse" href="#solvedTasks" role="button"
-                                       aria-expanded="false" aria-controls="solvedTasks">
-                                        <i class='ri-arrow-down-s-line fs-18'></i>Solved Tasks <span
-                                            class="text-muted">(</span><span class="text-muted"></span><span
-                                            class="text-muted">)</span>
-                                    </a>
-                                </h5>
-                                <div class="collapse show" id="solvedTasks">
-                                    <div class="card mb-0">
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <div class="row justify-content-sm-between">
-                                                    <table id="example" class="display nowrap" style="width:100%">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th>Project</th>
-                                                            <th>Issue Type</th>
-                                                            <th>Subject</th>
+                                                            <th style="display:none;">Description</th>
                                                             <th>Status</th>
                                                             <th>Priority</th>
                                                             <th>Due Date</th>
+                                                            <th style="display: none;">Attachments</th>
+                                                            <th style="display: none;">Members</th>
                                                             <th>Details</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <tr th:each="issue : ${overdueTasks}"
-                                                            th:if="${#lists.size(issue.users) > 1}">
-                                                            <td th:text="${issue.id}"></td>
+                                                        <tr th:each="issue : ${closedIssues}">
                                                             <td th:text="${issue.project.projectName}"></td>
-                                                            <td>
-                                                            <span th:switch="${issue.issueType.issueName}"
-                                                                  style="font-size: 17px;">
-                                                                <span th:case="'Task'"
-                                                                      class="badge bg-success-subtle text-success p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <span th:case="'Bug'"
-                                                                      class="badge bg-danger-subtle text-danger p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <span th:case="'Request'"
-                                                                      class="badge bg-info-subtle text-info p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <!-- Add more cases for other issue names -->
-                                                                <span th:case="*"
-                                                                      class="badge bg-warning-subtle text-warning p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
-                                                                <!-- Default case: In case none of the specified cases match -->
-                                                            </span>
-                                                            </td>
+                                                            <td th:text="${issue.issueType.issueName}"></td>
 
                                                             <td th:text="${issue.subject}"></td>
 
-                                                            <td th:text="${issue.status}"></td>
+                                                            <td th:text="${issue.description}"></td>
+
+                                                            <td th:text="${issue.issueStatus}"></td>
 
                                                             <td th:text="${issue.priority}"></td>
 
-                                                            <td>
-                                                                <input type="date" class="form-control start-date"
-                                                                       th:id="${issue.id}"
-                                                                       th:value="${issue.actualStartDate}"/>
+                                                            <td th:text="${issue.planDueDate}"></td>
+
+                                                            <td style="display: none;">
+                                                                <span th:if="${issue.attachmentFileNames != null}">
+                                                                    <ul>
+                                                                        <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">
+                                                                            <li>
+                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}"
+                                                                                   th:text="${attachmentFileName}">Download</a>
+                                                                            </li>
+                                                                        </span>
+                                                                    </ul>
+                                                                </span>
                                                             </td>
 
-                                                            <td>
-                                                                <input type="date" class="form-control end-date"
-                                                                       th:id="${issue.id}"
-                                                                       th:value="${issue.actualEndDate}"/>
+                                                            <td style="display: none;">
+                                                                <span th:each="user, iterStat : ${issue.users}">
+                                                                    <span th:text="${user.username + (iterStat.last ? '' : ', ')}"></span>
+                                                                </span>
                                                             </td>
 
 
@@ -829,6 +753,96 @@
                                     </div>
                                 </div>
                             </div>
+
+
+                            <!-- start stack members -->
+                            <div class="mt-4 mb-4" th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                <h5 class="m-0 pb-2">
+                                    <a class="text-dark" data-bs-toggle="collapse" href="#stackMembers" role="button"
+                                       aria-expanded="false" aria-controls="stackMembers">
+                                        <i class='ri-arrow-down-s-line fs-18'></i>Stack Members <span
+                                            class="text-muted">(</span><span class="text-muted"
+                                                                             th:text="${totalUsersWithMultipleIssues}"></span><span
+                                            class="text-muted">)</span>
+                                    </a>
+                                </h5>
+                                <div class="collapse show" id="stackMembers">
+                                    <div class="card mb-0">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <div class="row justify-content-sm-between">
+                                                    <table id="stack-members" class="display nowrap" style="width:100%">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Assignee</th>
+                                                            <th>Photo</th>
+                                                            <th style="display:none;">Email</th>
+                                                            <th>Project</th>
+                                                            <th>Issue Type</th>
+                                                            <th>Subject</th>
+                                                            <th>Status</th>
+                                                            <th>Priority</th>
+                                                            <th>Due Date</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr th:each="user : ${usersWithMultipleIssues}">
+                                                            <td>
+                                                                <span th:text="${user.username}"></span>
+                                                            </td>
+                                                            <td>
+                                                                <img th:src="${user.photosImagePath}" alt="User Photo"
+                                                                     style="width:50px; height:50px;">
+                                                            </td>
+                                                            <td style="display: none;">
+                                                                <span th:text="${user.email}"></span>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.project.projectName}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.issueType.issueName}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.subject}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.issueStatus}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.priority}"></li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                <ul>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.planDueDate}"></li>
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script>
@@ -919,439 +933,406 @@
         </div>
 
 
-        </div>
-
-        <!-- ============================================================== -->
-        <!-- End Page content -->
-        <!-- ============================================================== -->
-
     </div>
-    <!-- END wrapper -->
 
-    <!-- Theme Settings -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
-        <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
-            <h5 class="text-white m-0">Theme Settings</h5>
-            <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas"
-                    aria-label="Close"></button>
-        </div>
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
 
-        <div class="offcanvas-body p-0">
-            <div data-simplebar class="h-100">
-                <div class="card mb-0 p-3">
-                    <div class="alert alert-warning" role="alert">
-                        <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+</div>
+<!-- END wrapper -->
+
+<!-- Theme Settings -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
+    <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
+        <h5 class="text-white m-0">Theme Settings</h5>
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body p-0">
+        <div data-simplebar class="h-100">
+            <div class="card mb-0 p-3">
+                <div class="alert alert-warning" role="alert">
+                    <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+                </div>
+
+                <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical"
+                               class="form-check-input">
+                        <label class="form-check-label" for="customizer-layout01">Vertical</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal"
+                               class="form-check-input">
+                        <label class="form-check-label" for="customizer-layout02">Horizontal</label>
+                    </div>
+                </div>
+
+                <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light"
+                               value="light">
+                        <label class="form-check-label" for="layout-color-light">Light</label>
                     </div>
 
-                    <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark"
+                               value="dark">
+                        <label class="form-check-label" for="layout-color-dark">Dark</label>
+                    </div>
+                </div>
+
+                <div id="layout-width">
+                    <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
+
                     <div class="d-flex flex-column gap-2">
                         <div class="form-check form-switch">
-                            <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical"
-                                   class="form-check-input">
-                            <label class="form-check-label" for="customizer-layout01">Vertical</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal"
-                                   class="form-check-input">
-                            <label class="form-check-label" for="customizer-layout02">Horizontal</label>
-                        </div>
-                    </div>
-
-                    <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
-
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light"
-                                   value="light">
-                            <label class="form-check-label" for="layout-color-light">Light</label>
+                            <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                   id="layout-mode-fluid" value="fluid">
+                            <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
                         </div>
 
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark"
-                                   value="dark">
-                            <label class="form-check-label" for="layout-color-dark">Dark</label>
-                        </div>
-                    </div>
-
-                    <div id="layout-width">
-                        <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
-
-                        <div class="d-flex flex-column gap-2">
+                        <div id="layout-boxed">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" name="data-layout-mode"
-                                       id="layout-mode-fluid" value="fluid">
-                                <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
+                                       id="layout-mode-boxed" value="boxed">
+                                <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
                             </div>
+                        </div>
 
-                            <div id="layout-boxed">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="data-layout-mode"
-                                           id="layout-mode-boxed" value="boxed">
-                                    <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
-                                </div>
-                            </div>
-
-                            <div id="layout-detached">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="data-layout-mode"
-                                           id="data-layout-detached" value="detached">
-                                    <label class="form-check-label" for="data-layout-detached">Detached</label>
-                                </div>
+                        <div id="layout-detached">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                       id="data-layout-detached" value="detached">
+                                <label class="form-check-label" for="data-layout-detached">Detached</label>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+                <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                               id="topbar-color-light" value="light">
+                        <label class="form-check-label" for="topbar-color-light">Light</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                               id="topbar-color-dark" value="dark">
+                        <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                               id="topbar-color-brand" value="brand">
+                        <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
 
                     <div class="d-flex flex-column gap-2">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
-                                   id="topbar-color-light" value="light">
-                            <label class="form-check-label" for="topbar-color-light">Light</label>
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-light" value="light">
+                            <label class="form-check-label" for="leftbar-color-light">Light</label>
                         </div>
 
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
-                                   id="topbar-color-dark" value="dark">
-                            <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-dark" value="dark">
+                            <label class="form-check-label" for="leftbar-color-dark">Dark</label>
                         </div>
-
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
-                                   id="topbar-color-brand" value="brand">
-                            <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-brand" value="brand">
+                            <label class="form-check-label" for="leftbar-color-brand">Brand</label>
                         </div>
                     </div>
-
-                    <div>
-                        <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color"
-                                       id="leftbar-color-light" value="light">
-                                <label class="form-check-label" for="leftbar-color-light">Light</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color"
-                                       id="leftbar-color-dark" value="dark">
-                                <label class="form-check-label" for="leftbar-color-dark">Dark</label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color"
-                                       id="leftbar-color-brand" value="brand">
-                                <label class="form-check-label" for="leftbar-color-brand">Brand</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="sidebar-size">
-                        <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-default" value="default">
-                                <label class="form-check-label" for="leftbar-size-default">Default</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-compact" value="compact">
-                                <label class="form-check-label" for="leftbar-size-compact">Compact</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-small" value="condensed">
-                                <label class="form-check-label" for="leftbar-size-small">Condensed</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-small-hover" value="sm-hover">
-                                <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-full" value="full">
-                                <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-fullscreen" value="fullscreen">
-                                <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="layout-position">
-                        <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
-
-                        <div class="btn-group checkbox" role="group">
-                            <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed"
-                                   value="fixed">
-                            <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
-
-                            <input type="radio" class="btn-check" name="data-layout-position"
-                                   id="layout-position-scrollable" value="scrollable">
-                            <label class="btn btn-soft-primary w-sm ms-0"
-                                   for="layout-position-scrollable">Scrollable</label>
-                        </div>
-                    </div>
-
-                    <div id="sidebar-user">
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
-                            <div class="form-check form-switch">
-                                <input type="checkbox" class="form-check-input" name="sidebar-user"
-                                       id="sidebaruser-check">
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div id="sidebar-size">
+                    <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-default" value="default">
+                            <label class="form-check-label" for="leftbar-size-default">Default</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-compact" value="compact">
+                            <label class="form-check-label" for="leftbar-size-compact">Compact</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-small" value="condensed">
+                            <label class="form-check-label" for="leftbar-size-small">Condensed</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-small-hover" value="sm-hover">
+                            <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-full" value="full">
+                            <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-fullscreen" value="fullscreen">
+                            <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="layout-position">
+                    <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
+
+                    <div class="btn-group checkbox" role="group">
+                        <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed"
+                               value="fixed">
+                        <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
+
+                        <input type="radio" class="btn-check" name="data-layout-position"
+                               id="layout-position-scrollable" value="scrollable">
+                        <label class="btn btn-soft-primary w-sm ms-0"
+                               for="layout-position-scrollable">Scrollable</label>
+                    </div>
+                </div>
+
+                <div id="sidebar-user">
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
+                        <div class="form-check form-switch">
+                            <input type="checkbox" class="form-check-input" name="sidebar-user"
+                                   id="sidebaruser-check">
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
         </div>
-        <div class="offcanvas-footer border-top p-3 text-center">
-            <div class="row">
-                <div class="col-6">
-                    <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
-                </div>
-                <div class="col-6">
-                    <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
-                </div>
+
+    </div>
+    <div class="offcanvas-footer border-top p-3 text-center">
+        <div class="row">
+            <div class="col-6">
+                <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
+            </div>
+            <div class="col-6">
+                <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
             </div>
         </div>
     </div>
+</div>
 
-    <!--  Add new task modal -->
-    <div class="modal fade task-modal-content" id="add-new-task-modal" tabindex="-1" role="dialog"
-         aria-labelledby="NewTaskModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1070px;">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:#007bff; color: #fff; padding: 20px 30px;">
-                    <h4 class="modal-title" id="NewTaskModalLabel">Create New Task</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="background-color:#eeeef1;color: black; padding: 0 30px;">
-                    <form class="p-2" id="issueForm" th:object="${issue}">
+<!--  Add new task modal -->
+<div class="modal fade task-modal-content" id="add-new-task-modal" tabindex="-1" role="dialog"
+     aria-labelledby="NewTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1070px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#007bff; color: #fff; padding: 20px 30px;">
+                <h4 class="modal-title" id="NewTaskModalLabel">Create New Task</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="background-color:#eeeef1;color: black; padding: 0 30px;">
+                <form class="p-2" id="issueForm" th:object="${issue}" enctype="multipart/form-data">
 
-                        <input type="hidden" id="projectId" name="projectId">
+                    <input type="hidden" id="projectId" name="projectId">
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">IssueType</label>
-                                    <select class="form-select" th:field="*{issueType}">
-                                        <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}"
-                                                th:text="${issueType.issueName}"></option>
-                                    </select>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">IssueType</label>
+                                <select class="form-select" th:field="*{issueType}">
+                                    <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}"
+                                            th:text="${issueType.issueName}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" th:field="*{category}">
+                                    <option th:each="category : ${categories}" th:value="${category.id}"
+                                            th:text="${category.categoryName}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <span id="subjectError" class="text-danger"></span>
+                        <input type="text" class="form-control" id="subject" th:field="*{subject}"
+                               placeholder="Subject">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="task-description" class="form-label">Description</label>
+                        <textarea class="form-control" id="task-description" rows="3"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Priority</label>
+                                <select class="form-select" th:field="*{priority}">
+                                    <option th:each="priority : ${priorities}" th:value="${priority}"
+                                            th:text="${priority}"></option>
+                                </select>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="subject" class="form-label">Subject</label>
-                            <input type="text" class="form-control" id="subject" th:field="*{subject}"
-                                   placeholder="Subject">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="task-description" class="form-label">Description</label>
-                            <textarea class="form-control" id="task-description" rows="3"></textarea>
-                        </div>
-
-                        <div class="row">
-                            <!-- Left Column -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select" th:field="*{issueStatus}">
-                                        <option th:each="issueStatus : ${issueStatuses}" th:value="${issueStatus}"
-                                                th:text="${issueStatus}"></option>
-                                    </select>
-                                </div>
+                        <div class="col-md-6 edit">
+                            <div class="mb-3">
+                                <label for="attachments" class="form-label">Attachments</label>
+                                <input type="file" class="form-control" id="attachments" name="attachments" multiple>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Right Column -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Priority</label>
-                                    <select class="form-select" th:field="*{priority}">
-                                        <option th:each="priority : ${priorities}" th:value="${priority}"
-                                                th:text="${priority}"></option>
-                                    </select>
-                                </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="planStartDate" class="form-label">Plan Start Date</label>
+                                <!-- Error div -->
+                                <span id="errorDiv" class="text-danger"></span>
+                                <span id="dateError" class="text-danger"></span>
+                                <input type="date" class="form-control" id="planStartDate" th:field="*{planStartDate}">
                             </div>
                         </div>
 
-                        <div class="row">
-                            <!-- Left Column -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Category</label>
-                                    <select class="form-select" th:field="*{category}">
-                                        <option th:each="category : ${categories}" th:value="${category.id}"
-                                                th:text="${category.categoryName}"></option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Right Column -->
-                            <div class="col-md-6 edit">
-                                <div class="mb-3">
-                                    <label class="form-label">Assign To</label>
-                                    <select id="userSelect" class="form-control" multiple="multiple" th:field="*{users}"
-                                            required>
-                                        <!-- Options will be dynamically populated -->
-                                    </select>
-
-                                </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="planDueDate" class="form-label">Plan Due Date</label>
+                                <input type="date" class="form-control" id="planDueDate" th:field="*{planDueDate}">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="planStartDate" class="form-label">Plan Start Date</label>
-                                    <input type="date" class="form-control" id="planStartDate"
-                                           th:field="*{planStartDate}">
-                                </div>
-                            </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="planDueDate" class="form-label">Plan Due Date</label>
-                                    <input type="date" class="form-control" id="planDueDate" th:field="*{planDueDate}">
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="mb-3 edit">
+                            <label class="form-label">Assign To</label>
+                            <!-- Add this dropdown for selecting users -->
+                            <select id="userSelect" class="form-control" multiple="multiple" th:field="*{users}"
+                                    required>
+                                <!-- Default option -->
+                                <!-- Options will be dynamically populated -->
+                            </select>
                         </div>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="actualStartDate" class="form-label">Actual Start Date</label>
-                                    <input type="date" class="form-control" id="actualStartDate"
-                                           th:field="*{actualStartDate}">
-                                </div>
-                            </div>
+                    <div class="text-end">
+                        <button type="reset" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" id="createIssueBtn" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="actualEndDate" class="form-label">Actual End Date</label>
-                                    <input type="date" class="form-control" id="actualEndDate"
-                                           th:field="*{actualEndDate}">
-                                </div>
-                            </div>
-                        </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.js"
+        integrity="sha512-WHVh4oxWZQOEVkGECWGFO41WavMMW5vNCi55lyuzDBID+dHg2PIxVufsguM7nfTYN3CEeQ/6NB46FWemzpoI6Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(document).ready(function () {
+        // Function to handle form submission
+        $('#createIssueBtn').click(function (event) {
+            // Prevent default form submission
+            event.preventDefault();
 
-                        <div class="mb-3">
-                            <label for="attachments" class="form-label">Attachments</label><span id="errorSpan"
-                                                                                                 class="text-danger"></span>
-                            <input type="file" class="form-control" id="attachments" name="attachments" multiple>
-                        </div>
+            // Create a new FormData object
+            var formData = new FormData();
 
-                        <div class="text-end">
-                            <button type="reset" class="btn btn-light" data-bs-dismiss="modal" onclick="reloadPage()">
-                                Cancel
-                            </button>
-                            <button type="submit" id="createIssueBtn" class="btn btn-primary">Create</button>
-                        </div>
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            // Append form fields to FormData
+            formData.append('issueType', $('#issueType').val());
+            formData.append('subject', $('#subject').val());
+            formData.append('description', $('#task-description').val());
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.js"
-            integrity="sha512-WHVh4oxWZQOEVkGECWGFO41WavMMW5vNCi55lyuzDBID+dHg2PIxVufsguM7nfTYN3CEeQ/6NB46FWemzpoI6Q=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        $(document).ready(function () {
-            // Function to handle form submission
-            $('#createIssueBtn').click(function (event) {
-                // Prevent default form submission
-                event.preventDefault();
+            // Append select field values to FormData
+            formData.append('priority', $('#priority').val());
+            formData.append('category', $('#category').val());
 
-                // Create a new FormData object
-                var formData = new FormData();
+            formData.append('planStartDate', $('#planStartDate').val());
+            formData.append('planDueDate', $('#planDueDate').val());
 
-                // Append form fields to FormData
-                formData.append('issueType', $('#issueType').val());
-                formData.append('subject', $('#subject').val());
-                formData.append('description', $('#task-description').val());
+            // Get the attached file
+            // var file = $('#attachments')[0].files[0];
+            // console.log(file);
+            // // Check if file exists
+            // if (file) {
+            //     formData.append('attachments', file);
+            // }
 
-                // Append select field values to FormData
-                formData.append('issueStatus', $('#issueStatus').val());
-                formData.append('priority', $('#priority').val());
-                formData.append('category', $('#category').val());
+            // Append other form fields similarly
 
-                formData.append('planStartDate', $('#planStartDate').val());
-                formData.append('planDueDate', $('#planDueDate').val());
-                formData.append('actualStartDate', $('#actualStartDate').val());
-                formData.append('actualEndDate', $('#actualEndDate').val());
+            // Get the value of projectId hidden field
+            var projectId = $('#projectId').val();
+            console.log("Project ID: " + projectId);
 
-                // Get the attached file
-                // var file = $('#attachments')[0].files[0];
-                // console.log(file);
-                // // Check if file exists
-                // if (file) {
-                //     formData.append('attachments', file);
-                // }
+            // Add selected user IDs to form data
+            const selectedUsers = document.getElementById('userSelect').selectedOptions;
+            const userIds = Array.from(selectedUsers).map(option => option.value);
+            formData.append('userIds', userIds.join(','));
+            formData.append('projectId', projectId);
+            console.log("USER IDs " + userIds)
 
-                // Append other form fields similarly
-
-                // Get the value of projectId hidden field
-                var projectId = $('#projectId').val();
-                console.log("Project ID: " + projectId);
-
-                // Add selected user IDs to form data
-                const selectedUsers = document.getElementById('userSelect').selectedOptions;
-                const userIds = Array.from(selectedUsers).map(option => option.value);
-                formData.append('userIds', userIds.join(','));
-                formData.append('projectId', projectId);
-                console.log("USER IDs " + userIds)
-
-                // Perform AJAX submission
-                $.ajax({
-                    url: '/issue/process_issue', // URL to the controller endpoint for saving issues
-                    method: 'POST', // HTTP method
-                    data: formData, // Form data
-                    contentType: false, // Set to false when using FormData
-                    processData: false, // Set to false when using FormData
-                    success: function (response) {
-                        // Handle success response
-                        console.log('Issue created successfully:', response);
-                        // Close the modal
-                        $('#add-new-task-modal').modal('hide');
-                        // Show success message using SweetAlert
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Issue created successfully.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        })
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error
-                        console.error('Failed to create issue:', error);
-                        // Show error message using SweetAlert
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to create issue. Please try again later.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
+            // Perform AJAX submission
+            $.ajax({
+                url: '/issue/process_issue', // URL to the controller endpoint for saving issues
+                method: 'POST', // HTTP method
+                data: formData, // Form data
+                contentType: false, // Set to false when using FormData
+                processData: false, // Set to false when using FormData
+                success: function (response) {
+                    // Handle success response
+                    console.log('Issue created successfully:', response);
+                    // Close the modal
+                    $('#add-new-task-modal').modal('hide');
+                    // Show success message using SweetAlert
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Issue created successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    })
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error('Failed to create issue:', error);
+                    // Show error message using SweetAlert
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to create issue. Please try again later.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
             });
         });
-    </script>
+    });
+</script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
@@ -1378,29 +1359,112 @@
 
 <script>
     new DataTable('#overdue-tasks', {
+        columnDefs: [
+            {targets: [3], visible: false},
+            {targets: [7], visible: false},
+            {targets: [8], visible: false},
+        ],
         layout: {
             topStart: {
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).find('table thead tr th:nth-child(9), table tbody tr td:nth-child(2)').hide();
+                        }
+                    }
+                ]
             }
         }
     });
 </script>
+
+<script>
+    new DataTable('#closed-tasks', {
+        columnDefs: [
+            {targets: [3], visible: false},
+            {targets: [7], visible: false},
+            {targets: [8], visible: false},
+        ],
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {columns: ':not(:eq(9))'}
+                    },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).find('table thead tr th:nth-child(9), table tbody tr td:nth-child(2)').hide();
+                        }
+                    }
+                ]
+            }
+        }
+    });
+</script>
+
 
 <script>
     new DataTable('#stack-members', {
+        columnDefs: [
+            {targets: [2], visible: false} // Hide the third column (Email)
+        ],
         layout: {
             topStart: {
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-            }
-        }
-    });
-</script>
-
-<script>
-    new DataTable('#example', {
-        layout: {
-            topStart: {
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for copying
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for CSV
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for Excel
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for PDF
+                    },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).find('table thead tr th:nth-child(2), table tbody tr td:nth-child(2)').hide();
+                        }
+                    }
+                ]
             }
         }
     });
@@ -1418,5 +1482,10 @@
 
 <!-- App js -->
 <script src="/js/app.min.js"></script>
+
+<!--socket-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/socket.js"></script>
 </body>
 </html>

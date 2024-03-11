@@ -93,8 +93,8 @@ public class UserService implements UserDetailsService{
     }
 
     @Transactional
-    public Set<Project> findProjectsByUserId(long userId) {
-        return userRepository.findProjectsByUserId(userId);
+    public Set<Project> findActiveProjectsByUserId(long userId) {
+        return userRepository.findActiveProjectsByUserId(userId);
     }
 
     public int findNumberOfIssuesByUserId(int userId) {
@@ -157,6 +157,42 @@ public class UserService implements UserDetailsService{
 
     public int getTotalAssignedUsersByProjectId(Long projectId) {
         return userRepository.countUsersByProjectsId(projectId);
+    }
+
+    public Set<Project> getActiveProjectsByUser(User user) {
+        Set<Project> activeProjects = new HashSet<>();
+
+        // Iterate through the user's projects and filter out the active ones
+        for (Project project : user.getProjects()) {
+            if ("ACTIVE".equals(project.getStatus())) {
+                activeProjects.add(project);
+            }
+        }
+        return activeProjects;
+    }
+
+
+    public void updateUserProfile(User user) {
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateUser(User updatedUser) {
+        // Retrieve the user from the database by ID
+        User existingUser = userRepository.findById(updatedUser.getId()).orElse(null);
+
+        if (existingUser != null) {
+            // Update the user's details with the new values
+            existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setEmail(updatedUser.getEmail());
+            // Set the user's role or any other details that need to be updated
+
+            // Save the updated user entity back to the database
+            userRepository.save(existingUser);
+        } else {
+            // Handle the case where the user with the given ID is not found
+            throw new RuntimeException("User not found with ID: " + updatedUser.getId());
+        }
     }
 }
 

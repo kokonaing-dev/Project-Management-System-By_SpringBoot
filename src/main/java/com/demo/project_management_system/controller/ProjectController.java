@@ -1,12 +1,12 @@
 package com.demo.project_management_system.controller;
 
-import com.demo.project_management_system.entity.Project;
-import com.demo.project_management_system.entity.User;
-import com.demo.project_management_system.service.IssueService;
-import com.demo.project_management_system.service.ProjectService;
-import com.demo.project_management_system.service.UserService;
+import com.demo.project_management_system.dto.CategoryData;
+import com.demo.project_management_system.dto.IssueTypeData;
+import com.demo.project_management_system.entity.*;
+import com.demo.project_management_system.service.*;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @Controller
+@RequiredArgsConstructor
 public class ProjectController {
+
+    private final NotificationService notificationService;
 
     @Autowired
     private ProjectService projectService;
@@ -38,35 +38,74 @@ public class ProjectController {
     @Autowired
     private IssueService issueService;
 
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private IssueTypeService issueTypeService;
+
     @PostMapping(value = "/project/create")
-    public ResponseEntity<?> createProject(@ModelAttribute("project") Project project, @RequestParam("userIds") List<Long> userIds, @RequestParam("loggedInUserId") int loggedInUserId, Model model) {
-        // Check if projectName already exists
-        if (projectService.isProjectNameExists(project.getProjectName())) {
-            // Handle case where projectName already exists
-            return new ResponseEntity<>("Project with the same name already exists", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> createProject(@ModelAttribute("project") Project project,
+                                           @RequestParam("userIds") List<Long> userIds,
+                                           @RequestParam("loggedInUserId") int loggedInUserId,
+                                           BindingResult result) {
+        try {
+            // Check if required fields are empty
+            if (project.getProjectName() == null || project.getProjectName().isEmpty() ||
+                    project.getProjectStartDate() == null || project.getProjectDueDate() == null) {
+                return ResponseEntity.badRequest().body("Please fill in all required fields.");
+            }
+            // Check if project start date is greater than end date
+            if (project.getProjectStartDate().isAfter(project.getProjectDueDate())) {
+                return new ResponseEntity<>("Project start date cannot be after project end date", HttpStatus.BAD_REQUEST);
+            }
+            // Validate the project object
+            if (result.hasErrors()) {
+                return ResponseEntity.badRequest().body("Invalid data provided.");
+            }
+
+            // Check if the project name already exists
+            boolean existingProject = projectService.isProjectNameExists(project.getProjectName());
+            if (existingProject) {
+                return ResponseEntity.badRequest().body("Project name already exists.");
+            }
+
+            System.out.println("Logged in User ID is Here " + loggedInUserId);
+            // Retrieve the logged-in user from the userService
+            User loggedInUser = userService.getUserById(loggedInUserId);
+
+            // Retrieve User entities based on the provided user IDs
+            Set<User> users = userService.findByIdIn(userIds);
+
+            // Add the logged-in user to the set of users
+            users.add(loggedInUser);
+
+            // Set the retrieved users on the project
+            project.setUsers(users);
+
+            // Save the project
+            Project savedProject = projectService.save(project);
+            notificationService.sendNotification(savedProject);
+
+            return ResponseEntity.ok(savedProject);
+        } catch (Exception e) {
+            // Handle exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create project");
         }
-        // Check if project start date is greater than end date
-        if (project.getProjectStartDate().isAfter(project.getProjectEndDate())) {
-            return new ResponseEntity<>("Project start date cannot be after project end date", HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/deleteProject/{projectId}")
+    public ResponseEntity<String> deleteProject(@PathVariable long projectId) {
+        try {
+            // Delete the project by its ID
+            projectService.deleteProjectById(projectId);
+            return ResponseEntity.ok().body("Project deleted successfully");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete project");
         }
-
-        System.out.println("Logged in User ID is Here " + loggedInUserId);
-        // Retrieve the logged-in user from the userService
-        User loggedInUser = userService.getUserById(loggedInUserId);
-
-        // Retrieve User entities based on the provided user IDs
-        Set<User> users = userService.findByIdIn(userIds);
-
-        // Add the logged-in user to the set of users
-        users.add(loggedInUser);
-
-        System.out.println("SAVEDDDDDDDDDDDDD");
-
-        // Set the retrieved users on the project
-        project.setUsers(users);
-
-        Project savedProject = projectService.save(project);
-        return new ResponseEntity<>(savedProject, HttpStatus.OK);
     }
 
     @GetMapping("/projects/delete/{projectId}")
@@ -91,8 +130,10 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/homepage/{projectId}")
-    public String goToHomePage(@PathVariable int projectId, @AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session) {
+    @GetMapping("/projectDetail/{projectId}")
+    public String goToHomePage(@PathVariable long projectId,
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               Model model, HttpSession session) {
         User user = userService.findUserByEmail(userDetails.getUsername());
         // Store the user object in the session
         session.setAttribute("loggedInUser", user);
@@ -103,16 +144,188 @@ public class ProjectController {
         Optional<Project> optionalProject = Optional.ofNullable(projectService.getProjectById(projectId));
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
-            int totalIssues = issueService.getTotalIssuesByProjectId((long) projectId);
-            int totalAssignedUsers = userService.getTotalAssignedUsersByProjectId((long) projectId);
+
+            // Fetch project status using your service method
+            String projectStatus = project.calculateProjectStatus(); // Assuming you have a method to calculate project status
+            model.addAttribute("projectStatus", projectStatus); // Add project status to the model
+
+            // Add project start date and end date to the model
+            model.addAttribute("projectStartDate", project.getProjectStartDate());
+            model.addAttribute("projectDueDate", project.getProjectDueDate());
+
+            int inProgressCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.IN_PROGRESS, projectId);
+            int openCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.OPEN, projectId);
+            int solvedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.SOLVED, projectId);
+            int closedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.CLOSED, projectId);
+            int pendingCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.PENDING, projectId);
+
+
+            int totalIssues = issueService.getTotalIssuesByProjectId(projectId);
+            int totalAssignedUsers = userService.getTotalAssignedUsersByProjectId(projectId);
+
             model.addAttribute("project", project);
             model.addAttribute("totalIssues", totalIssues);
             model.addAttribute("totalAssignedUsers", totalAssignedUsers);
+            model.addAttribute("inProgressCount", inProgressCount);
+            model.addAttribute("openCount", openCount);
+            model.addAttribute("solvedCount", solvedCount);
+            model.addAttribute("closedCount", closedCount);
+            model.addAttribute("pendingCount", pendingCount);
+
+
+            // Fetch issue types data
+            List<IssueType> issueTypes = issueTypeService.getAllIssueTypes(); // Assuming you have a service method to fetch all issue types
+
+            // Fetch mapping of issue types to statuses
+            Map<IssueType, Set<IssueStatus>> issueTypeStatusMapping = issueTypeService.getIssueTypeStatusMapping(); // Assuming you have a service method to fetch issue type to status mapping
+
+            // Create a map to store issue types counts by status
+            Map<IssueStatus, Map<String, Integer>> issueTypeDataByStatus = new HashMap<>();
+
+            // Populate issue type data by status
+            for (IssueType issueType : issueTypes) {
+                Set<IssueStatus> statuses = issueTypeStatusMapping.getOrDefault(issueType, Collections.emptySet());
+                for (IssueStatus status : statuses) {
+                    issueTypeDataByStatus.putIfAbsent(status, new HashMap<>());
+                    issueTypeDataByStatus.get(status).put(issueType.getIssueName(), issueService.getIssueCountByTypeAndStatus(issueType.getId(), status)); // Assuming you have a service method to get issue count by type and status
+                }
+            }
+            // Add issue type data to model
+            model.addAttribute("issueTypeDataByStatus", issueTypeDataByStatus);
+            // Add logic to handle the request with the project id
+
+            // Fetch categories data
+            List<Category> categories = categoryService.getAllCategories(); // Assuming you have a service method to fetch all categories
+
+            // Fetch mapping of issue types to statuses
+            Map<Category, Set<IssueStatus>> categoryStatusMapping = categoryService.getCategoryStatusMapping();
+
+            // Create a map to store category data by status
+            Map<IssueStatus, Map<String, Integer>> categoryDataByStatus = new HashMap<>();
+
+            // Populate category data by status
+            for (Category category : categories) {
+                Set<IssueStatus> statuses = categoryStatusMapping.getOrDefault(category, Collections.emptySet());
+                for (IssueStatus status : statuses) {
+                    categoryDataByStatus.putIfAbsent(status, new HashMap<>());
+                    categoryDataByStatus.get(status).put(category.getCategoryName(), issueService.getIssueCountByCategoryAndStatus(category.getId(), status)); // Assuming you have a service method to get issue count by category and status
+                }
+            }
+
+            // Add category data to model
+            model.addAttribute("categoryDataByStatus", categoryDataByStatus);
+
+
         } else {
             // Handle project not found
         }
-
-        /* Add logic to handle the request with the project id */
         return "project-detail"; // return the name of your homepage template
     }
+
+
+//    @GetMapping("/api/project/{projectId}")
+//    public ResponseEntity<Project> getProjectDetails(@PathVariable long projectId) {
+//        Project project = projectService.getProjectById(projectId);
+//        if (project != null) {
+//            return ResponseEntity.ok(project);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+//    @PostMapping("/api/project/edit/{projectId}")
+//    public ResponseEntity<String> updateProject(@PathVariable Long projectId, @RequestBody Project updatedProject) {
+//        // Check if the projectId and updatedProject are valid
+//        if (projectId == null || updatedProject == null) {
+//            return ResponseEntity.badRequest().body("Invalid project ID or data");
+//        }
+//
+//        // Fetch the existing project from the database
+//        Project existingProject = projectService.getProjectById(projectId);
+//        if (existingProject == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        // Update the existing project with the data from updatedProject
+//        existingProject.setProjectName(updatedProject.getProjectName());
+//        existingProject.setProjectStartDate(updatedProject.getProjectStartDate());
+//        existingProject.setProjectDueDate(updatedProject.getProjectDueDate());
+//
+//        // Save the updated project
+//        projectService.updateProject(existingProject);
+//
+//        return ResponseEntity.ok("Project updated successfully");
+//    }
+
+    @PostMapping("/editProject")
+    public String updateProject(@ModelAttribute("project") Project project) {
+        // Update the project details using the project service
+        Project existingProject = projectService.findById(project.getId()).orElse(null);
+
+        // Check if the project exists
+        if (existingProject != null) {
+            // Update the project details
+            existingProject.setProjectName(project.getProjectName());
+            existingProject.setProjectStartDate(project.getProjectStartDate());
+            existingProject.setProjectDueDate(project.getProjectDueDate());
+
+            // Save the updated project to the database
+            projectService.save(existingProject);
+        } else {
+            // Handle case where project is not found
+            throw new RuntimeException("Project not found with ID: " + project.getId());
+        }
+
+        // Redirect to a suitable page after updating the project
+        return "redirect:/projectDetail/" + project.getId(); // Redirect to the project detail page
+    }
+
+    @PutMapping("/api/projects/{projectId}")
+    public ResponseEntity<Project> updateProject(@PathVariable Long projectId, @RequestBody Project projectDetails) {
+        // Retrieve the existing project from the database
+        Project existingProject = projectService.getProjectById(projectId);
+
+        if (existingProject == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Update the project details
+        existingProject.setProjectName(projectDetails.getProjectName());
+        existingProject.setProjectStartDate(projectDetails.getProjectStartDate());
+        existingProject.setProjectDueDate(projectDetails.getProjectDueDate());
+        existingProject.setStatus(projectDetails.getStatus());
+        // Update team members, handle this according to your application logic
+
+        // Save the updated project
+        Project updatedProject = projectService.save(existingProject);
+
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @GetMapping("/api/issueTypeData")
+    @ResponseBody
+    public List<IssueTypeData> getIssueTypeData() {
+        List<Object[]> rawData = issueService.getIssueTypeData(); // Assuming you have a method to fetch issue type data
+        List<IssueTypeData> issueTypeData = new ArrayList<>();
+        for (Object[] row : rawData) {
+            String name = (String) row[0];
+            Long count = (Long) row[1];
+            issueTypeData.add(new IssueTypeData(name, count));
+        }
+        return issueTypeData;
+    }
+
+    @GetMapping("/api/categoryData")
+    @ResponseBody
+    public List<CategoryData> getCategoryData() {
+        List<Object[]> rawData = issueService.getCategoryData(); // Assuming you have a method to fetch issue type data
+        List<CategoryData> categoryData = new ArrayList<>();
+        for (Object[] row : rawData) {
+            String name = (String) row[0];
+            Long count = (Long) row[1];
+            categoryData.add(new CategoryData(name, count));
+        }
+        return categoryData;
+    }
+
+
 }

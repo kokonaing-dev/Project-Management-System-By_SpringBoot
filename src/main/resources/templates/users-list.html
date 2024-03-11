@@ -10,8 +10,8 @@
         <!-- App favicon -->
         <link rel="shortcut icon" href="/images/favicon.ico">
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.css">
 
 
     <!-- Datatables css -->
@@ -35,6 +35,13 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
 
+    <style>
+        #user-table td,
+        #user-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
     </head>
 
 
@@ -80,9 +87,6 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-sm-4">
-                                                <h4 class="header-title">Information Admins</h4>
-                                            </div>
                                             <div class="col-sm-8 text-end"
                                                  th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">
                                                 <button type="button" class="btn btn btn-purple w-sm-100 rounded-pill waves-effect waves-light mb-3" data-bs-toggle="modal" data-bs-target="#inviteuser">
@@ -92,7 +96,7 @@
                                             </div>
                                         </div>
 
-                                        <table id="scroll-vertical-datatable" class="table table-striped dt-responsive nowrap w-100 h-100">
+                                        <table id="user-table" class="display nowrap" style="width:100%;">
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
@@ -100,31 +104,27 @@
                                                     <th>Email</th>
                                                     <th>Photo</th>
                                                     <th>Role</th>
-<!--                                                    <th>Status</th>-->
                                                     <th>Date</th>
                                                     <th>Manage</th>
                                                 </tr>
                                             </thead>
 
                                             <tbody>
-                                                <tr th:each="user: ${userList}">
-                                                    <td th:text="${user.id}"></td>
+                                                <tr th:each="user, iterStat : ${userList}">
+                                                    <td th:text="${iterStat.count}"></td>
                                                     <td th:text="${user.username}"></td>
                                                     <td th:text="${user.email}"></td>
                                                     <td>
-                                                        <img th:src="${user.photosImagePath}"  alt="photo" style="width: 50px; height: 50px;"/>
+                                                        <img th:src="${user.photosImagePath}"  alt="photo" class="rounded-circle shadow" height="42"/>
                                                     </td>
                                                     <td>
                                                         <span th:each="role: ${user.authorities}">
                                                             <span th:if="${role.authority == 'ROLE_PROJECT_MANAGER'}" class="badge bg-success">Project Manager</span>
                                                             <span th:if="${role.authority == 'ROLE_MEMBER'}" class="badge bg-info">Member</span>
                                                             <span th:if="${role.authority == 'ROLE_SYSTEM_ADMIN'}" class="badge bg-purple">Admin</span>
-<!--                                                            <span class="badge bg-danger "><span th:text="${#strings.substring(role.authority, 5)}"></span></span>-->
                                                         </span>
                                                     </td>
-<!--                                                    <td></td>-->
                                                     <td th:text="${user.createdAt}"></td>
-<!--                                                    <td><span class="badge bg-success rounded-pill">Active</span></td>-->
 
                                                     <td class="dropdown hover-dropdown">
                                                         <!-- Manage buttons -->
@@ -446,9 +446,6 @@
         </script>
 
 
-        <!-- Vendor js -->
-        <script src="/js/vendor.min.js"></script>
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
                 integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
                 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -463,39 +460,43 @@
         <script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
 
+
         <script>
-            new DataTable('scroll-vertical-datatable', {
+            new DataTable('#user-table', {
                 layout: {
                     topStart: {
-                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        buttons: [
+                            {
+                                extend: 'copy',
+                                exportOptions: { columns: [0, 1, 2, 4, 5] }
+                            },
+                            {
+                                extend: 'csv',
+                                exportOptions: { columns: [0, 1, 2, 4, 5] }
+                            },
+                            {
+                                extend: 'excel',
+                                exportOptions: { columns: [0, 1, 2, 4, 5] }
+                            },
+                            {
+                                extend: 'pdf',
+                                exportOptions: { columns: [0, 1, 2, 4, 5] }
+                            },
+                            {
+                                extend: 'print',
+                                exportOptions: { columns: [0, 1, 2, 4, 5] }
+                            }
+                        ]
                     }
                 }
             });
         </script>
 
-        <!-- Datatables js -->
-        <script src="/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
-        <script src="/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
-        <script src="/libs/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
-        <script src="/libs/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-        <script src="/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-        <script src="/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
-        <script src="/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-        <script src="/libs/datatables.net-buttons/js/buttons.flash.min.js"></script>
-        <script src="/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-        <script src="/libs/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-        <script src="/libs/datatables.net-select/js/dataTables.select.min.js"></script>
-
-        <!-- Datatable Demo Aapp js -->
-        <script src="/js/pages/demo.datatable-init.js"></script>
+        <!-- Vendor js -->
+        <script src="/js/vendor.min.js"></script>
 
         <!-- App js -->
         <script src="/js/app.min.js"></script>
-
-
-
 
     </body>
 

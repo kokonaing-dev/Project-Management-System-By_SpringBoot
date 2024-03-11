@@ -24,7 +24,10 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests((authorize) ->
                         authorize
+                                .requestMatchers("/dashboard").authenticated()
                                 .requestMatchers("/list_users").authenticated()
+                                .requestMatchers("/tasks").authenticated()
+                                .requestMatchers("/board").authenticated()
                                 .requestMatchers("/static/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ROLE_SYSTEM_ADMIN")
                                 .requestMatchers("/project-manager/**").hasAuthority("ROLE_PROJECT_MANAGER")
