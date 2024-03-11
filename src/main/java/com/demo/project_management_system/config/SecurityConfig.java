@@ -24,6 +24,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests((authorize) ->
                         authorize
+                                .requestMatchers("/dashboard").authenticated()
                                 .requestMatchers("/list_users").authenticated()
                                 .requestMatchers("/tasks").authenticated()
                                 .requestMatchers("/board").authenticated()

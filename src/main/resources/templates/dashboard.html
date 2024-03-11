@@ -68,54 +68,12 @@
     <link href="/libs/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet" type="text/css"/>
 
     <style>
-        /* CSS */
-        .button-links a:hover {
-            background-color: #e0e0e0;
-            color: #333;
+        .project-box{
+            border-radius: 30px;
         }
-
-        /* CSS */
-        .project-row:hover {
-            background-color: #318CE7; /* Change background color of the row when hovered */
+        h4{
+            cursor: pointer;
         }
-
-        /* Change color of project name to white when hovering over the row */
-        .project-row:hover .project-name {
-            color: white;
-        }
-
-        /* Hide button links by default */
-        .button-links a {
-            display: none;
-        }
-
-        /* Show button links when hovering over the table row */
-        .project-row:hover .button-links a {
-            display: inline-block;
-        }
-
-        /* Style for the button links */
-        .button-links a {
-            padding: 0.25rem 0.5rem; /* Adjust padding as needed */
-            font-size: 0.75rem; /* Adjust font size as needed */
-        }
-
-        /* CSS */
-        .accordion-body {
-            padding: 0;
-            margin-bottom: 0; /* Remove bottom margin of accordion-body */
-        }
-
-        .table {
-            padding: 0;
-            margin-bottom: 0; /* Remove bottom margin of table */
-        }
-
-        tbody>tr>td{
-            font-weight: bold;
-        }
-
-
     </style>
 
 </head>
@@ -143,194 +101,12 @@
             <!-- Start Content-->
             <div class="container-fluid">
 
-                <!-- Combined Modals -->
-                <div class="modal fade" id="projectModal" tabindex="-1" role="dialog"
-                     aria-labelledby="NewTaskModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1070px;">
-                        <div class="modal-content">
-                            <div class="modal-header bg-body-tertiary"
-                                 style="background-color:#007bff; color: #fff; padding: 20px 30px;">
-                                <h4 class="modal-title" id="NewTaskModalLabel">Create New Task</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" style="background-color:#eeeef1;color: black; padding: 0 30px;">
-                                <form class="p-2" id="issueForm" th:object="${issue}">
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">IssueType</label>
-                                                <select class="form-select" th:field="*{issueType}">
-                                                    <option th:each="issueType : ${issueTypes}"
-                                                            th:value="${issueType.id}"
-                                                            th:text="${issueType.issueName}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Select a Project</label>
-                                                <select class="form-select form-control" id="projectSelect"
-                                                        name="projectId" th:field="*{project}">
-                                                    <option value="" id="defaultOption" selected>Select Project</option>
-                                                    <option th:each="project : ${projectList}" th:value="${project.id}"
-                                                            th:text="${project.projectName}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="subject" class="form-label">Subject</label>
-                                        <input type="text" class="form-control" id="subject" th:field="*{subject}"
-                                               placeholder="Subject">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="task-description" class="form-label">Description</label>
-                                        <textarea class="form-control" id="task-description" rows="3"></textarea>
-                                    </div>
-
-                                    <div class="row">
-                                        <!-- Left Column -->
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Status</label>
-                                                <select class="form-select" th:field="*{issueStatus}">
-                                                    <option th:each="issueStatus : ${issueStatuses}"
-                                                            th:value="${issueStatus}" th:text="${issueStatus}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- Right Column -->
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Priority</label>
-                                                <select class="form-select" th:field="*{priority}">
-                                                    <option th:each="priority : ${priorities}" th:value="${priority}"
-                                                            th:text="${priority}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <!-- Left Column -->
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Category</label>
-                                                <select class="form-select" th:field="*{category}">
-                                                    <option th:each="category : ${categories}" th:value="${category.id}"
-                                                            th:text="${category.categoryName}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- Right Column -->
-                                        <div class="col-md-6 edit">
-                                            <div class="mb-3">
-                                                <label class="form-label">Assign To</label>
-                                                <select name="users" id="userSelect" class="form-control"
-                                                        multiple="multiple" th:field="*{users}">
-                                                    <!-- Options will be dynamically populated -->
-                                                    <!--                                                            <option th:each="user : ${usersList}" th:value="${user.id}" th:text="${user.username}"></option>-->
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="planStartDate" class="form-label">Plan Start Date</label>
-                                                <input type="date" class="form-control" id="planStartDate"
-                                                       th:field="*{planStartDate}">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="planDueDate" class="form-label">Plan Due Date</label>
-                                                <input type="date" class="form-control" id="planDueDate"
-                                                       th:field="*{planDueDate}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="actualStartDate" class="form-label">Actual Start
-                                                    Date</label>
-                                                <input type="date" class="form-control" id="actualStartDate"
-                                                       th:field="*{actualStartDate}">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="actualEndDate" class="form-label">Actual End Date</label>
-                                                <input type="date" class="form-control" id="actualEndDate"
-                                                       th:field="*{actualEndDate}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="attachments" class="form-label">Attachments</label>
-                                        <input type="file" class="form-control" id="attachments" name="attachments"
-                                               multiple>
-                                    </div>
-
-                                    <div class="text-end">
-                                        <button type="reset" class="btn btn-light" data-bs-dismiss="modal"
-                                                onclick="reloadPage()">Cancel
-                                        </button>
-                                        <button type="submit" id="createIssueBtn" class="btn btn-primary">Create
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div><!-- /.modal -->
-
-
                 <!-- Include jQuery library -->
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
-                <script>
-                    $(document).ready(function () {
-                        $('#projectSelect').change(function () {
-                            var projectId = $(this).val(); // Get the selected project id
 
-                            // Make an AJAX request to fetch users associated with the selected project
-                            $.ajax({
-                                type: 'GET',
-                                url: '/user/fetch_users?projectId=' + projectId, // Correct endpoint for fetching users associated with the project
-                                success: function (users) {
-                                    // Clear the options of the userSelect select element
-                                    $('#userSelect').empty();
-
-                                    // Add the retrieved users as options to the userSelect select element
-                                    $.each(users, function (userId, username) {
-                                        $('#userSelect').append('<option value="' + userId + '">' + username + '</option>');
-                                    });
-                                },
-                                error: function (xhr, status, error) {
-                                    console.error('Error fetching users:', error);
-                                }
-                            });
-                        });
-                    });
-
-                </script>
 
                 <div class="row">
                     <div class="col-12">
@@ -341,7 +117,7 @@
                                     <input type="text" class="form-control shadow border-0" id="dash-daterange">
                                     <span class="input-group-text bg-primary border-primary text-white">
                                                 <i class="ri-calendar-todo-fill fs-13"></i>
-                                            </span>
+                                    </span>
                                 </div>
                             </form>
                         </div>
@@ -349,140 +125,121 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-4">
-                        <div class="row justify-content-end">
-                            <div class="col-5 mb-3">
+                    <div class="col-xl-12">
+
+                        <div class="row mb-2 justify-content-between">
+                            <div class="col-lg-2">
+                                <!-- create project button icon -->
+                                <div class="mb-2 p-0"
+                                     th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'') or hasRole(''ROLE_PROJECT_MANAGER'')')}">
+                                    <button type="button" class="btn btn-sm btn-soft-info rounded-pill"
+                                            data-bs-toggle="modal" data-bs-target="#createproject">
+                                        <i class="ri-add-circle-fill" style="font-size: 18px;"></i>
+                                        Create Project
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3">
                                 <div class="input-group">
                                     <input type="text" id="projectSearchInput" class="form-control"
                                            placeholder="Search projects" aria-label="Search projects"
                                            aria-describedby="searchIcon">
                                     <span class="input-group-text" id="searchIcon">
-                                                <i class="bi bi-search"></i>
+                                        <i class="bi bi-search"></i>
                                         <!-- Assuming you're using Bootstrap icons -->
                                     </span>
                                 </div>
-                            </div>
+                            </div><!-- end col-->
                         </div>
+                        <!-- end row-->
+
                         <div class="row">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h3 class="header-title">Projects</h3>
+                            <div  th:each="project : ${projectList}" class="col-lg-4">
+                                <div class="card project-box p-1">
+                                    <div class="card-body">
+<!--                                        <div class="dropdown float-end">-->
+<!--                                            <a href="#" class="dropdown-toggle card-drop arrow-none" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                                                <i class="ri-more-fill m-0 text-muted h3"></i>-->
+<!--                                            </a>-->
+<!--                                            <div class="dropdown-menu dropdown-menu-end">-->
+<!--                                                <a class="dropdown-item" href="#">Edit</a>-->
+<!--                                                <a class="dropdown-item" href="#">Delete</a>-->
+<!--                                                <a class="dropdown-item" href="#">Add Members</a>-->
+<!--                                                <a class="dropdown-item" href="#">Add Due Date</a>-->
+<!--                                            </div>-->
+<!--                                        </div> -->
+                                        <!-- end dropdown -->
+                                        <!-- Title-->
+                                        <h4 class="project-name mt-0 text-dark" th:text="${project.projectName}"
+                                            th:attr="data-project-id=${project.id}"
+                                            onclick="redirectToHomePage(this)">
+                                            <a href="#">
+                                            </a>
+                                        </h4>
+                                        <p class="text-muted text-uppercase">
+                                            <i class="mdi mdi-account-circle"></i>
+                                            <small>Orange Limited</small>
+                                        </p>
+                                        <div class="mb-4">
+                                            <span th:if="${project.status == 'Working in Progress'}" class="badge bg-info-subtle text-info">Working in Progress</span>
+                                            <span th:if="${project.status == 'Done'}" class="badge bg-success-subtle text-success">Done</span>
+                                            <span th:if="${project.status == 'Pending'}" class="badge bg-warning-subtle text-warning">Pending</span>
+                                            <span th:if="${project.status == 'Coming Soon'}" class="badge bg-secondary-subtle text-secondary">Coming Soon</span>
                                         </div>
-                                        <div class="mb-2 p-0"
-                                             th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'') or hasRole(''ROLE_PROJECT_MANAGER'')')}">
-                                            <button type="button" class="btn btn-sm btn-soft-info rounded-pill"
-                                                    data-bs-toggle="modal" data-bs-target="#createproject">
-                                                        <span class="text-bg-info rounded rounded-3 shadow">
-                                                            <i class="ri-add-circle-fill" style="font-size: 18px;"></i>
-                                                        </span>
-                                            </button>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="accordion" id="accordionPanelsStayOpenExample">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                                                <button class="accordion-button fw-medium" type="button"
-                                                        data-bs-toggle="collapse"
-                                                        data-bs-target="#panelsStayOpen-collapseOne"
-                                                        aria-expanded="true"
-                                                        aria-controls="panelsStayOpen-collapseOne">
-                                                    Projects List
-                                                </button>
-                                            </h2>
-                                            <div id="panelsStayOpen-collapseOne"
-                                                 class="accordion-collapse collapse show"
-                                                 aria-labelledby="panelsStayOpen-headingOne">
-                                                <div class="accordion-body">
-                                                    <table class="table">
-                                                        <tbody id="projectTableBody">
-                                                        <!-- Iterate over projects -->
-                                                        <tr th:each="project : ${projectList}" class="project-row"
-                                                            th:attr="data-project-id=${project.id}"
-                                                            onclick="redirectToHomePage(this)">
-                                                            <!-- Project name column -->
-                                                            <td th:text="${project.projectName}"
-                                                                class="project-name"></td>
-                                                            <td class="button-links">
-                                                                <a href="#" class="btn btn-danger btn-delete-project">
-                                                                    <i class="ri-close-line"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
+                                        <!-- Desc-->
+                                        <p class="text-muted font-13 mb-3 sp-line-2">With supporting text below as a natural lead-in to additional contenposuere erat a
+                                            ante...<a href="javascript:void(0);" class="fw-bold text-muted">view more</a>
+                                        </p>
+                                        <!-- Task info-->
+                                        <p class="mb-1">
+                                            <span class="pe-2 text-nowrap mb-2 d-inline-block">
+                                                <i class="mdi mdi-format-list-bulleted-type text-muted"></i>
+                                                <b th:text="${project.numberOfIssues}"></b> Issues
+                                            </span>
+                                        </p>
+                                        <!-- Team-->
+                                        <h5>Team Members:</h5>
+                                        <div class="avatar-group mb-3" id="tooltips-container">
+                                            <!-- Iterate over team members -->
+                                            <div class="avatar-group">
+                                                <div th:each="user : ${project.users}">
+                                                    <a th:href="@{'/userDetail/' + ${user.id}}" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${user.username}" class="avatar-group-item">
+                                                        <img th:src="${user.photosImagePath}" class="rounded-circle avatar-xs" alt="User Avatar">
+                                                    </a>
                                                 </div>
                                             </div>
+
+<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
+<!--                                                    <img src="assets/images/users/user-2.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Michael Zenaty" />-->
+<!--                                                </a>-->
+
+<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
+<!--                                                    <img src="assets/images/users/user-3.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="James Anderson" />-->
+<!--                                                </a>-->
+
+<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
+<!--                                                    <img src="assets/images/users/user-4.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mat Helme" />-->
+<!--                                                </a>-->
+
+<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
+<!--                                                    <img src="assets/images/users/user-5.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Username" />-->
+<!--                                                </a>-->
                                         </div>
+                                        <!-- Progress-->
+                                        <p class="mb-2 fw-semibold">Task completed: <span class="float-end">28/78</span></p>
+                                        <div class="progress mb-1" style="height: 7px;">
+                                            <div class="progress-bar"
+                                                 role="progressbar" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100"
+                                                 style="width: 34%;">
+                                            </div><!-- /.progress-bar .progress-bar-danger -->
+                                        </div><!-- /.progress .no-rounded -->
                                     </div>
-                                </div> <!-- end card-body-->
-                            </div> <!-- end card-->
-
+                                </div> <!-- end card box-->
+                            </div><!-- end col-->
                         </div>
+
                     </div> <!-- end col-->
-
-                    <div class="col-xl-8 mb-5">
-                        <!-- Search issue type, category, and project input fields -->
-                        <div class="row mb-3">
-                            <div class="col-md-3 d-flex justify-content-end">
-
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="table-responsive">
-                                    <table id="issueTable" class="table table-bordered border-5 table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Project Name</th>
-                                            <th>Subject</th>
-                                            <th>Description</th>
-                                            <th>Issue Type</th>
-                                            <th>Category</th>
-                                            <th>Issue Status</th>
-                                            <th>Priority</th>
-                                            <th>Plan Start Date</th>
-                                            <th>Plan Due Date</th>
-                                            <th>Actual Start Date</th>
-                                            <th>Actual End Date</th>
-
-                                            <!-- Add more headers for other fields as needed -->
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <!-- Iterate over each issue and populate the table rows -->
-                                        <tr th:each="issue : ${issues}">
-                                            <td th:text="${issue.id}"></td>
-                                            <td th:text="${issue.project.projectName}"></td>
-                                            <td th:text="${issue.subject}"></td>
-                                            <td th:text="${issue.description}"></td>
-<!--                                            <td th:text="${issue.issueType.issueName}"></td>-->
-                                            <td th:text="${issue.category.categoryName}"></td>
-                                            <td th:text="${issue.issueStatus}"></td>
-
-                                            <td th:text="${issue.priority}"></td>
-                                            <td th:text="${issue.planStartDate}"></td>
-                                            <td th:text="${issue.planDueDate}"></td>
-                                            <td th:text="${issue.actualStartDate}"></td>
-                                            <td th:text="${issue.actualEndDate}"></td>
-                                            <!-- Add more columns for other fields as needed -->
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                    <script>
-                                        $(document).ready(function () {
-                                            $('#issueTable').DataTable();
-                                        });
-                                    </script>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <script>
                         $(document).ready(function () {
@@ -559,6 +316,7 @@
                         }
 
                     </script>
+
                 </div>
 
                 <script>
@@ -586,7 +344,7 @@
                 <div class="modal fade" id="createproject" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header py-3 px-4 border-bottom-0">
+                            <div class="modal-header bg-success text-light py-3 px-4 border-bottom-0">
                                 <h4 class="modal-title  fw-bold" id="createprojectlLabel"> Create Project</h4>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                         id="closeModalBtn"></button>
@@ -906,26 +664,21 @@
     </div>
 </div>
 
-<script>
-    $('#issueForm').submit(function (e) {
-        e.preventDefault(); // Prevent the default form submission
-        createIssue();
-    });
-
-</script>
 
 
 <script>
 
-    function redirectToHomePage(row) {
-        var tagName = event.target.tagName.toLowerCase();
-        // Check if the clicked element is not a button link
-        if (tagName !== 'a' && tagName !== 'i') {
-            var projectId = row.getAttribute('data-project-id');
-            /* Redirect to homepage with project id */
+    function redirectToHomePage(element) {
+        // Get the project ID from the data attribute
+        var projectId = element.getAttribute('data-project-id');
+
+        // Check if the clicked element is not a link or an icon
+        if (element.tagName.toLowerCase() !== 'a' && element.tagName.toLowerCase() !== 'i') {
+            // Redirect to the project detail page with the project ID
             window.location.href = '/projectDetail/' + projectId;
         }
     }
+
 
     function redirectToMainPage(button) {
         var projectId = button.getAttribute('data-project-id');
@@ -1239,6 +992,12 @@
 
 <!-- Datatable Demo Aapp js -->
 <script src="/js/pages/demo.datatable-init.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#issueTable').DataTable();
+    });
+</script>
 
 </body>
 </html>

@@ -6,6 +6,7 @@ import com.demo.project_management_system.entity.IssueType;
 import com.demo.project_management_system.entity.Project;
 import com.demo.project_management_system.repository.IssueRepository;
 import com.demo.project_management_system.repository.IssueTypeRepository;
+import com.demo.project_management_system.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ import java.util.*;
 public class IssueService {
     @Autowired
     private IssueRepository issueRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Autowired
     private IssueTypeRepository issueTypeRepository;
@@ -32,10 +36,24 @@ public class IssueService {
         return issueRepository.findById(id);
     }
 
+//    public Set<Issue> getAllIssues() {
+//        List<Issue> issueList = issueRepository.findAll();
+//        return new HashSet<>(issueList);
+//    }
+
     public Set<Issue> getAllIssues() {
-        List<Issue> issueList = issueRepository.findAll();
-        return new HashSet<>(issueList);
+        // Fetch active projects
+        List<Project> activeProjects = projectRepository.findByStatus("ACTIVE");
+
+        // Collect issues from active projects
+        Set<Issue> issuesFromActiveProjects = new HashSet<>();
+        for (Project project : activeProjects) {
+            issuesFromActiveProjects.addAll(project.getIssues());
+        }
+
+        return issuesFromActiveProjects;
     }
+
 
     public void delete(long id) {
         issueRepository.deleteById(id);

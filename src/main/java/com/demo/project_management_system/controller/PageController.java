@@ -63,6 +63,15 @@ public class PageController {
         Set<Project> projectList = projectService.getAllActiveProjects();
         model.addAttribute("projectList", projectList);
 
+        // Calculate project status for each project
+        for(Project project: projectList){
+            int totalIssues = project.getIssues().size();
+            project.setNumberOfIssues(totalIssues);
+            String projectStatus = project.calculateProjectStatus();
+            project.setStatus(projectStatus);
+        }
+
+
         // Get the Authentication object from SecurityContextHolder
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -236,6 +245,8 @@ public class PageController {
             System.out.println("Number Of Issues.........is " + numberOfIssues);
             model.addAttribute("numberOfIssues", numberOfIssues);
             project.setNumberOfIssues(numberOfIssues);
+            String projectStatus = project.calculateProjectStatus();
+            project.setStatus(projectStatus);
         }
 
         model.addAttribute("projectList", userProjects);
