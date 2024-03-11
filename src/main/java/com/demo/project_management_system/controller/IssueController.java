@@ -5,8 +5,10 @@ import com.demo.project_management_system.dto.IssueStatusUpdateRequest;
 import com.demo.project_management_system.dto.UpdateIssueStatusRequest;
 import com.demo.project_management_system.entity.*;
 import com.demo.project_management_system.service.IssueService;
+import com.demo.project_management_system.service.NotificationService;
 import com.demo.project_management_system.service.ProjectService;
 import com.demo.project_management_system.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -31,7 +33,10 @@ import java.util.Set;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class IssueController {
+
+    private final NotificationService notificationService;
 
     @Autowired
     private IssueService issueService;
@@ -106,6 +111,8 @@ public class IssueController {
 
                 // Save the issue (if not already saved)
                 issueService.save(issue);
+
+                notificationService.sendNotification(issue);
 
                 // Process other form fields and perform necessary operations
 

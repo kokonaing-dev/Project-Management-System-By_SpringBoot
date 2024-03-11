@@ -25,6 +25,10 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
 
+    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
 </head>
 
     <body>
@@ -83,19 +87,19 @@
                                             <span th:text="${#strings.substring(role.authority, 5)}"></span>
                                         </p>
 
-                                        <form action="/admin/userUpdate" method="POST" th:object="${user}">
+                                        <form th:object="${user}">
                                             <!-- Input fields for editing user details -->
                                             <div class="text-start mt-3">
                                                 <div class="mb-3">
-                                                    <input type="hidden" class="form-control" id="userId" name="id"  th:field="*{id}" >
+<!--                                                    <input type="hidden" class="form-control" id="userId" name="id"  th:field="*{id}" >-->
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="fullName" class="form-label">Full Name:</label>
-                                                    <input type="text" class="form-control" id="fullName" name="username" th:field="*{username}"  >
+                                                    <input type="text" class="form-control" id="fullName" name="username" th:field="*{username}" disabled>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="email" class="form-label">Email:</label>
-                                                    <input type="email" class="form-control" id="email" name="email" th:field="*{email}"  >
+                                                    <input type="email" class="form-control" id="email" name="email" th:field="*{email}" disabled>
                                                 </div>
                                                 <!-- Input fields for user roles -->
 <!--                                                <div class="mb-3">-->
@@ -109,7 +113,6 @@
                                             </div>
 
                                             <!-- Submit button -->
-                                            <button type="submit" class="btn btn-primary">Save Changes</button>
                                         </form>
 
                                     </div> <!-- end card-body -->
@@ -141,87 +144,105 @@
                                                 <div class="table-responsive">
                                                     <table class="table table-sm table-centered table-hover table-borderless mb-0">
                                                         <thead class="border-top border-bottom bg-light-subtle border-light">
-                                                            <tr>
-                                                                <th>#</th>
-                                                                <th>Project Name</th>
-                                                                <th>Start Date</th>
-                                                                <th>Due Date</th>
-                                                                <th>Status</th>
-                                                            </tr>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Project Name</th>
+                                                            <th>Start Date</th>
+                                                            <th>Due Date</th>
+                                                            <th>Status</th>
+                                                        </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr>
-                                                                <td>1</td>
-                                                                <td>App design and development</td>
-                                                                <td>01/01/2022</td>
-                                                                <td>10/12/2023</td>
-                                                                <td><span class="badge bg-info-subtle text-info">Work in Progress</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>2</td>
-                                                                <td>Coffee detail page - Main Page</td>
-                                                                <td>21/07/2023</td>
-                                                                <td>12/05/2024</td>
-                                                                <td><span class="badge bg-danger-subtle text-danger">Pending</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>3</td>
-                                                                <td>Poster illustation design</td>
-                                                                <td>18/03/2023</td>
-                                                                <td>28/09/2023</td>
-                                                                <td><span class="badge bg-success-subtle text-success">Done</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>4</td>
-                                                                <td>Drinking bottle graphics</td>
-                                                                <td>02/10/2022</td>
-                                                                <td>07/05/2023</td>
-                                                                <td><span class="badge bg-info-subtle text-info">Work in Progress</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>5</td>
-                                                                <td>Landing page design - Home</td>
-                                                                <td>17/01/2022</td>
-                                                                <td>25/05/2023</td>
-                                                                <td><span class="badge bg-warning-subtle text-warning">Coming soon</span></td>
-                                                            </tr>
-    
+                                                        <!-- Iterate over user projects -->
+                                                        <tr th:each="project, iterStat : ${userProjects}">
+                                                            <td th:text="${iterStat.count}">1</td>
+                                                            <td th:text="${project.projectName}">App design and development</td>
+                                                            <td th:text="${#temporals.format(project.projectStartDate, 'dd/MM/yyyy')}">01/01/2022</td>
+                                                            <td th:text="${#temporals.format(project.projectDueDate, 'dd/MM/yyyy')}">10/12/2023</td>
+                                                            <td>
+                                                                <span th:if="${project.status == 'Working in Progress'}" class="badge bg-info-subtle text-info">Working in Progress</span>
+                                                                <span th:if="${project.status == 'Done'}" class="badge bg-success-subtle text-success">Done</span>
+                                                                <span th:if="${project.status == 'Pending'}" class="badge bg-warning-subtle text-warning">Pending</span>
+                                                                <span th:if="${project.status == 'Coming Soon'}" class="badge bg-secondary-subtle text-secondary">Coming Soon</span>
+                                                            </td>
+                                                        </tr>
                                                         </tbody>
                                                     </table>
+
                                                 </div>
-
-
-
     
                                             </div> <!-- end tab-pane -->
                                             <!-- end about me section content -->
 
     
                                             <div class="tab-pane" id="settings">
-                                                <form action="/updateProfile">
+                                                <form id="updateProfileForm" method="post">
                                                     <h5 class="mb-4 text-uppercase"><i class="ri-contacts-book-2-line me-1"></i> Personal Info</h5>
+                                                    <input type="hidden" id="userId" name="userId" th:value="${user.id}">
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
                                                                 <label for="username" class="form-label">Username</label>
-                                                                <input type="text" class="form-control" id="username" placeholder="Enter your name" value="Ella Stella">
+                                                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter your name" th:value="${user.username}">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
                                                                 <label for="useremail" class="form-label">Email Address</label>
-                                                                <input type="email" class="form-control" id="useremail" placeholder="Enter your email" value="stella@gmail.com">
-<!--                                                                <span class="form-text text-muted"><small>If you want to change email please <a href="javascript: void(0);">click</a> here.</small></span>-->
+                                                                <input type="email" class="form-control" id="useremail" name="email" placeholder="Enter your email" th:value="${user.email}">
                                                             </div>
                                                         </div>
-                                                        <div class="text-end">
-                                                            <button type="submit" class="btn btn-success mb-3"><i class="ri-save-line"></i> Save</button>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="userrole" class="form-label">Role</label>
+                                                                <select class="form-select" id="userrole" name="roleId">
+                                                                    <option value="">Select Role</option>
+                                                                    <!-- Display only PROJECT MANAGER & MEMBER roles for admin -->
+                                                                    <option th:each="role : ${roles}"
+                                                                            th:if="${#strings.contains(role.authority, 'PROJECT_MANAGER') or #strings.contains(role.authority, 'MEMBER')}"
+                                                                            th:value="${role.roleId}"
+                                                                            th:text="${#strings.contains(role.authority, 'PROJECT_MANAGER') ? 'Project Manager' : 'Member'}"></option>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                        <!-- end col -->
                                                     </div> <!-- end row -->
+                                                    <div class="text-end">
+                                                        <button type="button" id="updateButton" class="btn btn-success mb-3"><i class="ri-save-line"></i>Update</button>
+                                                    </div>
                                                 </form>
 
-                                                    <div class="row">
+                                                <!-- JavaScript code to handle form submission -->
+                                                <script th:inline="javascript">
+                                                    $(document).ready(function () {
+                                                        // Handle form submission using AJAX
+                                                        $('#updateButton').click(function () {
+                                                            $.ajax({
+                                                                url: '/updateProfile',
+                                                                type: 'POST',
+                                                                data: $('#updateProfileForm').serialize(), // Serialize form data
+                                                                success: function () {
+                                                                    // Display success message using SweetAlert
+                                                                    Swal.fire({
+                                                                        icon: 'success',
+                                                                        title: 'Profile Updated Successfully!',
+                                                                        showConfirmButton: false,
+                                                                        timer: 1500
+                                                                    });
+                                                                },
+                                                                error: function () {
+                                                                    // Handle error if needed
+                                                                    Swal.fire({
+                                                                        icon: 'error',
+                                                                        title: 'Oops...',
+                                                                        text: 'Something went wrong!'
+                                                                    });
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
+
+                                                <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="accordion accordion-flush mb-3" id="changeEmailPasswordAccordion">
                                                                 <div class="accordion-item">
@@ -523,7 +544,11 @@
                     </div>
                 </div>
             </div>
-        </div>  
+        </div>
+
+        <!-- Include SweetAlert library -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Vendor js -->
         <script src="/js/vendor.min.js"></script>
 

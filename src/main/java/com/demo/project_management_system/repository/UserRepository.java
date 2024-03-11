@@ -18,8 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT u FROM User u WHERE u.email = ?1")
     User findByEmail(String email);
 
-    @Query("SELECT DISTINCT p FROM User u JOIN u.projects p WHERE u.id = :userId")
-    Set<Project> findProjectsByUserId(@Param("userId") long userId);
+    @Query("SELECT DISTINCT p FROM User u JOIN u.projects p WHERE u.id = :userId AND p.status = 'ACTIVE'")
+    Set<Project> findActiveProjectsByUserId(@Param("userId") long userId);
 
     User findUserById (long id);
 

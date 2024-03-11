@@ -107,7 +107,8 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="text-end">
-                                                    <h3 class="text-dark mt-1"><span th:text="${totalIssues}"></span></h3>
+                                                    <h3 class="text-dark mt-1"><span th:text="${totalIssues}"></span>
+                                                    </h3>
                                                     <p class="text-muted mb-1 text-truncate">Total Issues</p>
                                                 </div>
                                             </div>
@@ -128,7 +129,8 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="text-end">
-                                                    <h3 class="text-dark mt-1"><span th:text="${totalAssignedUsers}"></span>
+                                                    <h3 class="text-dark mt-1"><span
+                                                            th:text="${totalAssignedUsers}"></span>
                                                     </h3>
                                                     <p class="text-muted mb-1 text-truncate">Total Assigned Users</p>
                                                 </div>
@@ -138,96 +140,195 @@
                                 </div> <!-- end widget-rounded-circle-->
                             </div> <!-- end col-->
                         </div>
-
-                    </div> <!-- end col-->
-                </div>
-
-                <div class="row">
-                    <div class="col-xl-6 col-lg-6">
-                        <!-- project card -->
-                        <div class="card d-block">
-                            <div class="card-body">
-                                <div class="dropdown float-end">
-                                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                                       aria-expanded="false">
-                                        <i class="ri-more-line"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <!-- Button to trigger update project modal -->
-                                        <a th:href="@{'project/editProject/' + ${project.id} }" th:id="${project.id}"
-                                           class="dropdown-item" data-bs-toggle="modal"
-                                           data-bs-target="#updateProjectModal" data-action="edit">
-                                            <i class="ri-edit-2-fill me-1"></i>
-                                            Edit
-                                        </a>
-                                    </div>
-                                </div>
-                                <!-- project title-->
-                                <h3 class="mt-0 font-20" th:text="${project.projectName}"></h3>
-
-                                <!-- Start Date and End Date -->
-                                <div class="row mt-3">
-                                    <div class="col-md-4">
-                                        <div class="mb-4">
-                                            <h5>Start Date</h5>
-                                            <p class="project-start-date"
-                                               th:text="${#temporals.format(project.projectStartDate, 'dd MMMM yyyy')}"></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-4">
-                                            <h5>End Date</h5>
-                                            <p class="project-end-date"
-                                               th:text="${#temporals.format(project.projectDueDate, 'dd MMMM yyyy')}"></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-4">
-                                            <h5><i class="ri-calendar-schedule-line"></i></h5>
-                                            <p><span class="ms-2 date-difference"></span></p>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <!-- Team Members section -->
-                                <div id="tooltips-container">
-                                    <h5>Team Members:</h5>
-                                    <!-- Iterate over team members -->
-                                    <div class="avatar-group">
-                                        <div th:each="user : ${project.users}">
-                                            <a href="#" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${user.username}" class="avatar-group-item">
-                                                <img th:src="${user.photosImagePath}" class="rounded-circle avatar-xs" alt="User Avatar">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12">
+                                <!-- project card -->
+                                <div class="card d-block">
+                                    <div class="card-body">
+                                        <div class="dropdown float-end">
+                                            <a href="#" class="dropdown-toggle arrow-none card-drop"
+                                               data-bs-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="ri-more-line"></i>
                                             </a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <!-- Button to trigger update project modal -->
+                                                <a th:href="@{'project/editProject/' + ${project.id} }"
+                                                   th:id="${project.id}"
+                                                   class="dropdown-item" data-bs-toggle="modal"
+                                                   data-bs-target="#updateProjectModal" data-action="edit">
+                                                    <i class="ri-edit-2-fill me-1"></i>
+                                                    Edit
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <!-- project title-->
+                                        <h3 class="mt-0 font-20" th:text="${project.projectName}"></h3>
 
-                                </div> <!-- end card-body-->
+                                        <!-- Project Status -->
+                                        <div class="mb-4">
+                                            <!--                                            <h5>Project Status</h5>-->
+                                            <span th:if="${projectStatus == 'Working in Progress'}"
+                                                  class="badge bg-info-subtle text-info">Working in Progress</span>
+                                            <span th:if="${projectStatus == 'Done'}"
+                                                  class="badge bg-success-subtle text-success">Done</span>
+                                            <span th:if="${projectStatus == 'Pending'}"
+                                                  class="badge bg-warning-subtle text-warning">Pending</span>
+                                            <span th:if="${projectStatus == 'Coming Soon'}"
+                                                  class="badge bg-secondary-subtle text-secondary">Coming Soon</span>
+                                        </div>
 
-                            </div> <!-- end card-->
 
-                        </div> <!-- end col -->
+                                        <!-- Start Date and End Date -->
+                                        <div class="row mt-3">
+                                            <div class="col-md-4">
+                                                <div class="mb-4">
+                                                    <h5>Start Date</h5>
+                                                    <p class="project-start-date"
+                                                       th:text="${#temporals.format(project.projectStartDate, 'dd MMMM yyyy')}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-4">
+                                                    <h5>End Date</h5>
+                                                    <p class="project-end-date"
+                                                       th:text="${#temporals.format(project.projectDueDate, 'dd MMMM yyyy')}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-4">
+                                                    <h5><i class="ri-calendar-schedule-line"></i></h5>
+                                                    <p><span class="ms-2 date-difference"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                    </div>
-                    </div>
 
+                                        <!-- Team Members section -->
+                                        <div id="tooltips-container">
+                                            <h5>Team Members:</h5>
+                                            <!-- Iterate over team members -->
+                                            <div class="avatar-group">
+                                                <div th:each="user : ${project.users}">
+                                                    <a href="#" data-bs-container="#tooltips-container"
+                                                       data-bs-toggle="tooltip" data-bs-placement="top"
+                                                       th:title="${user.username}" class="avatar-group-item">
+                                                        <img th:src="${user.photosImagePath}"
+                                                             class="rounded-circle avatar-xs" alt="User Avatar">
+                                                    </a>
+                                                </div>
+                                            </div>
 
+                                        </div> <!-- end card-body-->
+
+                                    </div> <!-- end card-->
+
+                                </div> <!-- end col -->
+
+                            </div>
+                        </div>
+                    </div> <!-- end col-->
                     <div class="col-xl-6">
-                        <div class="col-xl-12">
-                            <div class="page-title"><h4>Status</h4></div>
-                            <div class="status in-progress" style="background-color: #ffcc00;">InProgress <span class="count" th:text="${inProgressCount}"></span></div>
-                            <div class="status open" style="background-color: #00cc00;">Open <span class="count" th:text="${openCount}"></span></div>
-                            <div class="status solved" style="background-color: #3366ff;">Solved <span class="count" th:text="${solvedCount}"></span></div>
-                            <div class="status closed" style="background-color: #999999;">Closed <span class="count" th:text="${closedCount}"></span></div>
-                            <div class="status pending" style="background-color: #ff9900;">Pending <span class="count" th:text="${pendingCount}"></span></div>
+                        <div class="col-xl-12 mb-4">
+                            <div class="page-title p-1"><h4>Status</h4></div>
+                            <div class="status in-progress text-black" style="background-color: #ffcc00;">InProgress
+                                <span class="count" th:text="${inProgressCount}"></span></div>
+                            <div class="status open text-black" style="background-color: #00cc00;">Open <span
+                                    class="count" th:text="${openCount}"></span></div>
+                            <div class="status solved text-black" style="background-color: #3366ff;">Solved <span
+                                    class="count" th:text="${solvedCount}"></span></div>
+                            <div class="status closed text-black" style="background-color: #999999;">Closed <span
+                                    class="count" th:text="${closedCount}"></span></div>
+                            <div class="status pending text-black" style="background-color: #ff9900;">Pending <span
+                                    class="count" th:text="${pendingCount}"></span></div>
                         </div>
                         <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+                        <!-- Edit Project Modal -->
+                        <div class="modal fade" id="updateProjectModal" tabindex="-1"
+                             aria-labelledby="updateProjectModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-success">
+                                        <h5 class="modal-title text-light fw-bold fs-20" id="editProjectModalLabel">Edit
+                                            Project</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Include your edit project form here -->
+                                        <!-- For example: -->
+                                        <form th:object="${project}" th:action="@{/editProject}" method="post">
+                                            <div class="mb-3">
+                                                <label for="projectName" class="form-label">Project Name</label>
+                                                <input type="text" class="form-control" id="projectName"
+                                                       th:field="*{projectName}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="startDate" class="form-label">Start Date</label>
+                                                <input type="date" class="form-control" id="startDate"
+                                                       th:field="*{projectStartDate}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="endDate" class="form-label">End Date</label>
+                                                <input type="date" class="form-control" id="endDate"
+                                                       th:field="*{projectDueDate}">
+                                            </div>
+                                            <input type="hidden" th:field="*{id}">
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Invite Users Modal -->
+                        <div class="modal fade" id="userInviteModal" tabindex="-1"
+                             aria-labelledby="userInviteModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="inviteUsersModalLabel">Invite Users</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Include your invite users form here -->
+                                        <!-- For example: -->
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="userDropdown" class="form-label">Select Users to
+                                                    Invite</label>
+                                                <select class="form-select" id="userDropdown" multiple>
+                                                    <!-- Populate dropdown with user options -->
+                                                    <!-- Example option: -->
+                                                    <!-- <option value="userId">Username</option> -->
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Invite</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rest of your HTML code including dropdown goes here -->
+
+                    </div>
+
+                </div>
+                <div class="row mt-2">
+                    <div class="col-xl-6 col-lg-12 col-md-12">
                         <div id="issueTypeChartContainer" style="height: 300px; width: 100%;"></div>
-                        <div id="categoryChartContainer" style="height: 300px; width: 100%;"></div>
 
                         <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
                         <script>
-                            window.onload = function() {
+                            window.onload = function () {
                                 // Fetch issue type data
                                 fetchIssueTypeData().then(issueTypeData => {
                                     var issueTypeDataPoints = [];
@@ -299,7 +400,7 @@
                                 var chart = new CanvasJS.Chart("chartContainer", {
                                     animationEnabled: true,
                                     title: {
-                                        text: "Chart"
+                                        text: "Issue Status"
                                     },
                                     data: [{
                                         type: "pie",
@@ -307,11 +408,11 @@
                                         yValueFormatString: "##0.00\"%\"",
                                         indexLabel: "{label} {y}",
                                         dataPoints: [
-                                            { y: (inProgressCount / total) * 100, label: "InProgress", color: colors[0] },
-                                            { y: (openCount / total) * 100, label: "Open", color: colors[1] },
-                                            { y: (solvedCount / total) * 100, label: "Solved", color: colors[2] },
-                                            { y: (closedCount / total) * 100, label: "Closed", color: colors[3] },
-                                            { y: (pendingCount / total) * 100, label: "Pending", color: colors[4] }
+                                            {y: (inProgressCount / total) * 100, label: "InProgress", color: colors[0]},
+                                            {y: (openCount / total) * 100, label: "Open", color: colors[1]},
+                                            {y: (solvedCount / total) * 100, label: "Solved", color: colors[2]},
+                                            {y: (closedCount / total) * 100, label: "Closed", color: colors[3]},
+                                            {y: (pendingCount / total) * 100, label: "Pending", color: colors[4]}
                                         ]
                                     }]
                                 });
@@ -320,12 +421,12 @@
 
                             // Function to fetch issue type data
                             function fetchIssueTypeData() {
-                                return new Promise(function(resolve, reject) {
+                                return new Promise(function (resolve, reject) {
                                     // Make an AJAX request to fetch issue type data
                                     var url = '/api/issueTypeData'; // Update with your endpoint
                                     var xhr = new XMLHttpRequest();
                                     xhr.open('GET', url, true);
-                                    xhr.onreadystatechange = function() {
+                                    xhr.onreadystatechange = function () {
                                         if (xhr.readyState === XMLHttpRequest.DONE) {
                                             if (xhr.status === 200) {
                                                 resolve(JSON.parse(xhr.responseText));
@@ -340,12 +441,12 @@
 
                             // Function to fetch category data
                             function fetchCategoryData() {
-                                return new Promise(function(resolve, reject) {
+                                return new Promise(function (resolve, reject) {
                                     // Make an AJAX request to fetch category data
                                     var url = '/api/categoryData'; // Update with your endpoint
                                     var xhr = new XMLHttpRequest();
                                     xhr.open('GET', url, true);
-                                    xhr.onreadystatechange = function() {
+                                    xhr.onreadystatechange = function () {
                                         if (xhr.readyState === XMLHttpRequest.DONE) {
                                             if (xhr.status === 200) {
                                                 resolve(JSON.parse(xhr.responseText));
@@ -358,91 +459,17 @@
                                 });
                             }
                         </script>
-
-
-
-                        <!-- Edit Project Modal -->
-                <div class="modal fade" id="updateProjectModal" tabindex="-1" aria-labelledby="updateProjectModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-success">
-                                <h5 class="modal-title text-light fw-bold fs-20" id="editProjectModalLabel">Edit
-                                    Project</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <!-- Include your edit project form here -->
-                                <!-- For example: -->
-                                <form th:object="${project}" th:action="@{/editProject}" method="post">
-                                    <div class="mb-3">
-                                        <label for="projectName" class="form-label">Project Name</label>
-                                        <input type="text" class="form-control" id="projectName"
-                                               th:field="*{projectName}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="startDate" class="form-label">Start Date</label>
-                                        <input type="date" class="form-control" id="startDate"
-                                               th:field="*{projectStartDate}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="endDate" class="form-label">End Date</label>
-                                        <input type="date" class="form-control" id="endDate"
-                                               th:field="*{projectDueDate}">
-                                    </div>
-                                    <input type="hidden" th:field="*{id}">
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
-                                    </button>
-                                </form>
-
-
-                            </div>
-                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-12 col-md-12">
+                        <div id="categoryChartContainer" style="height: 300px; width: 100%;"></div>
                     </div>
                 </div>
-
-
-
-
-                <!-- Invite Users Modal -->
-                <div class="modal fade" id="userInviteModal" tabindex="-1" aria-labelledby="userInviteModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="inviteUsersModalLabel">Invite Users</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <!-- Include your invite users form here -->
-                                <!-- For example: -->
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="userDropdown" class="form-label">Select Users to Invite</label>
-                                        <select class="form-select" id="userDropdown" multiple>
-                                            <!-- Populate dropdown with user options -->
-                                            <!-- Example option: -->
-                                            <!-- <option value="userId">Username</option> -->
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Invite</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rest of your HTML code including dropdown goes here -->
-
-
-                <div class="row">
+                <div class="row mt-5">
                     <div class="row">
                         <div class="col-lg-12 d-flex justify-content-end">
                             <div class="chat-avatar d-none d-md-block">
-                                <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2" onclick="openChatModal()">
+                                <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2"
+                                     onclick="openChatModal()">
                                     <i class="ri-chat-smile-3-line fs-22"></i>
                                     <span>Chat</span>
                                 </div>
@@ -451,105 +478,149 @@
                     </div>
                 </div>
 
-            </div> <!-- end container fluid -->
 
-        </div> <!-- content -->
+                <!-- end container fluid -->
 
-
-        <!-- Footer Start -->
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div>
-                            <script>document.write(new Date().getFullYear())</script>
-                            © PMS
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!-- end Footer -->
-
-    </div><!-- end content-page -->
-
-    <!-- ============================================================== -->
-    <!-- End Page content -->
-    <!-- ============================================================== -->
-
-    <!-- Chat Modal structure -->
-    <div class="modal fade" id="right-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog">
-        <div class="modal-dialog modal-dialog-scrollable modal-xl modal-right">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Chat Box</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body px-5">
-                    <!-- Your modal body content goes here -->
-
-                    <div class="py-2 px-3 border-bottom border-light">
-                        <div class="row justify-content-between py-1">
-                            <div class="col-sm-7">
-                                <div class="d-flex align-items-start">
+            </div> <!-- content -->
 
 
-
+            <!-- Footer Start -->
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div>
+                                <script>document.write(new Date().getFullYear())</script>
+                                © PMS
                             </div>
                         </div>
                     </div>
-                    <div class="p-0">
+                </div>
+            </footer>
+            <!-- end Footer -->
 
-                        <div class="connecting">
-                            Connecting...
-                        </div>
+        </div><!-- end content-page -->
 
-                        <div class="message-container">
-                            <ul class="conversation-list p-3" data-simplebar style="max-height: none; overflow: auto;">
-                            </ul>
-                        </div>
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
 
-                        <div class="fixed-form-container">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="bg-light p-3 rounded">
-                                        <form class="needs-validation" novalidate="" name="chat-form" id="chat-form">
-                                            <div class="row">
-                                                <div class="col mb-2 mb-sm-0">
-                                                    <input type="text" id="message" class="form-control border-0"
-                                                           placeholder="Enter your text" required=""/>
-                                                    <div class="invalid-feedback">
-                                                        Please enter your messsage
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-auto">
-                                                    <div class="btn-group">
-                                                        <!--                                                    <a href="#" class="btn btn-light"><i class="ri-attachment-2"></i></a>-->
-                                                        <button type="submit" class="btn btn-success chat-send w-100"><i
-                                                                class="ri-send-plane-2-line"></i></button>
-                                                    </div>
-                                                </div>
-                                                <!-- end col -->
-                                            </div>
-                                            <!-- end row-->
-                                        </form>
+        <!-- Chat Modal structure -->
+        <div class="modal fade" id="right-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog">
+            <div class="modal-dialog modal-dialog-scrollable modal-xl modal-right">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Chat Box</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body px-5">
+                        <!-- Your modal body content goes here -->
+
+                        <div class="py-2 px-3 border-bottom border-light">
+                            <div class="row justify-content-between py-1">
+                                <div class="col-sm-7">
+                                    <div class="d-flex align-items-start">
+                                        <img src="/images/users/avatar-5.jpg" class="me-2 rounded-circle" height="36"
+                                             alt="Project Image">
+                                        <div>
+                                            <h5 class="my-0 font-15">
+                                                <a href="#" class="text-reset" id="projectNameLink"></a>
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
-                                <!-- end col-->
                             </div>
                         </div>
-                        <!-- end row -->
+                        <div class="p-0">
+
+                            <div class="connecting">
+                                Connecting...
+                            </div>
+
+                            <div class="message-container">
+                                <ul class="conversation-list p-3" data-simplebar
+                                    style="max-height: none; overflow: auto;">
+                                </ul>
+                            </div>
+
+                            <div class="fixed-form-container">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="bg-light p-3 rounded">
+                                            <form class="needs-validation" novalidate="" name="chat-form"
+                                                  id="chat-form">
+                                                <div class="row">
+                                                    <div class="col mb-2 mb-sm-0">
+                                                        <input type="text" id="message" class="form-control border-0"
+                                                               placeholder="Enter your text" required=""/>
+                                                        <div class="invalid-feedback">
+                                                            Please enter your messsages
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-auto">
+                                                        <div class="btn-group">
+                                                            <!--                                                    <a href="#" class="btn btn-light"><i class="ri-attachment-2"></i></a>-->
+                                                            <button type="submit"
+                                                                    class="btn btn-success chat-send w-100"><i
+                                                                    class="ri-send-plane-2-line"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end col -->
+                                                </div>
+                                                <!-- end row-->
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- end col-->
+                                </div>
+                            </div>
+                            <!-- end row -->
+                        </div>
+                        <!-- end card-body -->
                     </div>
-                    <!-- end card-body -->
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>
 <!-- END wrapper -->
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!--project name link-->
+<script>
+    // Update project name in the modal
+    $(document).ready(function () {
+        projectname(function (projectName) {
+            console.log('Project name retrieved:', projectName);
+            $('#projectNameLink').text(projectName);
+        });
+    });
+
+    function projectname(callback) {
+        const projectId = getProjectIdFromUrl();
+        console.log('Project ID:', projectId);
+
+        // Make a fetch request to fetch the project name
+        fetch(`/api/getProjectName?projectId=${encodeURIComponent(projectId)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetch Success:', data);
+                const projectName = data.projectName;
+                callback(projectName);
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                callback('Unknown Project');
+            })
+    }
+</script>
 
 <!-- date difference -->
 <script th:inline="javascript">

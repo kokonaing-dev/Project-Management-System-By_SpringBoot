@@ -1,13 +1,21 @@
 package com.demo.project_management_system.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class NotificationRequest {
-    private String content;
-    private Long projectId;
-    private List<Long> userIds;
 
+    private boolean isUserConnected;
+    private String userEmail;
+    private Long userId;
+
+    // Constructors, getters, and setters
 }
+
+
+

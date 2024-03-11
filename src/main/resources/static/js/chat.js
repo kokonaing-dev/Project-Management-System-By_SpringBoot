@@ -1,7 +1,8 @@
-
 function sendMessage(event) {
     const messageContent = messageInput.value.trim();
-    if(messageContent && stompClient) {
+    const errorMessageDiv = document.querySelector('.invalid-feedback');
+
+    if (messageContent && stompClient) {
         const chatMessage = {
             messageType: 'CHAT',
             content: messageInput.value,
@@ -10,12 +11,20 @@ function sendMessage(event) {
                 username: username,
             },
             project: {
-                id : projectId
+                id: projectId
             }
         };
         stompClient.send(`/app/${projectId}/sendMessage`, {}, JSON.stringify(chatMessage));
 
+        // Clear input value
         messageInput.value = '';
+
+        // Remove error message
+        errorMessageDiv.textContent = '';
+    } else {
+        // If the message content is empty, display the error message
+        errorMessageDiv.textContent = 'Please enter your message';
     }
+
     event.preventDefault();
 }

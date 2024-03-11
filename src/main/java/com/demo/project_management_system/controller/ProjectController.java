@@ -6,6 +6,7 @@ import com.demo.project_management_system.entity.*;
 import com.demo.project_management_system.service.*;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,10 @@ import java.util.*;
 
 
 @Controller
+@RequiredArgsConstructor
 public class ProjectController {
+
+    private final NotificationService notificationService;
 
     @Autowired
     private ProjectService projectService;
@@ -40,43 +44,6 @@ public class ProjectController {
 
     @Autowired
     private IssueTypeService issueTypeService;
-
-//    @PostMapping(value = "/project/create")
-//    public ResponseEntity<?> createProject(@ModelAttribute("project") Project project,
-//                                           @RequestParam("userIds") List<Long> userIds,
-//                                           @RequestParam("loggedInUserId") int loggedInUserId,
-//                                           Model model) {
-//        try {
-//            // Check if projectName already exists
-//            if (projectService.isProjectNameExists(project.getProjectName())) {
-//                return ResponseEntity.badRequest().body("Project with the same name already exists");
-//            }
-//
-//            // Check if project start date is greater than end date
-//            if (project.getProjectStartDate().isAfter(project.getProjectEndDate())) {
-//                return ResponseEntity.badRequest().body("Project start date cannot be after project end date");
-//            }
-//
-//            // Retrieve the logged-in user from the userService
-//            User loggedInUser = userService.getUserById(loggedInUserId);
-//
-//            // Retrieve User entities based on the provided user IDs
-//            Set<User> users = userService.findByIdIn(userIds);
-//
-//            // Add the logged-in user to the set of users
-//            users.add(loggedInUser);
-//
-//            // Set the retrieved users on the project
-//            project.setUsers(users);
-//
-//            Project savedProject = projectService.save(project);
-//            return ResponseEntity.ok(savedProject);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during project creation");
-//        }
-//    }
-
-
 
     @PostMapping(value = "/project/create")
     public ResponseEntity<?> createProject(@ModelAttribute("project") Project project,
@@ -119,6 +86,7 @@ public class ProjectController {
 
             // Save the project
             Project savedProject = projectService.save(project);
+            notificationService.sendNotification(project);
 
             return ResponseEntity.ok(savedProject);
         } catch (Exception e) {
@@ -162,7 +130,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/projectDetails/{projectId}")
+    @GetMapping("/projectDetail/{projectId}")
     public String goToHomePage(@PathVariable long projectId,
                                @AuthenticationPrincipal UserDetails userDetails,
                                Model model, HttpSession session) {
@@ -177,11 +145,15 @@ public class ProjectController {
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
 
-            int inProgressCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.IN_PROGRESS,(long) projectId);
-            int openCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.OPEN, (long) projectId);
-            int solvedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.SOLVED, (long) projectId);
-            int closedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.CLOSED,(long) projectId);
-            int pendingCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.PENDING,(long) projectId);
+            // Fetch project status using your service method
+            String projectStatus = project.calculateProjectStatus(); // Assuming you have a method to calculate project status
+            model.addAttribute("projectStatus", projectStatus); // Add project status to the model
+
+            int inProgressCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.IN_PROGRESS, projectId);
+            int openCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.OPEN, projectId);
+            int solvedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.SOLVED, projectId);
+            int closedCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.CLOSED, projectId);
+            int pendingCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.PENDING, projectId);
 
 
             int totalIssues = issueService.getTotalIssuesByProjectId(projectId);
@@ -224,10 +196,10 @@ public class ProjectController {
             // Fetch mapping of issue types to statuses
             Map<Category, Set<IssueStatus>> categoryStatusMapping = categoryService.getCategoryStatusMapping();
 
-// Create a map to store category data by status
+            // Create a map to store category data by status
             Map<IssueStatus, Map<String, Integer>> categoryDataByStatus = new HashMap<>();
 
-// Populate category data by status
+            // Populate category data by status
             for (Category category : categories) {
                 Set<IssueStatus> statuses = categoryStatusMapping.getOrDefault(category, Collections.emptySet());
                 for (IssueStatus status : statuses) {
@@ -236,7 +208,7 @@ public class ProjectController {
                 }
             }
 
-// Add category data to model
+            // Add category data to model
             model.addAttribute("categoryDataByStatus", categoryDataByStatus);
 
 
@@ -244,6 +216,14 @@ public class ProjectController {
             // Handle project not found
         }
         return "project-detail"; // return the name of your homepage template
+    }
+
+    @PostMapping("/editProject")
+    public String updateProject(@ModelAttribute("project") Project project) {
+        // Update the project details using the project service
+        projectService.updateProject(project);
+        // Redirect to a suitable page after updating the project
+        return "redirect:/projectDetail/" + project.getId(); // Redirect to the project detail page
     }
 
     @GetMapping("/api/issueTypeData")

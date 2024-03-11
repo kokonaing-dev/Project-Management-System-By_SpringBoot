@@ -3,7 +3,7 @@
       xsi:schemaLocation="http://www.thymeleaf.org " lang="en">
 
 <head>
-    <meta charset='utf-8' />
+    <meta charset='utf-8'/>
     <title>Dashboard </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description"/>
@@ -52,15 +52,15 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script>
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 events: {
                     url: '/api/events',
                     method: 'GET',
-                    success: function(data) {
-                        var events = data.map(function(event) {
+                    success: function (data) {
+                        var events = data.map(function (event) {
                             var color;
                             // Determine color based on some criteria, for example, issue priority
                             switch (event.priority) {
@@ -93,7 +93,7 @@
                         });
                         return events;
                     },
-                    failure: function() {
+                    failure: function () {
                         alert('There was an error while fetching events!');
                     }
                 }
@@ -394,6 +394,10 @@
 
 <!-- Datatable Demo Aapp js -->
 <script src="/js/pages/demo.datatable-init.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/socket.js"></script>
 
 </body>
 

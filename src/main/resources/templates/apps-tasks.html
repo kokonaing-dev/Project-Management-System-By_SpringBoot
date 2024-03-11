@@ -236,7 +236,8 @@
                                         <!-- task -->
                                         <div class="table-responsive">
                                             <div class="row justify-content-sm-between">
-                                                <table id="today-tasks" class="table table-striped nowrap" style="width:100%">
+                                                <table id="today-tasks" class="table table-striped nowrap"
+                                                       style="width:100%">
                                                     <thead>
                                                     <tr>
                                                         <th>Project</th>
@@ -244,7 +245,8 @@
                                                         <th>Subject</th>
                                                         <th>Status<i class="fa-solid fa-pen-to-square ms-2"></i></th>
                                                         <th>Priority
-                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
                                                         </th>
                                                         <th>Due Date</th>
                                                         <th>Details</th>
@@ -294,11 +296,16 @@
                                                                         th:selected="${issue.issueStatus.ordinal() == 3}">
                                                                     PENDING
                                                                 </option>
-                                                                <th:block th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                <th:block
+                                                                        th:if="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
                                                                     <!-- Exclude the CLOSED option for ROLE_MEMBER -->
                                                                 </th:block>
-                                                                <th:block th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
-                                                                    <option value="CLOSED" th:selected="${issue.issueStatus.ordinal() == 4}">CLOSED</option>
+                                                                <th:block
+                                                                        th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                                                                    <option value="CLOSED"
+                                                                            th:selected="${issue.issueStatus.ordinal() == 4}">
+                                                                        CLOSED
+                                                                    </option>
                                                                 </th:block>
                                                             </select>
                                                         </td>
@@ -308,10 +315,20 @@
                                                                 <span th:text="${issue.priority}"></span>
                                                             </div>
                                                             <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
-                                                                    class="priorityDropdown form-select" th:id="${issue.id}">
-                                                                <option value="HIGH" th:selected="${issue.priority.ordinal() == 0}">HIGH</option>
-                                                                <option value="MEDIUM" th:selected="${issue.priority.ordinal() == 1}">MEDIUM</option>
-                                                                <option value="LOW" th:selected="${issue.priority.ordinal() == 2}">LOW</option>
+                                                                    class="priorityDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="HIGH"
+                                                                        th:selected="${issue.priority.ordinal() == 0}">
+                                                                    HIGH
+                                                                </option>
+                                                                <option value="MEDIUM"
+                                                                        th:selected="${issue.priority.ordinal() == 1}">
+                                                                    MEDIUM
+                                                                </option>
+                                                                <option value="LOW"
+                                                                        th:selected="${issue.priority.ordinal() == 2}">
+                                                                    LOW
+                                                                </option>
                                                             </select>
                                                         </td>
 
@@ -410,7 +427,8 @@
                                         <!-- task -->
                                         <div class="table-responsive">
                                             <div class="row justify-content-sm-between">
-                                                <table id="upcoming-tasks" class="table table-striped nowrap" style="width:100%">
+                                                <table id="upcoming-tasks" class="table table-striped nowrap"
+                                                       style="width:100%">
                                                     <thead>
                                                     <tr>
                                                         <th>Project</th>
@@ -418,7 +436,8 @@
                                                         <th>Subject</th>
                                                         <th>Status</th>
                                                         <th>Priority
-                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
                                                         </th>
                                                         <th>Due Date</th>
                                                         <th>Details</th>
@@ -437,8 +456,8 @@
                                                                       class="badge bg-danger-subtle text-danger p-1"
                                                                       th:text="${issue.issueType.issueName}"></span>
                                                          .       <span th:case="'Request'"
-                                                                      class="badge bg-info-subtle text-info p-1"
-                                                                      th:text="${issue.issueType.issueName}"></span>
+                                                                       class="badge bg-info-subtle text-info p-1"
+                                                                       th:text="${issue.issueType.issueName}"></span>
                                                                 <!-- Add more cases for other issue names -->
                                                                 <span th:case="*"
                                                                       class="badge bg-warning-subtle text-warning p-1"
@@ -456,10 +475,20 @@
                                                                 <span th:text="${issue.priority}"></span>
                                                             </div>
                                                             <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
-                                                                    class="priorityDropdown form-select" th:id="${issue.id}">
-                                                                <option value="HIGH" th:selected="${issue.priority.ordinal() == 0}">HIGH</option>
-                                                                <option value="MEDIUM" th:selected="${issue.priority.ordinal() == 1}">MEDIUM</option>
-                                                                <option value="LOW" th:selected="${issue.priority.ordinal() == 2}">LOW</option>
+                                                                    class="priorityDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="HIGH"
+                                                                        th:selected="${issue.priority.ordinal() == 0}">
+                                                                    HIGH
+                                                                </option>
+                                                                <option value="MEDIUM"
+                                                                        th:selected="${issue.priority.ordinal() == 1}">
+                                                                    MEDIUM
+                                                                </option>
+                                                                <option value="LOW"
+                                                                        th:selected="${issue.priority.ordinal() == 2}">
+                                                                    LOW
+                                                                </option>
                                                             </select>
                                                         </td>
 
@@ -506,13 +535,15 @@
                                                     <tr>
                                                         <th>Project</th>
                                                         <th>Issue Type</th>
-                                                         <th>Subject</th>
+                                                        <th>Subject</th>
                                                         <th style="display: none;">Description</th>
                                                         <th>Status
-                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
                                                         </th>
                                                         <th>Priority
-                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}" class="fa-solid fa-pen-to-square ms-2"></i>
+                                                            <i th:if="${not #authorization.expression('hasRole(''ROLE_MEMBER'')')}"
+                                                               class="fa-solid fa-pen-to-square ms-2"></i>
                                                         </th>
                                                         <th>Due Date</th>
                                                         <th style="display: none;">Attachments</th>
@@ -552,12 +583,28 @@
                                                                 <span th:text="${issue.issueStatus}"></span>
                                                             </div>
                                                             <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
-                                                                    class="issueStatusDropdown form-select" th:id="${issue.id}">
-                                                                <option value="OPEN" th:selected="${issue.issueStatus.ordinal() == 0}">OPEN</option>
-                                                                <option value="IN_PROGRESS" th:selected="${issue.issueStatus.ordinal() == 1}">IN_PROGRESS</option>
-                                                                <option value="SOLVED" th:selected="${issue.issueStatus.ordinal() == 2}">SOLVED</option>
-                                                                <option value="PENDING" th:selected="${issue.issueStatus.ordinal() == 3}">PENDING</option>
-                                                                <option value="CLOSED" th:selected="${issue.issueStatus.ordinal() == 4}">CLOSED</option>
+                                                                    class="issueStatusDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="OPEN"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 0}">
+                                                                    OPEN
+                                                                </option>
+                                                                <option value="IN_PROGRESS"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 1}">
+                                                                    IN_PROGRESS
+                                                                </option>
+                                                                <option value="SOLVED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 2}">
+                                                                    SOLVED
+                                                                </option>
+                                                                <option value="PENDING"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 3}">
+                                                                    PENDING
+                                                                </option>
+                                                                <option value="CLOSED"
+                                                                        th:selected="${issue.issueStatus.ordinal() == 4}">
+                                                                    CLOSED
+                                                                </option>
                                                             </select>
                                                         </td>
 
@@ -566,10 +613,20 @@
                                                                 <span th:text="${issue.priority}"></span>
                                                             </div>
                                                             <select th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}"
-                                                                    class="priorityDropdown form-select" th:id="${issue.id}">
-                                                                <option value="HIGH" th:selected="${issue.priority.ordinal() == 0}">HIGH</option>
-                                                                <option value="MEDIUM" th:selected="${issue.priority.ordinal() == 1}">MEDIUM</option>
-                                                                <option value="LOW" th:selected="${issue.priority.ordinal() == 2}">LOW</option>
+                                                                    class="priorityDropdown form-select"
+                                                                    th:id="${issue.id}">
+                                                                <option value="HIGH"
+                                                                        th:selected="${issue.priority.ordinal() == 0}">
+                                                                    HIGH
+                                                                </option>
+                                                                <option value="MEDIUM"
+                                                                        th:selected="${issue.priority.ordinal() == 1}">
+                                                                    MEDIUM
+                                                                </option>
+                                                                <option value="LOW"
+                                                                        th:selected="${issue.priority.ordinal() == 2}">
+                                                                    LOW
+                                                                </option>
                                                             </select>
                                                         </td>
 
@@ -580,7 +637,8 @@
                                                                     <ul>
                                                                         <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">
                                                                             <li>
-                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>
+                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}"
+                                                                                   th:text="${attachmentFileName}">Download</a>
                                                                             </li>
                                                                         </span>
                                                                     </ul>
@@ -618,7 +676,8 @@
                                     <a class="text-dark" data-bs-toggle="collapse" href="#closedTasks" role="button"
                                        aria-expanded="false" aria-controls="closedTasks">
                                         <i class='ri-arrow-down-s-line fs-18'></i>Closed Tasks <span
-                                            class="text-muted">(</span><span class="text-muted" th:text="${closedIssuesCount}"></span><span
+                                            class="text-muted">(</span><span class="text-muted"
+                                                                             th:text="${closedIssuesCount}"></span><span
                                             class="text-muted">)</span>
                                     </a>
                                 </h5>
@@ -662,7 +721,8 @@
                                                                     <ul>
                                                                         <span th:each="attachmentFileName, iterStat : ${issue.attachmentFileNames}">
                                                                             <li>
-                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}" th:text="${attachmentFileName}">Download</a>
+                                                                                <a th:href="@{/downloadAttachment(issueId=${issue.id}, fileName=${attachmentFileName})}"
+                                                                                   th:text="${attachmentFileName}">Download</a>
                                                                             </li>
                                                                         </span>
                                                                     </ul>
@@ -701,7 +761,8 @@
                                     <a class="text-dark" data-bs-toggle="collapse" href="#stackMembers" role="button"
                                        aria-expanded="false" aria-controls="stackMembers">
                                         <i class='ri-arrow-down-s-line fs-18'></i>Stack Members <span
-                                            class="text-muted">(</span><span class="text-muted" th:text="${totalUsersWithMultipleIssues}"></span><span
+                                            class="text-muted">(</span><span class="text-muted"
+                                                                             th:text="${totalUsersWithMultipleIssues}"></span><span
                                             class="text-muted">)</span>
                                     </a>
                                 </h5>
@@ -730,39 +791,46 @@
                                                                 <span th:text="${user.username}"></span>
                                                             </td>
                                                             <td>
-                                                                <img th:src="${user.photosImagePath}" alt="User Photo" style="width:50px; height:50px;">
+                                                                <img th:src="${user.photosImagePath}" alt="User Photo"
+                                                                     style="width:50px; height:50px;">
                                                             </td>
                                                             <td style="display: none;">
                                                                 <span th:text="${user.email}"></span>
                                                             </td>
                                                             <td>
                                                                 <ul>
-                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.project.projectName}"></li>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.project.projectName}"></li>
                                                                 </ul>
                                                             </td>
                                                             <td>
                                                                 <ul>
-                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.issueType.issueName}"></li>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.issueType.issueName}"></li>
                                                                 </ul>
                                                             </td>
                                                             <td>
                                                                 <ul>
-                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.subject}"></li>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.subject}"></li>
                                                                 </ul>
                                                             </td>
                                                             <td>
                                                                 <ul>
-                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.issueStatus}"></li>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.issueStatus}"></li>
                                                                 </ul>
                                                             </td>
                                                             <td>
                                                                 <ul>
-                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.priority}"></li>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.priority}"></li>
                                                                 </ul>
                                                             </td>
                                                             <td>
                                                                 <ul>
-                                                                    <li th:each="issue : ${user.issues}" th:text="${issue.planDueDate}"></li>
+                                                                    <li th:each="issue : ${user.issues}"
+                                                                        th:text="${issue.planDueDate}"></li>
                                                                 </ul>
                                                             </td>
                                                         </tr>
@@ -865,218 +933,219 @@
         </div>
 
 
-        </div>
-
-        <!-- ============================================================== -->
-        <!-- End Page content -->
-        <!-- ============================================================== -->
-
     </div>
-    <!-- END wrapper -->
 
-    <!-- Theme Settings -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
-        <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
-            <h5 class="text-white m-0">Theme Settings</h5>
-            <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas"
-                    aria-label="Close"></button>
-        </div>
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
 
-        <div class="offcanvas-body p-0">
-            <div data-simplebar class="h-100">
-                <div class="card mb-0 p-3">
-                    <div class="alert alert-warning" role="alert">
-                        <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+</div>
+<!-- END wrapper -->
+
+<!-- Theme Settings -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="theme-settings-offcanvas">
+    <div class="d-flex align-items-center bg-primary p-3 offcanvas-header">
+        <h5 class="text-white m-0">Theme Settings</h5>
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body p-0">
+        <div data-simplebar class="h-100">
+            <div class="card mb-0 p-3">
+                <div class="alert alert-warning" role="alert">
+                    <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+                </div>
+
+                <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical"
+                               class="form-check-input">
+                        <label class="form-check-label" for="customizer-layout01">Vertical</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal"
+                               class="form-check-input">
+                        <label class="form-check-label" for="customizer-layout02">Horizontal</label>
+                    </div>
+                </div>
+
+                <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light"
+                               value="light">
+                        <label class="form-check-label" for="layout-color-light">Light</label>
                     </div>
 
-                    <h5 class="mt-0 fs-16 fw-bold mb-3">Choose Layout</h5>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark"
+                               value="dark">
+                        <label class="form-check-label" for="layout-color-dark">Dark</label>
+                    </div>
+                </div>
+
+                <div id="layout-width">
+                    <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
+
                     <div class="d-flex flex-column gap-2">
                         <div class="form-check form-switch">
-                            <input id="customizer-layout01" name="data-layout" type="checkbox" value="vertical"
-                                   class="form-check-input">
-                            <label class="form-check-label" for="customizer-layout01">Vertical</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input id="customizer-layout02" name="data-layout" type="checkbox" value="horizontal"
-                                   class="form-check-input">
-                            <label class="form-check-label" for="customizer-layout02">Horizontal</label>
-                        </div>
-                    </div>
-
-                    <h5 class="my-3 fs-16 fw-bold">Color Scheme</h5>
-
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-light"
-                                   value="light">
-                            <label class="form-check-label" for="layout-color-light">Light</label>
+                            <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                   id="layout-mode-fluid" value="fluid">
+                            <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
                         </div>
 
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-bs-theme" id="layout-color-dark"
-                                   value="dark">
-                            <label class="form-check-label" for="layout-color-dark">Dark</label>
-                        </div>
-                    </div>
-
-                    <div id="layout-width">
-                        <h5 class="my-3 fs-16 fw-bold">Layout Mode</h5>
-
-                        <div class="d-flex flex-column gap-2">
+                        <div id="layout-boxed">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" name="data-layout-mode"
-                                       id="layout-mode-fluid" value="fluid">
-                                <label class="form-check-label" for="layout-mode-fluid">Fluid</label>
+                                       id="layout-mode-boxed" value="boxed">
+                                <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
                             </div>
+                        </div>
 
-                            <div id="layout-boxed">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="data-layout-mode"
-                                           id="layout-mode-boxed" value="boxed">
-                                    <label class="form-check-label" for="layout-mode-boxed">Boxed</label>
-                                </div>
-                            </div>
-
-                            <div id="layout-detached">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="data-layout-mode"
-                                           id="data-layout-detached" value="detached">
-                                    <label class="form-check-label" for="data-layout-detached">Detached</label>
-                                </div>
+                        <div id="layout-detached">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="data-layout-mode"
+                                       id="data-layout-detached" value="detached">
+                                <label class="form-check-label" for="data-layout-detached">Detached</label>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+                <h5 class="my-3 fs-16 fw-bold">Topbar Color</h5>
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                               id="topbar-color-light" value="light">
+                        <label class="form-check-label" for="topbar-color-light">Light</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                               id="topbar-color-dark" value="dark">
+                        <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="data-topbar-color"
+                               id="topbar-color-brand" value="brand">
+                        <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
 
                     <div class="d-flex flex-column gap-2">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
-                                   id="topbar-color-light" value="light">
-                            <label class="form-check-label" for="topbar-color-light">Light</label>
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-light" value="light">
+                            <label class="form-check-label" for="leftbar-color-light">Light</label>
                         </div>
 
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
-                                   id="topbar-color-dark" value="dark">
-                            <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-dark" value="dark">
+                            <label class="form-check-label" for="leftbar-color-dark">Dark</label>
                         </div>
-
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="data-topbar-color"
-                                   id="topbar-color-brand" value="brand">
-                            <label class="form-check-label" for="topbar-color-brand">Brand</label>
+                            <input class="form-check-input" type="checkbox" name="data-menu-color"
+                                   id="leftbar-color-brand" value="brand">
+                            <label class="form-check-label" for="leftbar-color-brand">Brand</label>
                         </div>
                     </div>
-
-                    <div>
-                        <h5 class="my-3 fs-16 fw-bold">Menu Color</h5>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color"
-                                       id="leftbar-color-light" value="light">
-                                <label class="form-check-label" for="leftbar-color-light">Light</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color"
-                                       id="leftbar-color-dark" value="dark">
-                                <label class="form-check-label" for="leftbar-color-dark">Dark</label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-menu-color"
-                                       id="leftbar-color-brand" value="brand">
-                                <label class="form-check-label" for="leftbar-color-brand">Brand</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="sidebar-size">
-                        <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
-
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-default" value="default">
-                                <label class="form-check-label" for="leftbar-size-default">Default</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-compact" value="compact">
-                                <label class="form-check-label" for="leftbar-size-compact">Compact</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-small" value="condensed">
-                                <label class="form-check-label" for="leftbar-size-small">Condensed</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-small-hover" value="sm-hover">
-                                <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-full" value="full">
-                                <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="data-sidenav-size"
-                                       id="leftbar-size-fullscreen" value="fullscreen">
-                                <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="layout-position">
-                        <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
-
-                        <div class="btn-group checkbox" role="group">
-                            <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed"
-                                   value="fixed">
-                            <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
-
-                            <input type="radio" class="btn-check" name="data-layout-position"
-                                   id="layout-position-scrollable" value="scrollable">
-                            <label class="btn btn-soft-primary w-sm ms-0"
-                                   for="layout-position-scrollable">Scrollable</label>
-                        </div>
-                    </div>
-
-                    <div id="sidebar-user">
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
-                            <div class="form-check form-switch">
-                                <input type="checkbox" class="form-check-input" name="sidebar-user"
-                                       id="sidebaruser-check">
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div id="sidebar-size">
+                    <h5 class="my-3 fs-16 fw-bold">Sidebar Size</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-default" value="default">
+                            <label class="form-check-label" for="leftbar-size-default">Default</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-compact" value="compact">
+                            <label class="form-check-label" for="leftbar-size-compact">Compact</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-small" value="condensed">
+                            <label class="form-check-label" for="leftbar-size-small">Condensed</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-small-hover" value="sm-hover">
+                            <label class="form-check-label" for="leftbar-size-small-hover">Hover View</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-full" value="full">
+                            <label class="form-check-label" for="leftbar-size-full">Full Layout</label>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="data-sidenav-size"
+                                   id="leftbar-size-fullscreen" value="fullscreen">
+                            <label class="form-check-label" for="leftbar-size-fullscreen">Fullscreen Layout</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="layout-position">
+                    <h5 class="my-3 fs-16 fw-bold">Layout Position</h5>
+
+                    <div class="btn-group checkbox" role="group">
+                        <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed"
+                               value="fixed">
+                        <label class="btn btn-soft-primary w-sm" for="layout-position-fixed">Fixed</label>
+
+                        <input type="radio" class="btn-check" name="data-layout-position"
+                               id="layout-position-scrollable" value="scrollable">
+                        <label class="btn btn-soft-primary w-sm ms-0"
+                               for="layout-position-scrollable">Scrollable</label>
+                    </div>
+                </div>
+
+                <div id="sidebar-user">
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <label class="fs-16 fw-bold m-0" for="sidebaruser-check">Sidebar User Info</label>
+                        <div class="form-check form-switch">
+                            <input type="checkbox" class="form-check-input" name="sidebar-user"
+                                   id="sidebaruser-check">
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
         </div>
-        <div class="offcanvas-footer border-top p-3 text-center">
-            <div class="row">
-                <div class="col-6">
-                    <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
-                </div>
-                <div class="col-6">
-                    <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
-                </div>
+
+    </div>
+    <div class="offcanvas-footer border-top p-3 text-center">
+        <div class="row">
+            <div class="col-6">
+                <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
+            </div>
+            <div class="col-6">
+                <a href="#" role="button" class="btn btn-primary w-100">Buy Now</a>
             </div>
         </div>
     </div>
+</div>
 
 <!--  Add new task modal -->
-<div class="modal fade task-modal-content" id="add-new-task-modal" tabindex="-1" role="dialog" aria-labelledby="NewTaskModalLabel" aria-hidden="true">
+<div class="modal fade task-modal-content" id="add-new-task-modal" tabindex="-1" role="dialog"
+     aria-labelledby="NewTaskModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1070px;">
         <div class="modal-content">
             <div class="modal-header" style="background-color:#007bff; color: #fff; padding: 20px 30px;">
@@ -1093,7 +1162,8 @@
                             <div class="mb-3">
                                 <label class="form-label">IssueType</label>
                                 <select class="form-select" th:field="*{issueType}">
-                                    <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}" th:text="${issueType.issueName}"></option>
+                                    <option th:each="issueType : ${issueTypes}" th:value="${issueType.id}"
+                                            th:text="${issueType.issueName}"></option>
                                 </select>
                             </div>
                         </div>
@@ -1101,7 +1171,8 @@
                             <div class="mb-3">
                                 <label class="form-label">Category</label>
                                 <select class="form-select" th:field="*{category}">
-                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+                                    <option th:each="category : ${categories}" th:value="${category.id}"
+                                            th:text="${category.categoryName}"></option>
                                 </select>
                             </div>
                         </div>
@@ -1110,7 +1181,8 @@
                     <div class="mb-3">
                         <label for="subject" class="form-label">Subject</label>
                         <span id="subjectError" class="text-danger"></span>
-                        <input type="text" class="form-control" id="subject" th:field="*{subject}" placeholder="Subject">
+                        <input type="text" class="form-control" id="subject" th:field="*{subject}"
+                               placeholder="Subject">
                     </div>
 
                     <div class="mb-3">
@@ -1123,7 +1195,8 @@
                             <div class="mb-3">
                                 <label class="form-label">Priority</label>
                                 <select class="form-select" th:field="*{priority}">
-                                    <option th:each="priority : ${priorities}" th:value="${priority}" th:text="${priority}"></option>
+                                    <option th:each="priority : ${priorities}" th:value="${priority}"
+                                            th:text="${priority}"></option>
                                 </select>
                             </div>
                         </div>
@@ -1161,7 +1234,8 @@
                         <div class="mb-3 edit">
                             <label class="form-label">Assign To</label>
                             <!-- Add this dropdown for selecting users -->
-                            <select id="userSelect" class="form-control" multiple="multiple" th:field="*{users}" required>
+                            <select id="userSelect" class="form-control" multiple="multiple" th:field="*{users}"
+                                    required>
                                 <!-- Default option -->
                                 <!-- Options will be dynamically populated -->
                             </select>
@@ -1178,87 +1252,87 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.js"
-            integrity="sha512-WHVh4oxWZQOEVkGECWGFO41WavMMW5vNCi55lyuzDBID+dHg2PIxVufsguM7nfTYN3CEeQ/6NB46FWemzpoI6Q=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        $(document).ready(function () {
-            // Function to handle form submission
-            $('#createIssueBtn').click(function (event) {
-                // Prevent default form submission
-                event.preventDefault();
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.js"
+        integrity="sha512-WHVh4oxWZQOEVkGECWGFO41WavMMW5vNCi55lyuzDBID+dHg2PIxVufsguM7nfTYN3CEeQ/6NB46FWemzpoI6Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(document).ready(function () {
+        // Function to handle form submission
+        $('#createIssueBtn').click(function (event) {
+            // Prevent default form submission
+            event.preventDefault();
 
-                // Create a new FormData object
-                var formData = new FormData();
+            // Create a new FormData object
+            var formData = new FormData();
 
-                // Append form fields to FormData
-                formData.append('issueType', $('#issueType').val());
-                formData.append('subject', $('#subject').val());
-                formData.append('description', $('#task-description').val());
+            // Append form fields to FormData
+            formData.append('issueType', $('#issueType').val());
+            formData.append('subject', $('#subject').val());
+            formData.append('description', $('#task-description').val());
 
-                // Append select field values to FormData
-                formData.append('priority', $('#priority').val());
-                formData.append('category', $('#category').val());
+            // Append select field values to FormData
+            formData.append('priority', $('#priority').val());
+            formData.append('category', $('#category').val());
 
-                formData.append('planStartDate', $('#planStartDate').val());
-                formData.append('planDueDate', $('#planDueDate').val());
+            formData.append('planStartDate', $('#planStartDate').val());
+            formData.append('planDueDate', $('#planDueDate').val());
 
-                // Get the attached file
-                // var file = $('#attachments')[0].files[0];
-                // console.log(file);
-                // // Check if file exists
-                // if (file) {
-                //     formData.append('attachments', file);
-                // }
+            // Get the attached file
+            // var file = $('#attachments')[0].files[0];
+            // console.log(file);
+            // // Check if file exists
+            // if (file) {
+            //     formData.append('attachments', file);
+            // }
 
-                // Append other form fields similarly
+            // Append other form fields similarly
 
-                // Get the value of projectId hidden field
-                var projectId = $('#projectId').val();
-                console.log("Project ID: " + projectId);
+            // Get the value of projectId hidden field
+            var projectId = $('#projectId').val();
+            console.log("Project ID: " + projectId);
 
-                // Add selected user IDs to form data
-                const selectedUsers = document.getElementById('userSelect').selectedOptions;
-                const userIds = Array.from(selectedUsers).map(option => option.value);
-                formData.append('userIds', userIds.join(','));
-                formData.append('projectId', projectId);
-                console.log("USER IDs " + userIds)
+            // Add selected user IDs to form data
+            const selectedUsers = document.getElementById('userSelect').selectedOptions;
+            const userIds = Array.from(selectedUsers).map(option => option.value);
+            formData.append('userIds', userIds.join(','));
+            formData.append('projectId', projectId);
+            console.log("USER IDs " + userIds)
 
-                // Perform AJAX submission
-                $.ajax({
-                    url: '/issue/process_issue', // URL to the controller endpoint for saving issues
-                    method: 'POST', // HTTP method
-                    data: formData, // Form data
-                    contentType: false, // Set to false when using FormData
-                    processData: false, // Set to false when using FormData
-                    success: function (response) {
-                        // Handle success response
-                        console.log('Issue created successfully:', response);
-                        // Close the modal
-                        $('#add-new-task-modal').modal('hide');
-                        // Show success message using SweetAlert
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Issue created successfully.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        })
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error
-                        console.error('Failed to create issue:', error);
-                        // Show error message using SweetAlert
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to create issue. Please try again later.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
+            // Perform AJAX submission
+            $.ajax({
+                url: '/issue/process_issue', // URL to the controller endpoint for saving issues
+                method: 'POST', // HTTP method
+                data: formData, // Form data
+                contentType: false, // Set to false when using FormData
+                processData: false, // Set to false when using FormData
+                success: function (response) {
+                    // Handle success response
+                    console.log('Issue created successfully:', response);
+                    // Close the modal
+                    $('#add-new-task-modal').modal('hide');
+                    // Show success message using SweetAlert
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Issue created successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    })
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error('Failed to create issue:', error);
+                    // Show error message using SweetAlert
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to create issue. Please try again later.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
             });
         });
-    </script>
+    });
+</script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
@@ -1286,32 +1360,32 @@
 <script>
     new DataTable('#overdue-tasks', {
         columnDefs: [
-            { targets: [3], visible: false },
-            { targets: [7], visible: false },
-            { targets: [8], visible: false },
+            {targets: [3], visible: false},
+            {targets: [7], visible: false},
+            {targets: [8], visible: false},
         ],
         layout: {
             topStart: {
                 buttons: [
                     {
                         extend: 'copy',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'csv',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'excel',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'pdf',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'print',
-                        customize: function(win) {
+                        customize: function (win) {
                             $(win.document.body).find('table thead tr th:nth-child(9), table tbody tr td:nth-child(2)').hide();
                         }
                     }
@@ -1324,32 +1398,32 @@
 <script>
     new DataTable('#closed-tasks', {
         columnDefs: [
-            { targets: [3], visible: false },
-            { targets: [7], visible: false },
-            { targets: [8], visible: false },
+            {targets: [3], visible: false},
+            {targets: [7], visible: false},
+            {targets: [8], visible: false},
         ],
         layout: {
             topStart: {
                 buttons: [
                     {
                         extend: 'copy',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'csv',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'excel',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'pdf',
-                        exportOptions: { columns: ':not(:eq(9))' }
+                        exportOptions: {columns: ':not(:eq(9))'}
                     },
                     {
                         extend: 'print',
-                        customize: function(win) {
+                        customize: function (win) {
                             $(win.document.body).find('table thead tr th:nth-child(9), table tbody tr td:nth-child(2)').hide();
                         }
                     }
@@ -1363,30 +1437,30 @@
 <script>
     new DataTable('#stack-members', {
         columnDefs: [
-            { targets: [2], visible: false } // Hide the third column (Email)
+            {targets: [2], visible: false} // Hide the third column (Email)
         ],
         layout: {
             topStart: {
                 buttons: [
                     {
                         extend: 'copy',
-                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for copying
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for copying
                     },
                     {
                         extend: 'csv',
-                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for CSV
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for CSV
                     },
                     {
                         extend: 'excel',
-                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for Excel
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for Excel
                     },
                     {
                         extend: 'pdf',
-                        exportOptions: { columns: ':not(:eq(1))' } // Exclude the second column (Photo) for PDF
+                        exportOptions: {columns: ':not(:eq(1))'} // Exclude the second column (Photo) for PDF
                     },
                     {
                         extend: 'print',
-                        customize: function(win) {
+                        customize: function (win) {
                             $(win.document.body).find('table thead tr th:nth-child(2), table tbody tr td:nth-child(2)').hide();
                         }
                     }
@@ -1395,7 +1469,6 @@
         }
     });
 </script>
-
 
 
 <!-- Vendor js -->
@@ -1409,5 +1482,10 @@
 
 <!-- App js -->
 <script src="/js/app.min.js"></script>
+
+<!--socket-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/socket.js"></script>
 </body>
 </html>

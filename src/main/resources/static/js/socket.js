@@ -7,6 +7,7 @@ const messageInput = document.querySelector('#message');
 let stompClient = null;
 let username = null;
 let userId = null;
+let userEmail = null;
 let projectId = getProjectIdFromUrl();
 
 async function connect() {
@@ -19,6 +20,7 @@ async function connect() {
         if (response.ok) {
             username = userData.username;
             userId = userData.id;
+            userEmail = userData.email;
 
             const socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
@@ -38,14 +40,8 @@ async function connect() {
 
 function onConnect() {
 
-    // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/public', onNotificationReceived);
-
     //Subscribe to the user-specific topic
     stompClient.subscribe('/user/queue/notification', onNotificationReceived);
-
-    // Subscribe to the project-specific topic
-    stompClient.subscribe(`/topic/${projectId}/notification`, onNotificationReceived);
 
     // Subscribe to the project-specific topic
     stompClient.subscribe(`/topic/${projectId}/messages`, onMessageReceived);
@@ -63,7 +59,8 @@ function onConnect() {
     };
     stompClient.send(`/app/${projectId}/connectUser`, {}, JSON.stringify(chatMessage));
 
-    // connectingElement.classList.add('hidden');
+    connectingElement.textContent='';
+
     console.log("add user to connecting ")
 }
 
@@ -72,7 +69,7 @@ function onError(error) {
     connectingElement.style.color = 'red';
 }
 
-const receivedPayloads = new Set();
+let receivedPayloads = new Set();
 
 async function onMessageReceived(payload) {
     const chatMessageList = JSON.parse(payload.body);
@@ -83,7 +80,7 @@ async function onMessageReceived(payload) {
         const stringifiedPayload = JSON.stringify(chatMessage);
         if (!receivedPayloads.has(stringifiedPayload)) {
             // If the payload is not a duplicate, process it
-            toDisplayChatMessages(chatMessage);
+            displayChatMessages(chatMessage);
 
             // Add the stringified payload to the set to mark it as received
             receivedPayloads.add(stringifiedPayload);
@@ -93,8 +90,7 @@ async function onMessageReceived(payload) {
     });
 }
 
-
-function toDisplayChatMessages(chatMessage) {
+function displayChatMessages(chatMessage) {
     const listItem = document.createElement('li');
 
     if (chatMessage.messageType === 'JOIN') {
@@ -104,7 +100,6 @@ function toDisplayChatMessages(chatMessage) {
         listItem.classList.add('event-message');
         chatMessage.content = chatMessage.user.username + ' left!';
     } else {
-
         if (chatMessage.user.id !== userId) {
             listItem.classList.add('clearfix');
         } else {
@@ -166,63 +161,130 @@ function toDisplayChatMessages(chatMessage) {
 
 
 async function onNotificationReceived(payload) {
-    console.log("i am in notification received...")
     try {
         const notificationData = JSON.parse(payload.body);
-        console.log('Parsed notification data:', notificationData);
 
-        // Your processing logic here
         if (notificationData) {
-
-            // showToast(notificationData.content, "", "success");
-
-            // Create a new <a> element
-            const newNotification = document.createElement('a');
-            newNotification.href = "javascript:void(0);";
-            newNotification.classList.add('dropdown-item', 'p-0', 'notify-item', 'unread-noti', 'card', 'm-0', 'shadow-none');
-
-            // Construct the inner HTML of the <a> element using notificationData
-            newNotification.innerHTML = `
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="notify-icon bg-primary">
-                                <i class="ri-message-3-line fs-18"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 text-truncate ms-2">
-                            <h5 class="noti-item-title fw-medium fs-14">${notificationData.user?.username || 'Unknown User'} <small class="fw-normal text-muted float-end ms-1">${notificationData.time}</small></h5>
-                            <small class="noti-item-subtitle text-muted">${notificationData.content}</small>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Append the new <a> element to the notification container
-            const notificationContainer = document.getElementById('notificationContainer');
-            notificationContainer.appendChild(newNotification);
+            // Optionally, you can display the notification immediately
+            displayNotification(notificationData);
+        } else {
+            console.log("Empty or invalid notification data received.");
         }
-
     } catch (error) {
         console.error("Error parsing JSON:", error);
-        console.log("Raw message content:", payload.body);
     }
 }
 
-function showToast(message, position, type) {
-    const toast = document.getElementById("toast");
-    console.log("in show Toast");
-    toast.className = toast.className + " show";
-
-    if (message) toast.innerText = message;
-
-    if (position !== "") toast.className = toast.className + ` ${position}`;
-    if (type !== "") toast.className = toast.className + ` ${type}`;
-
-    setTimeout(function () {
-        toast.className = toast.className.replace("show", "");
-    }, 3000);
+function displayNotification(notificationData) {
+    const newNotification = createNotificationElement(notificationData);
+    appendNotificationToContainer(newNotification);
 }
+
+function createNotificationElement(notificationData) {
+    const newNotification = document.createElement('a');
+    newNotification.href = getNotificationURL(notificationData);
+    newNotification.classList.add('dropdown-item', 'p-0', 'notify-item', 'unread-noti', 'card', 'm-0', 'shadow-none');
+
+    newNotification.innerHTML = constructNotificationHTML(notificationData);
+
+    return newNotification;
+}
+
+function constructNotificationHTML(notificationData) {
+    return `
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="notify-icon bg-primary">
+                            <i class="ri-notification-3-fill fs-18 text-light"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="fw-bold">${notificationData.content}</div>
+                        <small class="text-muted">
+                            ${notificationData.timestamp}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function appendNotificationToContainer(notificationElement) {
+    const notificationContainer = document.getElementById('notificationContainer');
+    notificationContainer.appendChild(notificationElement);
+}
+
+// Function to display multiple notifications
+function displayNotifications(notificationsList) {
+    // Clear existing notifications before displaying new ones
+    const notificationContainer = document.getElementById('notificationContainer');
+    notificationContainer.innerHTML = '';
+
+    // Display each notification
+    notificationsList.forEach(notificationData => {
+        displayNotification(notificationData);
+    });
+}
+
+
+// Function to fetch notification data from the server
+async function fetchNotifications(userId) {
+    try {
+        let url = `/api/notifications?userId=${userId}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const notificationList = await response.json();
+        console.log("noti liser " + notificationList);
+
+        // Call the displayNotifications function to display the notifications
+        displayNotifications(notificationList);
+
+        return notificationList;
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        return [];
+    }
+}
+
+
+let toControlFetchData = true; // Set to true initially to allow fetching data
+
+document.addEventListener('DOMContentLoaded', async function () {
+    await connect();
+
+    if (toControlFetchData) {
+        console.log("Am I called?");
+        // Check if userId is not null before calling fetchNotifications
+        if (userId) {
+            try {
+                // Call fetchNotifications and wait for it to complete
+                const notifications = await fetchNotifications(userId);
+
+                // Check if fetchNotifications was successful
+                if (notifications) {
+                    playAudio();
+
+                    // Set toControlFetchData to false after successful fetch
+                    toControlFetchData = false;
+                } else {
+                    console.error('Error fetching notifications. Check your fetchNotifications function.');
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        } else {
+            console.error('User ID is null. Make sure to set it before calling fetchNotifications.');
+        }
+    }
+});
 
 function getProjectIdFromUrl() {
     const currentUrl = window.location.href;
@@ -234,60 +296,33 @@ function getProjectIdFromUrl() {
     }
 }
 
-//user level notification
-function sendNotificationToSpecificUsers(userIds) {
-    console.log("Users Id array: " + userIds);
+// Example function to construct the notification URL
+function getNotificationURL(notificationData) {
+    // Assuming notificationData has properties like projectLink and issueLink
+    const projectLink = notificationData.projectId;
+    const issueLink = notificationData.issueId;
 
-    // if (stompClient) {
-    //     const notificationRequest = {
-    //         content: 'Hello, World!',
-    //         projectId: projectId,
-    //         userIds: userIds,
-    //     };
-    //     console.log("Notification Data: " + JSON.stringify(notificationRequest));
-    //
-    //     try {
-    //         stompClient.send(`/app/specific`, {}, JSON.stringify(notificationRequest));
-    //     } catch (error) {
-    //         console.error('Error sending notification:', error);
-    //     }
-    // }
-}
-
-
-function sendNotificationToProject(project_id) {
-    console.log("i am in sent notification to project level")
-    if (stompClient) {
-        const notificationData = {
-            content: "something alerting to project",
-            user: {
-                id: userId,
-            },
-            project: {
-                id: projectId,
-            }
-        };
-        console.log("Notification Data is " + notificationData)
-        stompClient.send(`/app/${projectId}/sendNotiToProject`, {}, JSON.stringify(notificationData));
+    if (projectLink) {
+        // If it's a project notification, construct the project URL
+        return `/projects/${projectLink}`; // Adjust this based on your project URL structure
+    } else if (issueLink) {
+        // If it's an issue notification, construct the issue URL
+        return `/issues/${issueLink}`; // Adjust this based on your issue URL structure
+    } else {
+        // Default fallback URL (e.g., go to a generic notification page)
+        return '/notifications'; // Adjust this based on your desired fallback URL
     }
 }
 
-function sendPublicNoti() {
-    const notification = {
-        content: "public noti",
-        user: {
-            id: userId,
-            username: username,
-        },
-        project: {
-            id: projectId
-        }
-    }
-    stompClient.send(`/app/public`, {}, JSON.stringify(notification));
+function playAudio() {
+    // Replace 'path/to/audio.mp3' with the actual path to your audio file
+    const audioPath = 'audio/pop-noti.mp3';
+
+    const audio = new Audio(audioPath);
+
+    // Play the audio
+    audio.play();
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
-    await connect();
-});
 
 

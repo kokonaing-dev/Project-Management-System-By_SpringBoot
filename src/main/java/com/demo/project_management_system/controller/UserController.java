@@ -6,6 +6,7 @@ import com.demo.project_management_system.entity.*;
 import com.demo.project_management_system.repository.RoleRepository;
 import com.demo.project_management_system.service.IssueService;
 import com.demo.project_management_system.service.ProjectService;
+import com.demo.project_management_system.service.RoleService;
 import com.demo.project_management_system.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -39,6 +40,9 @@ public class UserController {
 
     @Autowired
     private IssueService issueService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private RoleRepository roleRepo;
@@ -316,19 +320,22 @@ public class UserController {
     }
 
 
+    @GetMapping("/fetchRoles")
+    @ResponseBody
+    public List<Role> fetchRoles() {
+        return roleService.getAllRoles();
+    }
+
+
     @GetMapping(value = "/apps-todo")
     public String showAppsTodo(){ return "apps-todo"; }
 
-    @GetMapping(value="/profile")
-    public String showUserProfile() {
-    	return "profile";
-    }
+
 
     @GetMapping(value = "/usermanage")
     public String showUserList(){
         return "usermanage";
     }
-
 
     @GetMapping(value = "/charts-apex-bar")
     public String chartBar(){
