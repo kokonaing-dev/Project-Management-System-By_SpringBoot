@@ -31,6 +31,9 @@ public class Project {
     @Column(unique = true)
     private String projectName;
 
+    @Column(unique = true)
+    private String projectKey;
+
 
     private LocalDate projectStartDate;
 

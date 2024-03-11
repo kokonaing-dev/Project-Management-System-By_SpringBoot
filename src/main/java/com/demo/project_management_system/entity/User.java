@@ -87,7 +87,7 @@ public class User implements UserDetails {
                 '}';
     }
 
-        @Override
+    @Override
     public int hashCode() {
         return Objects.hash(id);
     }

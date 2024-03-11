@@ -35,7 +35,13 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
 
-
+    <style>
+        #user-table td,
+        #user-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
     </head>
 
 
@@ -81,9 +87,6 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-sm-4">
-                                                <h4 class="header-title">Information Admins</h4>
-                                            </div>
                                             <div class="col-sm-8 text-end"
                                                  th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}">
                                                 <button type="button" class="btn btn btn-purple w-sm-100 rounded-pill waves-effect waves-light mb-3" data-bs-toggle="modal" data-bs-target="#inviteuser">
@@ -93,7 +96,7 @@
                                             </div>
                                         </div>
 
-                                        <table id="user-table" class="display nowrap" style="text-align: center; width:100%;">
+                                        <table id="user-table" class="display nowrap" style="width:100%;">
                                             <thead>
                                                 <tr>
                                                     <th>No</th>

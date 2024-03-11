@@ -70,6 +70,9 @@
             <!-- Start Content-->
             <div class="container-fluid">
 
+                <!-- Hidden input field for ROLE_SYSTEM_ADMIN -->
+<!--                <input type="hidden" id="roleSystemAdmin" th:if="${loggedInUser != null && #authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'')')}" th:value="ROLE_SYSTEM_ADMIN">-->
+
                 <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="NewTaskModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px;">
                         <div class="modal-content" style="background-color:#eeeef1;color: black;">
@@ -226,6 +229,13 @@
                             <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
                         </select>
                     </div>
+
+                    <div class="col-2 mb-2">
+                        <label for="search-select"></label>
+                        <select id="search-project" class="form-control" data-placeholder="Select an option">
+                            <option th:each="project : ${projectList}" th:value="${project.id}" th:text="${project.projectName}"></option>
+                        </select>
+                    </div>
                 </div>
 
                 <script>
@@ -291,6 +301,9 @@
                         // Print or do whatever you want with the selected issueName
                         console.log(selectedIssueStatus);
 
+                        // Initialize counter for found elements
+                        var foundCount = 0;
+
                         // Iterate over each board
                         var boards = document.querySelectorAll('.board');
                         boards.forEach(function(board) {
@@ -310,6 +323,7 @@
                                         // Set display property based on whether issue matches the selected option
                                         if (issueStatus === selectedIssueStatus) {
                                             issue.style.display = ''; // Show issue
+                                            foundCount++; // Increment found element counter
                                         } else {
                                             issue.style.display = 'none'; // Hide issue
                                         }
@@ -320,8 +334,19 @@
                                 });
                             });
                         });
+
+                        // Output found count
+                        console.log("Found elements: " + foundCount);
+
+                        // Update count in the HTML
+                        var countElement = document.querySelector('.task-header span');
+                        if (countElement) {
+                            countElement.textContent = foundCount;
+                        }
                     });
                 </script>
+
+
 
                 <script>
                     // Get the select element for issue statuses
@@ -370,6 +395,53 @@
                     });
                 </script>
 
+                <script>
+                    // Get the select element for issue statuses
+                    var selectElementIssueProject = document.getElementById('search-project');
+
+                    // Add event listener for change event for issue statuses
+                    selectElementIssueProject.addEventListener('change', function() {
+                        // Get the selected option
+                        var selectedOption = selectElementIssueProject.options[selectElementIssueProject.selectedIndex];
+
+                        // Get the text of the selected option (issueName)
+                        var selectedIssueProject = selectedOption.text;
+
+                        // Print or do whatever you want with the selected issueName
+                        console.log(selectedIssueProject);
+
+                        // Iterate over each board
+                        var boards = document.querySelectorAll('.board');
+                        boards.forEach(function(board) {
+                            // Iterate over each task list within the current board
+                            var taskLists = board.querySelectorAll('.task-list-items');
+                            taskLists.forEach(function(taskList) {
+                                // Find issues within the current task list
+                                var issues = taskList.querySelectorAll('.card');
+                                issues.forEach(function(issue) {
+                                    // Access issue details
+                                    var issueProjectElement = issue.querySelector('.issue-project');
+
+                                    // Check if issueTypeElement is not null before accessing its textContent
+                                    if (issueProjectElement) {
+                                        var issueProject = issueProjectElement.textContent;
+
+                                        // Set display property based on whether issue matches the selected option
+                                        if (issueProject === selectedIssueProject) {
+                                            issue.style.display = ''; // Show issue
+                                        } else {
+                                            issue.style.display = 'none'; // Hide issue
+                                        }
+                                    } else {
+                                        // Handle cases where the issue type element is not found
+                                        console.log('Issue Category element not found for issue:', issue);
+                                    }
+                                });
+                            });
+                        });
+                    });
+                </script>
+
 
 
                 <div class="row">
@@ -399,7 +471,7 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span th:text="${issue.project.projectName}">
+                                                            <span class="issue-project" th:text="${issue.project.projectName}">
                                                             </span>
 
                                                         </span>
@@ -594,7 +666,7 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span th:text="${issue.project.projectName}">
+                                                            <span class="issue-project" th:text="${issue.project.projectName}">
                                                             </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">
@@ -680,7 +752,7 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span th:text="${issue.project.projectName}">
+                                                            <span class="issue-project" th:text="${issue.project.projectName}">
                                                             </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">
@@ -765,7 +837,7 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span th:text="${issue.project.projectName}">
+                                                            <span class="issue-project" th:text="${issue.project.projectName}">
                                                             </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">
@@ -850,7 +922,7 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span th:text="${issue.project.projectName}">
+                                                            <span class="issue-project" th:text="${issue.project.projectName}">
                                                             </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">
@@ -1234,7 +1306,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-<script th:unless="${#authorization.expression('hasAuthority(''ROLE_PROJECT_MANAGER'')')}">
+<script th:if="${#authorization.expression('hasAuthority(''ROLE_MEMBER'')')}">
     document.addEventListener('DOMContentLoaded', function () {
         // Get all task containers
         const taskContainers = document.querySelectorAll('.task-list-items');

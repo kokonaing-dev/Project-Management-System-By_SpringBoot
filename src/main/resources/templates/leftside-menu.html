@@ -31,8 +31,6 @@
     <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"/>
 
 </head>
 <body>
@@ -98,20 +96,17 @@
             <li class="side-nav-title mt-1"> Main</li>
 
             <li class="side-nav-item">
-                <a href="/calendar" class="side-nav-link">
-                    &nbsp;<span class="material-symbols-outlined">
-                    calendar_month
-                    </span>
+                <a href="/dashboard" class="side-nav-link">
+                    <i class="ri-calendar-2-line"></i>
                     <span> Calendar </span>
                 </a>
             </li>
 
 
-            <li class="side-nav-item">
-                <a href="/dashboard" class="side-nav-link">
-                    <i class="ri-dashboard-2-fill"></i>
-                    <!--            <span class="badge bg-success float-end">9+</span>-->
-                    <span> Dashboard </span>
+            <li class="side-nav-item" th:unless="${#authorization.expression('hasRole(''ROLE_MEMBER'')')}">
+                <a href="/project" class="side-nav-link">
+                    <i class="ri-briefcase-5-fill"></i>
+                    <span> Projects </span>
                 </a>
             </li>
 

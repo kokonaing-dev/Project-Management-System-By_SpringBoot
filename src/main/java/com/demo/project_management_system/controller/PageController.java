@@ -17,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,20 @@ public class PageController {
     private ProjectService projectService;
 
     @GetMapping("/dashboard")
-    public String gettingStart(@AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session) {
+    public String viewDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session) {
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        // Store the user object in the session
+        session.setAttribute("loggedInUser", user);
+
+        // Expose loggedInUser as a model attribute
+        model.addAttribute("loggedInUser", user);
+
+        return "calendar";
+    }
+
+
+    @GetMapping("/project")
+    public String viewProject(@AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session){
         User user = userService.findUserByEmail(userDetails.getUsername());
         // Store the user object in the session
         session.setAttribute("loggedInUser", user);
@@ -60,7 +72,7 @@ public class PageController {
         model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
         model.addAttribute("categories", categoryService.getAllCategories());
 
-        Set<Project> projectList = projectService.getAllActiveProjects();
+        Set<Project> projectList = projectService.getAllProjects();
         model.addAttribute("projectList", projectList);
 
         // Get the Authentication object from SecurityContextHolder
@@ -108,7 +120,7 @@ public class PageController {
             List<User> projectManagerAndMembers = userService.getUsersByAuthorities("ROLE_PROJECT_MANAGER","ROLE_MEMBER");
             session.setAttribute("projectManagersAndMembers", projectManagerAndMembers);
             model.addAttribute("projectManagersAndMembers", projectManagerAndMembers);
-            return "dashboard";
+            return "project-list";
         }
         if (isProjectManager) {
             // Get users with authority ROLE_MEMBER
@@ -120,19 +132,7 @@ public class PageController {
 //            return "project-list";
         }
 
-        return "dashboard";
-    }
-
-
-    @GetMapping("/calendar")
-    public String viewCalendar(@AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session){
-        User user = userService.findUserByEmail(userDetails.getUsername());
-        // Store the user object in the session
-        session.setAttribute("loggedInUser", user);
-
-        // Expose loggedInUser as a model attribute
-        model.addAttribute("loggedInUser", user);
-        return "calendar";
+        return "project-list";
     }
 
     @GetMapping("/api/events")
@@ -148,8 +148,45 @@ public class PageController {
         // Retrieve authorities from the Authentication object
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+        // Check if the logged-in user has ROLE_SYSTEM_ADMIN authority
+        boolean isSystemAdmin = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SYSTEM_ADMIN"));
+
         boolean isProjectManager = authorities.stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER"));
+
+
+        if (isSystemAdmin) {
+
+            Set<Project> projectList = projectService.getProjectsByUserId(loggedInUser.getId());
+            model.addAttribute("projectList", projectList);
+
+            Set<Issue> issueList = new HashSet<>();
+            for (Project project : projectList) {
+                issueList.addAll(issueService.findIssueByProjectId(project.getId()));
+            }
+            System.out.println("ADMIN PROJECT ISSUE LIST "+ issueList);
+
+            List<IssueDto> events = new ArrayList<>();
+
+
+            for (Issue issue : issueList) {
+                IssueDto eventDto = new IssueDto();
+                eventDto.setId(issue.getId());
+                eventDto.setIssueName(issue.getIssueType().getIssueName());
+                eventDto.setPriority(issue.getPriority());
+                eventDto.setProjectName(issue.getProject().getProjectName());
+                eventDto.setSubject(issue.getSubject());
+                eventDto.setPlanStartDate(issue.getPlanStartDate());
+                eventDto.setPlanDueDate(issue.getPlanDueDate());
+
+                // Add event to the list
+                events.add(eventDto);
+            }
+            return ResponseEntity.ok().body(events);
+
+        }
+
 
         if (isProjectManager) {
 
@@ -274,8 +311,64 @@ public class PageController {
         // Retrieve authorities from the Authentication object
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+        // Check if the logged-in user has ROLE_SYSTEM_ADMIN authority
+        boolean isSystemAdmin = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SYSTEM_ADMIN"));
+        // Add authorities as model attributes
+        model.addAttribute("isSystemAdmin", isSystemAdmin);
+        System.out.println("ADMIN AUTHORITY: " + isSystemAdmin);
+
         boolean isProjectManager = authorities.stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER"));
+
+
+        if (isSystemAdmin){
+            Set<Issue> issueList = issueService.getAllIssues();
+
+            // Filter issues by status
+            List<Issue> todoIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.OPEN && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> inProgressIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.IN_PROGRESS && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> solvedIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.SOLVED && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> pendingIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.PENDING && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> closedIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.CLOSED && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+
+            // Add filtered lists to the model
+            model.addAttribute("todoIssues", todoIssues);
+            model.addAttribute("inProgressIssues", inProgressIssues);
+            model.addAttribute("solvedIssues", solvedIssues);
+            model.addAttribute("pendingIssues", pendingIssues);
+            model.addAttribute("closedIssues", closedIssues);
+
+
+            model.addAttribute("issue", new Issue());
+            model.addAttribute("project", new Project());
+
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("issueStatuses", IssueStatus.values()); // Add statuses enum
+            model.addAttribute("priorities", Priority.values()); // Add priorities enum
+            model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
+            model.addAttribute("categories", categoryService.getAllCategories());
+
+            return "apps-kanban";
+
+        }
+
+
 
         if (isProjectManager) {
 
@@ -283,10 +376,10 @@ public class PageController {
             model.addAttribute("projectList", projectList);
 
 
-        Set<Issue> issueList = new HashSet<>();
-        for (Project project : projectList) {
-            issueList.addAll(issueService.findIssueByProjectId(project.getId()));
-        }
+            Set<Issue> issueList = new HashSet<>();
+            for (Project project : projectList) {
+                issueList.addAll(issueService.findIssueByProjectId(project.getId()));
+            }
 
 
             // Filter issues by status

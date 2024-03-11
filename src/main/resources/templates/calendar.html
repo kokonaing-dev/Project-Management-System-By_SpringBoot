@@ -78,8 +78,8 @@
                             }
 
                             // Format dates as ISO 8601 string
-                            var start = event.planStartDate ? new Date(event.planStartDate).toISOString().split('T')[0] : null;
-                            var end = event.planDueDate ? new Date(event.planDueDate).toISOString().split('T')[0] : null;
+                            var start = event.planStartDate ? new Date(event.planStartDate) : null;
+                            var end = event.planDueDate ? new Date(event.planDueDate) : null;
                             console.log(start);
                             console.log(end);
 
