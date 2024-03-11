@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 function getProjectIdFromUrl() {
     const currentUrl = window.location.href;
-    const match = currentUrl.match(/\/homepage\/(\d+)/);
+    const match = currentUrl.match(/\/projectDetail\/(\d+)/);
     if (match && match[1]) {
         return match[1];
     } else {
@@ -304,7 +304,7 @@ function getNotificationURL(notificationData) {
 
     if (projectLink) {
         // If it's a project notification, construct the project URL
-        return `/projects/${projectLink}`; // Adjust this based on your project URL structure
+        return `/projectDetail/${projectLink}`; // Adjust this based on your project URL structure
     } else if (issueLink) {
         // If it's an issue notification, construct the issue URL
         return `/issues/${issueLink}`; // Adjust this based on your issue URL structure

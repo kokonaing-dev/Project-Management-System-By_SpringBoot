@@ -86,7 +86,7 @@ public class ProjectController {
 
             // Save the project
             Project savedProject = projectService.save(project);
-            notificationService.sendNotification(project);
+            notificationService.sendNotification(savedProject);
 
             return ResponseEntity.ok(savedProject);
         } catch (Exception e) {
@@ -148,6 +148,10 @@ public class ProjectController {
             // Fetch project status using your service method
             String projectStatus = project.calculateProjectStatus(); // Assuming you have a method to calculate project status
             model.addAttribute("projectStatus", projectStatus); // Add project status to the model
+
+            // Add project start date and end date to the model
+            model.addAttribute("projectStartDate", project.getProjectStartDate());
+            model.addAttribute("projectDueDate", project.getProjectDueDate());
 
             int inProgressCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.IN_PROGRESS, projectId);
             int openCount = issueService.getIssuesCountByStatusAndProjectId(IssueStatus.OPEN, projectId);
@@ -218,12 +222,83 @@ public class ProjectController {
         return "project-detail"; // return the name of your homepage template
     }
 
+
+//    @GetMapping("/api/project/{projectId}")
+//    public ResponseEntity<Project> getProjectDetails(@PathVariable long projectId) {
+//        Project project = projectService.getProjectById(projectId);
+//        if (project != null) {
+//            return ResponseEntity.ok(project);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+//    @PostMapping("/api/project/edit/{projectId}")
+//    public ResponseEntity<String> updateProject(@PathVariable Long projectId, @RequestBody Project updatedProject) {
+//        // Check if the projectId and updatedProject are valid
+//        if (projectId == null || updatedProject == null) {
+//            return ResponseEntity.badRequest().body("Invalid project ID or data");
+//        }
+//
+//        // Fetch the existing project from the database
+//        Project existingProject = projectService.getProjectById(projectId);
+//        if (existingProject == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        // Update the existing project with the data from updatedProject
+//        existingProject.setProjectName(updatedProject.getProjectName());
+//        existingProject.setProjectStartDate(updatedProject.getProjectStartDate());
+//        existingProject.setProjectDueDate(updatedProject.getProjectDueDate());
+//
+//        // Save the updated project
+//        projectService.updateProject(existingProject);
+//
+//        return ResponseEntity.ok("Project updated successfully");
+//    }
+
     @PostMapping("/editProject")
     public String updateProject(@ModelAttribute("project") Project project) {
         // Update the project details using the project service
-        projectService.updateProject(project);
+        Project existingProject = projectService.findById(project.getId()).orElse(null);
+
+        // Check if the project exists
+        if (existingProject != null) {
+            // Update the project details
+            existingProject.setProjectName(project.getProjectName());
+            existingProject.setProjectStartDate(project.getProjectStartDate());
+            existingProject.setProjectDueDate(project.getProjectDueDate());
+
+            // Save the updated project to the database
+            projectService.save(existingProject);
+        } else {
+            // Handle case where project is not found
+            throw new RuntimeException("Project not found with ID: " + project.getId());
+        }
+
         // Redirect to a suitable page after updating the project
         return "redirect:/projectDetail/" + project.getId(); // Redirect to the project detail page
+    }
+
+    @PutMapping("/api/projects/{projectId}")
+    public ResponseEntity<Project> updateProject(@PathVariable Long projectId, @RequestBody Project projectDetails) {
+        // Retrieve the existing project from the database
+        Project existingProject = projectService.getProjectById(projectId);
+
+        if (existingProject == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Update the project details
+        existingProject.setProjectName(projectDetails.getProjectName());
+        existingProject.setProjectStartDate(projectDetails.getProjectStartDate());
+        existingProject.setProjectDueDate(projectDetails.getProjectDueDate());
+        existingProject.setStatus(projectDetails.getStatus());
+        // Update team members, handle this according to your application logic
+
+        // Save the updated project
+        Project updatedProject = projectService.save(existingProject);
+
+        return ResponseEntity.ok(updatedProject);
     }
 
     @GetMapping("/api/issueTypeData")

@@ -39,6 +39,99 @@ public class PageController {
     private ProjectService projectService;
 
     @GetMapping("/dashboard")
+    public String gettingStart(@AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session) {
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        // Store the user object in the session
+        session.setAttribute("loggedInUser", user);
+
+        // Expose loggedInUser as a model attribute
+        model.addAttribute("loggedInUser", user);
+
+        model.addAttribute("issue", new Issue());
+        model.addAttribute("project", new Project());
+
+        List<User> users = userService.getAllActiveUsers();
+        model.addAttribute("usersList", users);
+
+        model.addAttribute("issueStatuses", IssueStatus.values()); // Add statuses enum
+        model.addAttribute("priorities", Priority.values()); // Add priorities enum
+
+        model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
+        model.addAttribute("categories", categoryService.getAllCategories());
+
+        Set<Project> projectList = projectService.getAllActiveProjects();
+        model.addAttribute("projectList", projectList);
+
+        // Calculate project status for each project
+        for(Project project: projectList){
+            int totalIssues = project.getIssues().size();
+            project.setNumberOfIssues(totalIssues);
+            String projectStatus = project.calculateProjectStatus();
+            project.setStatus(projectStatus);
+        }
+
+
+        // Get the Authentication object from SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Retrieve authorities from the Authentication object
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        // Check if the logged-in user has ROLE_SYSTEM_ADMIN authority
+        boolean isSystemAdmin = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SYSTEM_ADMIN"));
+
+        boolean isProjectManager = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER"));
+
+        // Check if the logged-in user has ROLE_PROJECT_MANAGER or ROLE_MEMBER authority
+        boolean isProjectManagerOrMember = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER") || auth.getAuthority().equals("ROLE_MEMBER"));
+
+        List<Issue> issues;
+        if (isSystemAdmin){
+            // Convert the Set to a List for the admin user
+            issues = new ArrayList<>(issueService.getAllIssues());
+        } else if (isProjectManagerOrMember) {
+            // Fetch issues by userId for non-admin users
+            issues = issueService.getIssuesByUserId(user.getId());
+        }else {
+            // Default to an empty list of issues for other users
+            issues = new ArrayList<>();
+        }
+        model.addAttribute("issues", issues);
+
+
+        if (isSystemAdmin) {
+            // Get all projects
+            List<Project> projects = projectService.getAllProjectsWithCounts();
+            model.addAttribute("projects", projects);
+        } else if (isProjectManagerOrMember) {
+            // Get projects by user ID
+            Set<Project> projects = projectService.getProjectsByUserId(user.getId());
+            model.addAttribute("projects", projects);
+        }
+        if(isSystemAdmin){
+            // Get users with authorities POLE_PROJECT_MANGER and role member
+            List<User> projectManagerAndMembers = userService.getUsersByAuthorities("ROLE_PROJECT_MANAGER","ROLE_MEMBER");
+            session.setAttribute("projectManagersAndMembers", projectManagerAndMembers);
+            model.addAttribute("projectManagersAndMembers", projectManagerAndMembers);
+            return "dashboard";
+        }
+        if (isProjectManager) {
+            // Get users with authority ROLE_MEMBER
+            List<User> members = userService.getUsersByAuthority("ROLE_MEMBER");
+            session.setAttribute("members", members);
+            model.addAttribute("members", members);
+
+//            System.out.println("MMMMMMMMMMMMMMM " + members);
+//            return "project-list";
+        }
+
+        return "dashboard";
+    }
+
+    @GetMapping("/calendar")
     public String viewDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model, HttpSession session) {
         User user = userService.findUserByEmail(userDetails.getUsername());
         // Store the user object in the session
@@ -74,6 +167,15 @@ public class PageController {
 
         Set<Project> projectList = projectService.getAllProjects();
         model.addAttribute("projectList", projectList);
+
+        // Calculate project status for each project
+        for(Project project: projectList){
+            int totalIssues = project.getIssues().size();
+            project.setNumberOfIssues(totalIssues);
+            String projectStatus = project.calculateProjectStatus();
+            project.setStatus(projectStatus);
+        }
+
 
         // Get the Authentication object from SecurityContextHolder
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -273,6 +375,8 @@ public class PageController {
             System.out.println("Number Of Issues.........is " + numberOfIssues);
             model.addAttribute("numberOfIssues", numberOfIssues);
             project.setNumberOfIssues(numberOfIssues);
+            String projectStatus = project.calculateProjectStatus();
+            project.setStatus(projectStatus);
         }
 
         model.addAttribute("projectList", userProjects);

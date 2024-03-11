@@ -110,9 +110,9 @@ public class IssueController {
                 issue.setStatus(1);
 
                 // Save the issue (if not already saved)
-                issueService.save(issue);
+                Issue savedIssue = issueService.save(issue);
 
-                notificationService.sendNotification(issue);
+                notificationService.sendNotification(savedIssue);
 
                 // Process other form fields and perform necessary operations
 

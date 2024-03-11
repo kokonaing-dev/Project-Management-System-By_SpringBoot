@@ -70,6 +70,15 @@ public class AdminController {
         User user = userService.getUserById(userId);
         model.addAttribute("user", user);
 
+        // Check if the user is equal to the loggedInUser
+        if (user.getId() == loggedInUser.getId()) {
+            // Redirect to the profile page for the logged-in user
+            return "redirect:/pages-profile";
+        }
+
+        // Pass the loggedInUser object to the view
+        model.addAttribute("loggedInUser", loggedInUser);
+
         // Retrieve the active projects associated with the user
         Set<Project> activeProjects = userService.getActiveProjectsByUser(user);
 

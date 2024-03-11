@@ -59,446 +59,469 @@
 </head>
 <body>
 
-<!-- Begin page -->
-<div id="wrapper">
+    <!-- Begin page -->
+    <div id="wrapper">
 
-    <!-- ========== Topbar Start ========== -->
-    <div th:insert="~{/top-bar :: top-bar}"></div>
-    <!-- ========== Topbar End ========== -->
+        <!-- ========== Topbar Start ========== -->
+        <div th:insert="~{/top-bar :: top-bar}"></div>
+        <!-- ========== Topbar End ========== -->
 
-    <!-- ========== Left Sidebar Start ========== -->
-    <div th:insert="~{/leftside-menu :: leftside-menu}"></div>
-    <!-- ========== Left Sidebar End ========== -->
-
-
-    <div class="content-page">
-
-        <div class="content">
-
-            <!-- Start Content-->
-            <div class="container-fluid">
-
-                <!-- start page title -->
-                <div class="row bg-light">
-                    <div class="col-12">
-                        <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
-                            <h1 class="page-title" th:text="${project.projectName}"></h1>
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="/project">Project</a></li>
-                                <li class="breadcrumb-item active">Project Details</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <!-- end page title -->
-
-                <div class="row">
-                    <div class="col-xl-6">
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <div class="widget-rounded-circle card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
-                                                    <!--                                                    <i class="fe-list font-26 avatar-title text-primary"></i>-->
-                                                    <i class="ri-bug-fill avatar-title"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="text-end">
-                                                    <h3 class="text-dark mt-1"><span th:text="${totalIssues}"></span>
-                                                    </h3>
-                                                    <p class="text-muted mb-1 text-truncate">Total Issues</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- end row-->
-                                    </div>
-                                </div> <!-- end widget-rounded-circle-->
-                            </div> <!-- end col-->
-
-                            <div class="col-xl-6">
-                                <div class="widget-rounded-circle card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
-                                                    <!--                                                    <i class="fe-users font-26 avatar-title text-info"></i>-->
-                                                    <i class="ri-group-fill avatar-title"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="text-end">
-                                                    <h3 class="text-dark mt-1"><span
-                                                            th:text="${totalAssignedUsers}"></span>
-                                                    </h3>
-                                                    <p class="text-muted mb-1 text-truncate">Total Assigned Users</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- end row-->
-                                    </div>
-                                </div> <!-- end widget-rounded-circle-->
-                            </div> <!-- end col-->
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12">
-                                <!-- project card -->
-                                <div class="card d-block">
-                                    <div class="card-body">
-                                        <div class="dropdown float-end">
-                                            <a href="#" class="dropdown-toggle arrow-none card-drop"
-                                               data-bs-toggle="dropdown"
-                                               aria-expanded="false">
-                                                <i class="ri-more-line"></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <!-- Button to trigger update project modal -->
-                                                <a th:href="@{'project/editProject/' + ${project.id} }"
-                                                   th:id="${project.id}"
-                                                   class="dropdown-item" data-bs-toggle="modal"
-                                                   data-bs-target="#updateProjectModal" data-action="edit">
-                                                    <i class="ri-edit-2-fill me-1"></i>
-                                                    Edit
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <!-- project title-->
-                                        <h3 class="mt-0 font-20" th:text="${project.projectName}"></h3>
-
-                                        <!-- Project Status -->
-                                        <div class="mb-4">
-                                            <!--                                            <h5>Project Status</h5>-->
-                                            <span th:if="${projectStatus == 'Working in Progress'}"
-                                                  class="badge bg-info-subtle text-info">Working in Progress</span>
-                                            <span th:if="${projectStatus == 'Done'}"
-                                                  class="badge bg-success-subtle text-success">Done</span>
-                                            <span th:if="${projectStatus == 'Pending'}"
-                                                  class="badge bg-warning-subtle text-warning">Pending</span>
-                                            <span th:if="${projectStatus == 'Coming Soon'}"
-                                                  class="badge bg-secondary-subtle text-secondary">Coming Soon</span>
-                                        </div>
+        <!-- ========== Left Sidebar Start ========== -->
+        <div th:insert="~{/leftside-menu :: leftside-menu}"></div>
+        <!-- ========== Left Sidebar End ========== -->
 
 
-                                        <!-- Start Date and End Date -->
-                                        <div class="row mt-3">
-                                            <div class="col-md-4">
-                                                <div class="mb-4">
-                                                    <h5>Start Date</h5>
-                                                    <p class="project-start-date"
-                                                       th:text="${#temporals.format(project.projectStartDate, 'dd MMMM yyyy')}"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-4">
-                                                    <h5>End Date</h5>
-                                                    <p class="project-end-date"
-                                                       th:text="${#temporals.format(project.projectDueDate, 'dd MMMM yyyy')}"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-4">
-                                                    <h5><i class="ri-calendar-schedule-line"></i></h5>
-                                                    <p><span class="ms-2 date-difference"></span></p>
-                                                </div>
-                                            </div>
-                                        </div>
+        <div class="content-page">
 
+            <div class="content">
 
-                                        <!-- Team Members section -->
-                                        <div id="tooltips-container">
-                                            <h5>Team Members:</h5>
-                                            <!-- Iterate over team members -->
-                                            <div class="avatar-group">
-                                                <div th:each="user : ${project.users}">
-                                                    <a href="#" data-bs-container="#tooltips-container"
-                                                       data-bs-toggle="tooltip" data-bs-placement="top"
-                                                       th:title="${user.username}" class="avatar-group-item">
-                                                        <img th:src="${user.photosImagePath}"
-                                                             class="rounded-circle avatar-xs" alt="User Avatar">
-                                                    </a>
-                                                </div>
-                                            </div>
+                <!-- Start Content-->
+                <div class="container-fluid">
 
-                                        </div> <!-- end card-body-->
-
-                                    </div> <!-- end card-->
-
-                                </div> <!-- end col -->
-
+                    <!-- start page title -->
+                    <div class="row bg-light">
+                        <div class="col-12">
+                            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                                <h1 class="page-title" th:text="${project.projectName}"></h1>
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Project Details</li>
+                                </ol>
                             </div>
                         </div>
-                    </div> <!-- end col-->
-                    <div class="col-xl-6">
-                        <div class="col-xl-12 mb-4">
-                            <div class="page-title p-1"><h4>Status</h4></div>
-                            <div class="status in-progress text-black" style="background-color: #ffcc00;">InProgress
-                                <span class="count" th:text="${inProgressCount}"></span></div>
-                            <div class="status open text-black" style="background-color: #00cc00;">Open <span
-                                    class="count" th:text="${openCount}"></span></div>
-                            <div class="status solved text-black" style="background-color: #3366ff;">Solved <span
-                                    class="count" th:text="${solvedCount}"></span></div>
-                            <div class="status closed text-black" style="background-color: #999999;">Closed <span
-                                    class="count" th:text="${closedCount}"></span></div>
-                            <div class="status pending text-black" style="background-color: #ff9900;">Pending <span
-                                    class="count" th:text="${pendingCount}"></span></div>
-                        </div>
-                        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
-
-                        <!-- Edit Project Modal -->
-                        <div class="modal fade" id="updateProjectModal" tabindex="-1"
-                             aria-labelledby="updateProjectModalLabel"
-                             aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-success">
-                                        <h5 class="modal-title text-light fw-bold fs-20" id="editProjectModalLabel">Edit
-                                            Project</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Include your edit project form here -->
-                                        <!-- For example: -->
-                                        <form th:object="${project}" th:action="@{/editProject}" method="post">
-                                            <div class="mb-3">
-                                                <label for="projectName" class="form-label">Project Name</label>
-                                                <input type="text" class="form-control" id="projectName"
-                                                       th:field="*{projectName}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="startDate" class="form-label">Start Date</label>
-                                                <input type="date" class="form-control" id="startDate"
-                                                       th:field="*{projectStartDate}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="endDate" class="form-label">End Date</label>
-                                                <input type="date" class="form-control" id="endDate"
-                                                       th:field="*{projectDueDate}">
-                                            </div>
-                                            <input type="hidden" th:field="*{id}">
-                                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Cancel
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Invite Users Modal -->
-                        <div class="modal fade" id="userInviteModal" tabindex="-1"
-                             aria-labelledby="userInviteModalLabel"
-                             aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="inviteUsersModalLabel">Invite Users</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Include your invite users form here -->
-                                        <!-- For example: -->
-                                        <form>
-                                            <div class="mb-3">
-                                                <label for="userDropdown" class="form-label">Select Users to
-                                                    Invite</label>
-                                                <select class="form-select" id="userDropdown" multiple>
-                                                    <!-- Populate dropdown with user options -->
-                                                    <!-- Example option: -->
-                                                    <!-- <option value="userId">Username</option> -->
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Invite</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Rest of your HTML code including dropdown goes here -->
-
                     </div>
+                    <!-- end page title -->
 
-                </div>
-                <div class="row mt-2">
-                    <div class="col-xl-6 col-lg-12 col-md-12">
-                        <div id="issueTypeChartContainer" style="height: 300px; width: 100%;"></div>
-
-                        <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
-                        <script>
-                            window.onload = function () {
-                                // Fetch issue type data
-                                fetchIssueTypeData().then(issueTypeData => {
-                                    var issueTypeDataPoints = [];
-                                    issueTypeData.forEach(issueType => {
-                                        issueTypeDataPoints.push({
-                                            y: issueType.count,
-                                            label: issueType.name
-                                        });
-                                    });
-
-                                    var issueTypeChart = new CanvasJS.Chart("issueTypeChartContainer", {
-                                        animationEnabled: true,
-                                        title: {
-                                            text: "Issue Types"
-                                        },
-                                        data: [{
-                                            type: "pie",
-                                            startAngle: 240,
-                                            yValueFormatString: "##0.00\"%\"",
-                                            indexLabel: "{label} {y}",
-                                            dataPoints: issueTypeDataPoints
-                                        }]
-                                    });
-                                    issueTypeChart.render();
-                                }).catch(error => {
-                                    console.error('Failed to fetch issue type data:', error);
-                                });
-
-                                // Fetch category data
-                                fetchCategoryData().then(categoryData => {
-                                    var categoryDataPoints = [];
-                                    categoryData.forEach(category => {
-                                        categoryDataPoints.push({
-                                            y: category.count,
-                                            label: category.name
-                                        });
-                                    });
-
-                                    var categoryChart = new CanvasJS.Chart("categoryChartContainer", {
-                                        animationEnabled: true,
-                                        title: {
-                                            text: "Categories"
-                                        },
-                                        data: [{
-                                            type: "pie",
-                                            startAngle: 240,
-                                            yValueFormatString: "##0.00\"%\"",
-                                            indexLabel: "{label} {y}",
-                                            dataPoints: categoryDataPoints
-                                        }]
-                                    });
-                                    categoryChart.render();
-                                }).catch(error => {
-                                    console.error('Failed to fetch category data:', error);
-                                });
-
-                                // Fetch total data
-                                var inProgressCount = parseInt(document.querySelector('.in-progress .count').innerText);
-                                var openCount = parseInt(document.querySelector('.open .count').innerText);
-                                var solvedCount = parseInt(document.querySelector('.solved .count').innerText);
-                                var closedCount = parseInt(document.querySelector('.closed .count').innerText);
-                                var pendingCount = parseInt(document.querySelector('.pending .count').innerText);
-
-                                var total = inProgressCount + openCount + solvedCount + closedCount + pendingCount;
-
-                                // Define colors for each status
-                                var colors = ['#ffcc00', '#00cc00', '#3366ff', '#999999', '#ff9900'];
-
-                                var chart = new CanvasJS.Chart("chartContainer", {
-                                    animationEnabled: true,
-                                    title: {
-                                        text: "Issue Status"
-                                    },
-                                    data: [{
-                                        type: "pie",
-                                        startAngle: 240,
-                                        yValueFormatString: "##0.00\"%\"",
-                                        indexLabel: "{label} {y}",
-                                        dataPoints: [
-                                            {y: (inProgressCount / total) * 100, label: "InProgress", color: colors[0]},
-                                            {y: (openCount / total) * 100, label: "Open", color: colors[1]},
-                                            {y: (solvedCount / total) * 100, label: "Solved", color: colors[2]},
-                                            {y: (closedCount / total) * 100, label: "Closed", color: colors[3]},
-                                            {y: (pendingCount / total) * 100, label: "Pending", color: colors[4]}
-                                        ]
-                                    }]
-                                });
-                                chart.render();
-                            };
-
-                            // Function to fetch issue type data
-                            function fetchIssueTypeData() {
-                                return new Promise(function (resolve, reject) {
-                                    // Make an AJAX request to fetch issue type data
-                                    var url = '/api/issueTypeData'; // Update with your endpoint
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.open('GET', url, true);
-                                    xhr.onreadystatechange = function () {
-                                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                                            if (xhr.status === 200) {
-                                                resolve(JSON.parse(xhr.responseText));
-                                            } else {
-                                                reject(xhr.responseText);
-                                            }
-                                        }
-                                    };
-                                    xhr.send();
-                                });
-                            }
-
-                            // Function to fetch category data
-                            function fetchCategoryData() {
-                                return new Promise(function (resolve, reject) {
-                                    // Make an AJAX request to fetch category data
-                                    var url = '/api/categoryData'; // Update with your endpoint
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.open('GET', url, true);
-                                    xhr.onreadystatechange = function () {
-                                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                                            if (xhr.status === 200) {
-                                                resolve(JSON.parse(xhr.responseText));
-                                            } else {
-                                                reject(xhr.responseText);
-                                            }
-                                        }
-                                    };
-                                    xhr.send();
-                                });
-                            }
-                        </script>
-                    </div>
-                    <div class="col-xl-6 col-lg-12 col-md-12">
-                        <div id="categoryChartContainer" style="height: 300px; width: 100%;"></div>
-                    </div>
-                </div>
-                <div class="row mt-5">
                     <div class="row">
-                        <div class="col-lg-12 d-flex justify-content-end">
-                            <div class="chat-avatar d-none d-md-block">
-                                <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2"
-                                     onclick="openChatModal()">
-                                    <i class="ri-chat-smile-3-line fs-22"></i>
-                                    <span>Chat</span>
+                        <div class="col-xl-6">
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <div class="widget-rounded-circle card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
+                                                        <!--                                                    <i class="fe-list font-26 avatar-title text-primary"></i>-->
+                                                        <i class="ri-bug-fill avatar-title"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="text-end">
+                                                        <h3 class="text-dark mt-1"><span th:text="${totalIssues}"></span></h3>
+                                                        <p class="text-muted mb-1 text-truncate">Total Issues</p>
+                                                    </div>
+                                                </div>
+                                            </div> <!-- end row-->
+                                        </div>
+                                    </div> <!-- end widget-rounded-circle-->
+                                </div> <!-- end col-->
+
+                                <div class="col-xl-6">
+                                    <div class="widget-rounded-circle card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="avatar-lg rounded-circle bg-light" style="font-size: 36px;">
+                                                        <!--                                                    <i class="fe-users font-26 avatar-title text-info"></i>-->
+                                                        <i class="ri-group-fill avatar-title"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="text-end">
+                                                        <h3 class="text-dark mt-1"><span th:text="${totalAssignedUsers}"></span>
+                                                        </h3>
+                                                        <p class="text-muted mb-1 text-truncate">Total Assigned Users</p>
+                                                    </div>
+                                                </div>
+                                            </div> <!-- end row-->
+                                        </div>
+                                    </div> <!-- end widget-rounded-circle-->
+                                </div> <!-- end col-->
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <!-- project card -->
+                                    <div class="card d-block">
+                                        <div class="card-body">
+                                            <div class="dropdown float-end">
+                                                <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
+                                                   aria-expanded="false">
+                                                    <i class="ri-more-line"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <!-- Button to trigger update project modal -->
+                                                    <a th:href="@{'project/editProject/' + ${project.id} }" th:id="${project.id}"
+                                                       class="dropdown-item" data-bs-toggle="modal"
+                                                       data-bs-target="#updateProjectModal" data-action="edit">
+                                                        <i class="ri-edit-2-fill me-1"></i>
+                                                        Edit
+                                                    </a>
+                                                    <!-- Button trigger modal -->
+<!--                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProjectModal">-->
+<!--                                                        Edit Project-->
+<!--                                                    </button>-->
+                                                </div>
+                                            </div>
+
+                                            <!-- Edit Project Modal -->
+<!--                                            <div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">-->
+<!--                                                <div class="modal-dialog modal-dialog-centered modal-lg">-->
+<!--                                                    <div class="modal-content">-->
+<!--                                                        <div class="modal-header">-->
+<!--                                                            <h5 class="modal-title" id="editProjectModalLabel">Edit Project</h5>-->
+<!--                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                                                        </div>-->
+<!--                                                        <div class="modal-body">-->
+<!--                                                            <form id="editProjectForm" action="/api/projects/{projectId}" method="PUT">-->
+<!--                                                                &lt;!&ndash; Project Name &ndash;&gt;-->
+<!--                                                                <div class="mb-3">-->
+<!--                                                                    <label for="projectName" class="form-label">Project Name</label>-->
+<!--                                                                    <input type="text" class="form-control" id="projectName" name="projectName" >-->
+<!--                                                                </div>-->
+<!--                                                                &lt;!&ndash; Project Start Date &ndash;&gt;-->
+<!--                                                                <div class="mb-3">-->
+<!--                                                                    <label for="startDate" class="form-label">Start Date</label>-->
+<!--                                                                    <input type="date" class="form-control" id="startDate" name="startDate" >-->
+<!--                                                                </div>-->
+<!--                                                                &lt;!&ndash; Project Due Date &ndash;&gt;-->
+<!--                                                                <div class="mb-3">-->
+<!--                                                                    <label for="dueDate" class="form-label">Due Date</label>-->
+<!--                                                                    <input type="date" class="form-control" id="dueDate" name="dueDate" >-->
+<!--                                                                </div>-->
+<!--                                                                &lt;!&ndash; Project Status &ndash;&gt;-->
+<!--                                                                <div class="mb-3">-->
+<!--                                                                    <label for="status" class="form-label">Status</label>-->
+<!--                                                                    <select class="form-select" id="status" name="status" >-->
+<!--                                                                        <option value="ACTIVE">Active</option>-->
+<!--                                                                        <option value="INACTIVE">Inactive</option>-->
+<!--                                                                    </select>-->
+<!--                                                                </div>-->
+<!--                                                                &lt;!&ndash; Team Members &ndash;&gt;-->
+<!--                                                                <div class="mb-3">-->
+<!--                                                                    <label for="teamMembers" class="form-label">Team Members</label>-->
+<!--                                                                    &lt;!&ndash; Assuming you have a multi-select for team members &ndash;&gt;-->
+<!--                                                                    <select multiple class="form-select" id="teamMembers" name="teamMembers">-->
+<!--                                                                        &lt;!&ndash; Add options dynamically using JavaScript &ndash;&gt;-->
+<!--                                                                    </select>-->
+<!--                                                                </div>-->
+<!--                                                                &lt;!&ndash; Submit Button &ndash;&gt;-->
+<!--                                                                <button type="submit" class="btn btn-primary">Save Changes</button>-->
+<!--                                                            </form>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+
+
+                                            <!-- project title-->
+                                            <h3 class="mt-0 font-20" th:text="${project.projectName}"></h3>
+
+                                            <!-- Project Status -->
+                                            <div class="mb-4">
+                                            <!--<h5>Project Status</h5>-->
+                                                <span th:if="${projectStatus == 'Working in Progress'}" class="badge bg-info-subtle text-info">Working in Progress</span>
+                                                <span th:if="${projectStatus == 'Done'}" class="badge bg-success-subtle text-success">Done</span>
+                                                <span th:if="${projectStatus == 'Pending'}" class="badge bg-warning-subtle text-warning">Pending</span>
+                                                <span th:if="${projectStatus == 'Coming Soon'}" class="badge bg-secondary-subtle text-secondary">Coming Soon</span>
+                                            </div>
+
+
+                                            <!-- Start Date and Due Date -->
+                                            <div class="row mt-3">
+                                                <div class="col-md-4">
+                                                    <div class="mb-4">
+                                                        <h5>Start Date</h5>
+                                                        <p class="project-start-date"
+                                                           th:text="${#temporals.format(project.projectStartDate, 'dd MMMM yyyy')}"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-4">
+                                                        <h5>End Date</h5>
+                                                        <p class="project-end-date"
+                                                           th:text="${#temporals.format(project.projectDueDate, 'dd MMMM yyyy')}"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-4">
+                                                        <h5><i class="ri-calendar-schedule-line"></i></h5>
+                                                        <p><span class="ms-2 day-left"></span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- Team Members section -->
+                                            <div id="tooltips-container">
+                                                <h5>Team Members:</h5>
+                                                <!-- Iterate over team members -->
+                                                <div class="avatar-group">
+                                                    <div th:each="user : ${project.users}">
+                                                        <a href="#" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${user.username}" class="avatar-group-item">
+                                                            <img th:src="${user.photosImagePath}" class="rounded-circle avatar-xs" alt="User Avatar">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div> <!-- end card-body-->
+                                        </div> <!-- end card-->
+                                    </div> <!-- end col -->
+                                </div>
+                            </div>
+                        </div> <!-- end col-->
+                        <div class="col-xl-6">
+                            <div class="col-xl-12 mb-4">
+                                <div class="page-title p-1"><h4>Status</h4></div>
+                                <div class="status in-progress text-black" style="background-color: #ffcc00;">InProgress <span class="count" th:text="${inProgressCount}"></span></div>
+                                <div class="status open text-black" style="background-color: #00cc00;">Open <span class="count" th:text="${openCount}"></span></div>
+                                <div class="status solved text-black" style="background-color: #3366ff;">Solved <span class="count" th:text="${solvedCount}"></span></div>
+                                <div class="status closed text-black" style="background-color: #999999;">Closed <span class="count" th:text="${closedCount}"></span></div>
+                                <div class="status pending text-black" style="background-color: #ff9900;">Pending <span class="count" th:text="${pendingCount}"></span></div>
+                            </div>
+                            <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+                            <!-- Edit Project Modal -->
+                            <div class="modal fade" id="updateProjectModal" tabindex="-1" aria-labelledby="updateProjectModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-success">
+                                            <h5 class="modal-title text-light fw-bold fs-20" id="editProjectModalLabel">Edit
+                                                Project</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Include your edit project form here -->
+                                            <!-- For example: -->
+                                            <form  th:action="@{/editProject}" method="post" th:object="${project}">
+                                                <div class="mb-3">
+                                                    <label for="projectName" class="form-label">Project Name</label>
+                                                    <input type="text" class="form-control" id="projectName" th:field="*{projectName}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="startDate" class="form-label">Start Date</label>
+                                                    <input type="date" class="form-control" id="startDate" th:value="${projectStartDate}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="endDate" class="form-label">End Date</label>
+                                                    <input type="date" class="form-control" id="endDate" th:value="*{projectDueDate}">
+                                                </div>
+                                                <input type="hidden" th:field="*{id}">
+                                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Invite Users Modal -->
+                            <div class="modal fade" id="userInviteModal" tabindex="-1" aria-labelledby="userInviteModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="inviteUsersModalLabel">Invite Users</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Include your invite users form here -->
+                                            <!-- For example: -->
+                                            <form>
+                                                <div class="mb-3">
+                                                    <label for="userDropdown" class="form-label">Select Users to Invite</label>
+                                                    <select class="form-select" id="userDropdown" multiple>
+                                                        <!-- Populate dropdown with user options -->
+                                                        <!-- Example option: -->
+                                                        <!-- <option value="userId">Username</option> -->
+                                                    </select>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Invite</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rest of your HTML code including dropdown goes here -->
+
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-xl-6 col-lg-12 col-md-12">
+                            <div id="issueTypeChartContainer" style="height: 300px; width: 100%;"></div>
+
+                            <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+                            <script>
+                                window.onload = function() {
+                                    // Fetch issue type data
+                                    fetchIssueTypeData().then(issueTypeData => {
+                                        var issueTypeDataPoints = [];
+                                        issueTypeData.forEach(issueType => {
+                                            issueTypeDataPoints.push({
+                                                y: issueType.count,
+                                                label: issueType.name
+                                            });
+                                        });
+
+                                        var issueTypeChart = new CanvasJS.Chart("issueTypeChartContainer", {
+                                            animationEnabled: true,
+                                            title: {
+                                                text: "Issue Types"
+                                            },
+                                            data: [{
+                                                type: "pie",
+                                                startAngle: 240,
+                                                yValueFormatString: "##0.00\"%\"",
+                                                indexLabel: "{label} {y}",
+                                                dataPoints: issueTypeDataPoints
+                                            }]
+                                        });
+                                        issueTypeChart.render();
+                                    }).catch(error => {
+                                        console.error('Failed to fetch issue type data:', error);
+                                    });
+
+                                    // Fetch category data
+                                    fetchCategoryData().then(categoryData => {
+                                        var categoryDataPoints = [];
+                                        categoryData.forEach(category => {
+                                            categoryDataPoints.push({
+                                                y: category.count,
+                                                label: category.name
+                                            });
+                                        });
+
+                                        var categoryChart = new CanvasJS.Chart("categoryChartContainer", {
+                                            animationEnabled: true,
+                                            title: {
+                                                text: "Categories"
+                                            },
+                                            data: [{
+                                                type: "pie",
+                                                startAngle: 240,
+                                                yValueFormatString: "##0.00\"%\"",
+                                                indexLabel: "{label} {y}",
+                                                dataPoints: categoryDataPoints
+                                            }]
+                                        });
+                                        categoryChart.render();
+                                    }).catch(error => {
+                                        console.error('Failed to fetch category data:', error);
+                                    });
+
+                                    // Fetch total data
+                                    var inProgressCount = parseInt(document.querySelector('.in-progress .count').innerText);
+                                    var openCount = parseInt(document.querySelector('.open .count').innerText);
+                                    var solvedCount = parseInt(document.querySelector('.solved .count').innerText);
+                                    var closedCount = parseInt(document.querySelector('.closed .count').innerText);
+                                    var pendingCount = parseInt(document.querySelector('.pending .count').innerText);
+
+                                    var total = inProgressCount + openCount + solvedCount + closedCount + pendingCount;
+
+                                    // Define colors for each status
+                                    var colors = ['#ffcc00', '#00cc00', '#3366ff', '#999999', '#ff9900'];
+
+                                    var chart = new CanvasJS.Chart("chartContainer", {
+                                        animationEnabled: true,
+                                        title: {
+                                            text: "Issue Status"
+                                        },
+                                        data: [{
+                                            type: "pie",
+                                            startAngle: 240,
+                                            yValueFormatString: "##0.00\"%\"",
+                                            indexLabel: "{label} {y}",
+                                            dataPoints: [
+                                                { y: (inProgressCount / total) * 100, label: "InProgress", color: colors[0] },
+                                                { y: (openCount / total) * 100, label: "Open", color: colors[1] },
+                                                { y: (solvedCount / total) * 100, label: "Solved", color: colors[2] },
+                                                { y: (closedCount / total) * 100, label: "Closed", color: colors[3] },
+                                                { y: (pendingCount / total) * 100, label: "Pending", color: colors[4] }
+                                            ]
+                                        }]
+                                    });
+                                    chart.render();
+                                };
+
+                                // Function to fetch issue type data
+                                function fetchIssueTypeData() {
+                                    return new Promise(function(resolve, reject) {
+                                        // Make an AJAX request to fetch issue type data
+                                        var url = '/api/issueTypeData'; // Update with your endpoint
+                                        var xhr = new XMLHttpRequest();
+                                        xhr.open('GET', url, true);
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState === XMLHttpRequest.DONE) {
+                                                if (xhr.status === 200) {
+                                                    resolve(JSON.parse(xhr.responseText));
+                                                } else {
+                                                    reject(xhr.responseText);
+                                                }
+                                            }
+                                        };
+                                        xhr.send();
+                                    });
+                                }
+
+                                // Function to fetch category data
+                                function fetchCategoryData() {
+                                    return new Promise(function(resolve, reject) {
+                                        // Make an AJAX request to fetch category data
+                                        var url = '/api/categoryData'; // Update with your endpoint
+                                        var xhr = new XMLHttpRequest();
+                                        xhr.open('GET', url, true);
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState === XMLHttpRequest.DONE) {
+                                                if (xhr.status === 200) {
+                                                    resolve(JSON.parse(xhr.responseText));
+                                                } else {
+                                                    reject(xhr.responseText);
+                                                }
+                                            }
+                                        };
+                                        xhr.send();
+                                    });
+                                }
+                            </script>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 col-md-12">
+                            <div id="categoryChartContainer" style="height: 300px; width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="row">
+                            <div class="col-lg-12 d-flex justify-content-end">
+                                <div class="chat-avatar d-none d-md-block">
+                                    <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2" onclick="openChatModal()">
+                                        <i class="ri-chat-smile-3-line fs-22"></i>
+                                        <span>Chat</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-
-                <!-- end container fluid -->
+                </div><!-- end container fluid -->
 
             </div> <!-- content -->
 
 
-            <!-- Footer Start -->
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div>
-                                <script>document.write(new Date().getFullYear())</script>
-                                © PMS
+                <!-- Footer Start -->
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div>
+                                    <script>document.write(new Date().getFullYear())</script>
+                                    © PMS
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </footer>
-            <!-- end Footer -->
-
+                </footer>
+                <!-- end Footer -->
         </div><!-- end content-page -->
 
         <!-- ============================================================== -->
@@ -555,7 +578,7 @@
                                                         <input type="text" id="message" class="form-control border-0"
                                                                placeholder="Enter your text" required=""/>
                                                         <div class="invalid-feedback">
-                                                            Please enter your messsages
+                                                            Please enter your messsage
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-auto">
@@ -582,126 +605,127 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<!-- END wrapper -->
+    </div><!-- END wrapper -->
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-<!--project name link-->
-<script>
-    // Update project name in the modal
-    $(document).ready(function () {
-        projectname(function (projectName) {
-            console.log('Project name retrieved:', projectName);
-            $('#projectNameLink').text(projectName);
+    <!--project name link-->
+    <script>
+        // Update project name in the modal
+        $(document).ready(function () {
+            projectname(function (projectName) {
+                console.log('Project name retrieved:', projectName);
+                $('#projectNameLink').text(projectName);
+            });
         });
-    });
 
-    function projectname(callback) {
-        const projectId = getProjectIdFromUrl();
-        console.log('Project ID:', projectId);
+        function projectname(callback) {
+            const projectId = getProjectIdFromUrl();
+            console.log('Project ID:', projectId);
 
-        // Make a fetch request to fetch the project name
-        fetch(`/api/getProjectName?projectId=${encodeURIComponent(projectId)}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Fetch Success:', data);
-                const projectName = data.projectName;
-                callback(projectName);
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-                callback('Unknown Project');
-            })
-    }
-</script>
+            // Make a fetch request to fetch the project name
+            fetch(`/api/getProjectName?projectId=${encodeURIComponent(projectId)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Fetch Success:', data);
+                    const projectName = data.projectName;
+                    callback(projectName);
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    callback('Unknown Project');
+                })
+        }
+    </script>
 
-<!-- date difference -->
-<script th:inline="javascript">
-    /*<![CDATA[*/
+    <!-- JavaScript code to calculate days left -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
 
-    // Get the project start date and end date from the HTML elements
-    var startDateStr = document.querySelector('.project-start-date').textContent;
-    var endDateStr = document.querySelector('.project-end-date').textContent;
+        // Get the project end date from the HTML element
+        var endDateStr = document.querySelector('.project-end-date').textContent;
 
-    // Parse the date strings to JavaScript Date objects
-    var startDate = new Date(startDateStr);
-    var endDate = new Date(endDateStr);
+        // Parse the date string to a JavaScript Date object
+        var endDate = new Date(endDateStr);
 
-    // Calculate the difference in milliseconds
-    var differenceMs = endDate - startDate;
+        // Get the current date
+        var currentDate = new Date();
 
-    // Convert milliseconds to days (assuming 1 day = 24 * 60 * 60 * 1000 milliseconds)
-    var differenceDays = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+        // Calculate the difference in milliseconds
+        var differenceMs = endDate - currentDate;
 
-    // Display the difference in the HTML element
-    document.querySelector('.date-difference').textContent = differenceDays + ' days';
+        // Convert milliseconds to days (assuming 1 day = 24 * 60 * 60 * 1000 milliseconds)
+        var differenceDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
 
-    /*]]>*/
-</script>
+        // Display the difference in the HTML element
+        var daysLeftText = differenceDays > 0 ? differenceDays + ' days left' : 'Project has ended';
+        document.querySelector('.day-left').textContent = daysLeftText;
 
-<script>
+        /*]]>*/
+    </script>
+    <script>
 
-    $(".btn-leave-project").click(function () {
-        // Show SweetAlert2 confirmation dialog
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You will leave this project.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, leave it!",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Perform actions when the user leaves the project
-                // You can send an AJAX request or handle it based on your application's logic
-                // For example, remove the user from the project or update the user's status
-            }
-        });
-    });
+            $(".btn-leave-project").click(function () {
+                // Show SweetAlert2 confirmation dialog
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You will leave this project.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, leave it!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Perform actions when the user leaves the project
+                        // You can send an AJAX request or handle it based on your application's logic
+                        // For example, remove the user from the project or update the user's status
+                    }
+                });
+            });
 
-</script>
+        </script>
 
-<!-- JavaScript to handle delete button click -->
+        <!-- JavaScript to handle delete button click -->
 
 
-<!-- Vendor js -->
-<script src="/js/vendor.min.js"></script>
+        <!-- Vendor js -->
+        <script src="/js/vendor.min.js"></script>
 
-<!-- App js -->
-<script src="/js/app.min.js"></script>
+        <!-- App js -->
+        <script src="/js/app.min.js"></script>
 
-<!-- Chart JS -->
-<script src="/libs/chart.js/chart.min.js"></script>
+        <!-- Chart JS -->
+        <script src="/libs/chart.js/chart.min.js"></script>
 
-<!-- Init js -->
-<script src="/js/pages/project-details.init.js"></script>
+        <!-- Init js -->
+        <script src="/js/pages/project-details.init.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
-<!--to open modal box-->
-<script>
-    function openChatModal() {
-        const myModal = new bootstrap.Modal(document.getElementById('right-modal'));
-        myModal.show();
+    <!--to open modal box-->
+    <script>
+        function openChatModal() {
+            const myModal = new bootstrap.Modal(document.getElementById('right-modal'));
+            myModal.show();
 
-    }
+        }
 
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/js/socket.js"></script>
-<script src="/js/chat.js"></script>
-<script>
-    chatForm.addEventListener('submit', sendMessage, true) //for sending messages
-</script>
-</html>
+    </script>
+
+<!--socket-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/js/socket.js"></script>
+    <script src="/js/chat.js"></script>
+    <script>
+        chatForm.addEventListener('submit', sendMessage, true) //for sending messages
+    </script>
+    </html>
