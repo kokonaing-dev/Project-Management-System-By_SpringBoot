@@ -4,6 +4,7 @@ import com.demo.project_management_system.File.FileUploadUtil;
 import com.demo.project_management_system.dto.UserIssueRequest;
 import com.demo.project_management_system.dto.UserRoleUpdateRequest;
 import com.demo.project_management_system.entity.*;
+import com.demo.project_management_system.repository.ProjectRepository;
 import com.demo.project_management_system.repository.RoleRepository;
 import com.demo.project_management_system.service.IssueService;
 import com.demo.project_management_system.service.ProjectService;
@@ -13,9 +14,13 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -47,6 +52,9 @@ public class UserController {
 
     @Autowired
     private RoleRepository roleRepo;
+
+    @Autowired
+    private ProjectService projectService;
 
     @PostMapping("/process_register")
     public String processRegistration( @RequestParam("role") String role,@Valid User user,
@@ -354,6 +362,39 @@ public class UserController {
 
         return ResponseEntity.ok("Users added to the issue successfully.");
     }
+
+
+    @GetMapping("/api/users")
+    @ResponseBody
+    public List<User> fetchUsersForRole(@RequestParam String role) {
+        List<User> users = userService.getUsersByAuthority(role);
+        return users;
+    }
+
+    @PostMapping("/api/addUsersToProject")
+    public ResponseEntity<String> addUsersToProject(@RequestParam int projectId, @RequestParam List<Long> selectedUsers) {
+        try {
+            System.out.println("Project ID: " + projectId);
+            System.out.println("Selected Users: " + selectedUsers);
+
+            // Fetch the project by ID
+            Project project = projectService.findProjectById(projectId);
+
+            // Retrieve User entities based on the provided user IDs
+            Set<User> newUsers = userService.findByIdIn(selectedUsers);
+
+            // Add new users to the existing set of users in the project
+            project.getUsers().addAll(newUsers);
+
+            // Save the project to update the database
+            projectService.save(project);
+
+            return ResponseEntity.ok("Users added to project successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add users to project: " + e.getMessage());
+        }
+    }
+
 
 
     @GetMapping("/fetchRoles")
