@@ -218,6 +218,15 @@
                 </div>
 
                 <div class="row">
+
+                    <div class="col-2 mb-2">
+                        <label for="search-select"></label>
+                        <select id="search-project" class="form-control" data-placeholder="Select an option">
+                            <option th:each="project : ${projectList}" th:value="${project.id}"
+                                    th:text="${project.projectName}"></option>
+                        </select>
+                    </div>
+
                     <div class="col-2 mb-2">
                         <label for="search-select"></label>
                         <select id="search-select" class="form-control" data-control="select2"
@@ -244,13 +253,6 @@
                         </select>
                     </div>
 
-                    <div class="col-2 mb-2">
-                        <label for="search-select"></label>
-                        <select id="search-project" class="form-control" data-placeholder="Select an option">
-                            <option th:each="project : ${projectList}" th:value="${project.id}"
-                                    th:text="${project.projectName}"></option>
-                        </select>
-                    </div>
                 </div>
 
                 <script>
@@ -488,10 +490,12 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span class="issue-project"
+                                                            <span class="issue-project" style="display: none;"
                                                                   th:text="${issue.project.projectName}">
                                                             </span>
-
+                                                            <span
+                                                                  th:text="${issue.project.projectKey}">
+                                                            </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">
                                                             <small style="color: red;"
@@ -508,6 +512,8 @@
                                                     <i class="ri-more-2-fill fs-18"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-animated dropdown-menu-end">
+                                                    <!-- item-->
+                                                    <a th:href="@{'issue/upload/' + ${issue.id}}" th:id="${issue.id}" class="dropdown-item add-attachment-link" data-bs-toggle="modal" data-bs-target="#fileModal"><i class="fa-solid fa-paperclip me-1"></i>Add Attachment</a>
                                                     <!-- item-->
                                                     <a th:href="@{'issue/editissue/' + ${issue.id}}" th:id="${issue.id}"
                                                        class="dropdown-item edit-issue-link" data-bs-toggle="modal"
@@ -720,8 +726,11 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span class="issue-project"
+                                                            <span class="issue-project" style="display: none;"
                                                                   th:text="${issue.project.projectName}">
+                                                            </span>
+                                                            <span
+                                                                    th:text="${issue.project.projectKey}">
                                                             </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">
@@ -943,8 +952,11 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span class="issue-project"
+                                                            <span class="issue-project" style="display: none;"
                                                                   th:text="${issue.project.projectName}">
+                                                            </span>
+                                                            <span
+                                                                    th:text="${issue.project.projectKey}">
                                                             </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">
@@ -1054,8 +1066,11 @@
                                             <p class="mb-0">
                                                         <span class="pe-2 text-nowrap mb-2 d-inline-block">
                                                             <i class="ri-briefcase-5-fill"></i>
-                                                            <span class="issue-project"
+                                                            <span class="issue-project" style="display: none;"
                                                                   th:text="${issue.project.projectName}">
+                                                            </span>
+                                                            <span
+                                                                    th:text="${issue.project.projectKey}">
                                                             </span>
                                                         </span>
                                                 <span class="text-nowrap mb-2 d-inline-block">

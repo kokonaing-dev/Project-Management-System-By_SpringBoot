@@ -2,10 +2,12 @@ package com.demo.project_management_system.service;
 
 import com.demo.project_management_system.entity.Issue;
 import com.demo.project_management_system.entity.Project;
+import com.demo.project_management_system.entity.User;
 import com.demo.project_management_system.repository.IssueRepository;
 import com.demo.project_management_system.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -112,52 +114,21 @@ public class ProjectService {
         return projectRepository.existsById(id);
     }
 
-//    public void updateProject(Project project) {
-//        // You need to fetch the existing project from the database first
-//        // Make sure the project ID is not null or 0
-//        if (project.getId() != null && project.getId() > 0) {
-//            // Fetch the existing project from the database
-//
-//
-//            // Check if the project exists
-//            if (existingProject != null) {
-//                // Update the project details
-//                existingProject.setProjectName(project.getProjectName());
-//                existingProject.setProjectStartDate(project.getProjectStartDate());
-//                existingProject.setProjectDueDate(project.getProjectDueDate());
-//
-//                // Save the updated project to the database
-//                projectRepository.save(existingProject);
-//            } else {
-//                // Handle case where project is not found
-//                throw new RuntimeException("Project not found with ID: " + project.getId());
-//            }
-//        } else {
-//            // Handle case where project ID is null or invalid
-//            throw new IllegalArgumentException("Invalid project ID: " + project.getId());
-//        }
-//    }
 
-
-//    public String createPjId() {
-//        String highestId = pjRepo.findHighestId();
-//        if (highestId == null) {
-//            return "PJ001";
-//        } else {
-//            try {
-//                int num = Integer.parseInt(highestId.substring(3)) + 1;
-//                return String.format("PJ%03d", num);
-//            } catch (NumberFormatException e) {
-//                // Handle the exception (log it or take appropriate action)
-//                return null; // or throw a custom exception
-//            }
-//        }
-//    }
-//
-//    @Transactional
-//    public Project createProject(Project project) {
-//        return pjRepo.save(project);
-//    }
-
-    // Uncomment and implement other methods as needed
+    public void addUsersToProject(int projectId, List<Integer> userIds) throws ChangeSetPersister.NotFoundException {
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        if (projectOptional.isPresent()) {
+            Project project = projectOptional.get();
+            Set<User> users = project.getUsers();
+            UserService userService = new UserService(); // Assuming you have a UserService
+            for (Integer userId : userIds) {
+                Optional<User> userOptional = Optional.ofNullable(userService.getUserById(userId));
+                userOptional.ifPresent(users::add); // Add user to the project's set of users
+            }
+            projectRepository.save(project);
+        } else {
+            // Handle case where project with given ID is not found
+            throw new ChangeSetPersister.NotFoundException();
+        }
+    }
 }
