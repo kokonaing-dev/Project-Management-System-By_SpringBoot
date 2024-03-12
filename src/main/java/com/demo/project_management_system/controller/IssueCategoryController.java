@@ -1,7 +1,8 @@
-package com.demo.project_management_system.controller.api;
+package com.demo.project_management_system.controller;
 
 import com.demo.project_management_system.entity.Category;
 import com.demo.project_management_system.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class IssueCategoryController {
-
-    @Autowired
-    private CategoryService issueCategoryService;
+    private final CategoryService issueCategoryService;
 
     @GetMapping("/api/issue-categories")
     public ResponseEntity<List<Category>> getAllIssueCategories() {

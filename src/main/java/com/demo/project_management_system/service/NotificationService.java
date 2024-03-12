@@ -22,48 +22,47 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
-    private final ProjectService projectService;
+
 
     public void sendNotification(Object object) {
         String content;
-        Set<User> users;
-        Long projectId = null;
-        Long issueId = null;
+        Set<User> users = new HashSet<>();
+        Project project = null;
+        Issue issue = null;
 
-        if (object instanceof Project project) {
+        if (object instanceof Project) {
+            project = (Project) object;
             System.out.println("project");
             content = "You have been assigned to " + project.getProjectName();
             users = project.getUsers();
-            projectId = project.getId(); // Assuming you have a method to get the project ID
-            log.info("Project Id :" + projectId);
-        } else if (object instanceof Issue issue) {
+        } else if (object instanceof Issue) {
+            issue = (Issue) object;
             System.out.println("issue");
             content = "New issue: " + issue.getDescription();
             users = issue.getProject().getUsers();
-            projectId = issue.getProject().getId(); // Assuming you have a method to get the project ID
-            issueId = issue.getId(); // Assuming you have a method to get the issue ID
-            log.info("Issue Id :" + issueId);
         } else {
             // Handle other types of entities or throw an exception
             content = "New notification";
-            users = new HashSet<>(); // or handle appropriately for your case
+            // You might handle other types of entities differently here
         }
 
         for (User user : users) {
-            Notification notification = new Notification(); // Create a new Notification object for each user
+            Notification notification = new Notification();
             notification.setTimestamp(new Timestamp(System.currentTimeMillis()));
             notification.setContent(content);
-            notification.setProjectId(projectId);
-            notification.setIssueId(issueId);
-            notification.setUser(user); // Set the User for the Notification
-
-            notificationRepository.save(notification); // Save the notification for each user
+            notification.setProject(project);
+            notification.setIssue(issue);
+            notification.setUser(user);
+            log.info("ProjectId in notification :" + notification.getProject().getId());
+            notificationRepository.save(notification);
             messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/notification", notification);
         }
     }
 
-    public List<Notification> getNotificationByUserId(Long userId) {
-        return notificationRepository.getNotificationByUserId(userId);
+
+
+    public List<Notification> getNotificationsByUserId(Long userId) {
+        return notificationRepository.findByUserId(userId);
     }
 }
 
