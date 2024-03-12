@@ -6,6 +6,7 @@ import com.demo.project_management_system.entity.User;
 import com.demo.project_management_system.repository.IssueRepository;
 import com.demo.project_management_system.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
 
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private IssueRepository issueRepository;
+    private final ProjectRepository projectRepository;
+    private final IssueRepository issueRepository;
 
     public Set<Project> getAllProjects() {
         List<Project> projectList = projectRepository.findAll();

@@ -2,8 +2,7 @@ package com.demo.project_management_system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,7 +10,8 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @RequiredArgsConstructor
 @Table(name = "projects")
@@ -52,6 +52,10 @@ public class Project {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<Issue> issues;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "project")
+    private Set<Notification> notifications;
 
     @Column(name = "status")
     private String status = "ACTIVE"; // Set default value here
