@@ -39,11 +39,11 @@ public class InvatationController {
         if (emailSent) {
             model.addAttribute("message", "Invitation email sent successfully!");
             model.addAttribute("role", role);
+            model.addAttribute("email", email);
         } else {
             model.addAttribute("error", "Error sending invitation email. Please try again.");
             return "users-list";
         }
-        model.addAttribute("email", email);
 
         return "redirect:/userList"; // Create a result.html for displaying the result message
     }

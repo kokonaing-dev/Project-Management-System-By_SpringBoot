@@ -15,6 +15,7 @@
 
     <!-- Theme Config Js -->
     <script src="/js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- App css -->
     <link href="/css/app.min.css" rel="stylesheet" type="text/css" id="app-style"/>
@@ -230,6 +231,9 @@
                                                         selectedRole: selectedRole
                                                     };
 
+                                                    console.log("FormData:",formData);
+
+                                                    // Send the data using AJAX
                                                     // Send the data using AJAX
                                                     $.ajax({
                                                         type: 'POST',
@@ -238,6 +242,14 @@
                                                         data: JSON.stringify(formData), // Convert formData to JSON string
                                                         success: function(response) {
                                                             // Handle success response
+                                                            Swal.fire({
+                                                                title: 'Success',
+                                                                text: 'Update Role Successfully',
+                                                                icon: 'success',
+                                                                confirmButtonText: 'OK'
+                                                            }).then(function() {
+                                                                window.location.reload(); // Reload the page after the alert is closed
+                                                            });
                                                             console.log(response);
                                                         },
                                                         error: function(xhr, status, error) {

@@ -114,19 +114,26 @@ public class PageController {
         }
         if(isSystemAdmin){
             // Get users with authorities POLE_PROJECT_MANGER and role member
-            List<User> projectManagerAndMembers = userService.getUsersByAuthorities("ROLE_PROJECT_MANAGER","ROLE_MEMBER");
-            session.setAttribute("projectManagersAndMembers", projectManagerAndMembers);
-            model.addAttribute("projectManagersAndMembers", projectManagerAndMembers);
+            List<User> projectManager = userService.getUsersByAuthority("ROLE_PROJECT_MANAGER");
+            Set<Project> projects = projectService.getAllProjects();
+
+            session.setAttribute("projectManager", projectManager);
+            session.setAttribute("projects", projects);
+
+            model.addAttribute("projectManager", projectManager);
+            model.addAttribute("projects", projects);
             return "dashboard";
         }
         if (isProjectManager) {
             // Get users with authority ROLE_MEMBER
             List<User> members = userService.getUsersByAuthority("ROLE_MEMBER");
-            session.setAttribute("members", members);
-            model.addAttribute("members", members);
+            Set<Project> projects = projectService.getProjectsByUserId(user.getId());
 
-//            System.out.println("MMMMMMMMMMMMMMM " + members);
-//            return "project-list";
+            session.setAttribute("members", members);
+            session.setAttribute("projects", projects);
+
+            model.addAttribute("members", members);
+            model.addAttribute("projects", projects);
         }
 
         return "dashboard";

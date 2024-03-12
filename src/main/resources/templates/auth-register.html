@@ -107,7 +107,7 @@
 
                                     <div class="mb-3">
                                         <label for="email-address" class="form-label">Email address</label>
-                                        <input class="form-control" type="email" id="email-address" th:field="*{email}" placeholder="Enter your email">
+                                        <input class="form-control" type="email" name="email" id="email-address" th:value="${param.email}" placeholder="Enter your email" readonly>
                                         <!-- Display validation errors for the email -->
                                         <div th:if="${#fields.hasErrors('email')}" class="text-danger">
                                             <span th:errors="*{email}"></span>
