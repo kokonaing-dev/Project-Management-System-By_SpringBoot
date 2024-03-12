@@ -117,4 +117,9 @@ public class IssueService {
     public List<Object[]> getCategoryData() {
         return issueRepository.countByCategoryGroupByCategoryName();
     }
+
+    public Set<Issue> getIssuesByProjectId(Long projectId) {
+        // Assuming you have a method in your repository to fetch issues by project ID
+        return issueRepository.findByProjectId(projectId);
+    }
 }

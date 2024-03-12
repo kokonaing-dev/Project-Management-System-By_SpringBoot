@@ -1,8 +1,10 @@
 package com.demo.project_management_system.service;
 
 import com.demo.project_management_system.entity.Project;
+import com.demo.project_management_system.entity.Role;
 import com.demo.project_management_system.entity.User;
 import com.demo.project_management_system.repository.IssueRepository;
+import com.demo.project_management_system.repository.RoleRepository;
 import com.demo.project_management_system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +26,7 @@ public class UserService implements UserDetailsService{
     private UserRepository userRepository;
 
     @Autowired
-    private IssueRepository issueRepository;
+    private RoleRepository roleRepository;
 
     // this method is working for spring security section
     @Override
@@ -192,6 +194,23 @@ public class UserService implements UserDetailsService{
         } else {
             // Handle the case where the user with the given ID is not found
             throw new RuntimeException("User not found with ID: " + updatedUser.getId());
+        }
+    }
+
+    public void updateUserRole(User user, String selectedRole) {
+        // Retrieve the role from the database based on the role name
+        Optional<Role> optionalRole = roleRepository.findByAuthority(selectedRole);
+
+        if (optionalRole.isPresent()) {
+            Role role = optionalRole.get();
+            // Update the user's authorities to contain only the selected role
+            user.setAuthorities(Set.of(role));
+
+            // Save the updated user object back to the database
+            userRepository.save(user);
+        } else {
+            // Handle case where role with given name does not exist
+            throw new IllegalArgumentException("Role with name " + selectedRole + " not found.");
         }
     }
 }

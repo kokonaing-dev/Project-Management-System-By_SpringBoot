@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -167,6 +168,7 @@ public class IssueController {
 
         // Update the issue status
         issue.setIssueStatus(IssueStatus.valueOf(request.getNewIssueStatus()));
+        issue.setUpdatedAt(LocalDate.now()); // Update updatedAt timestamp
 
         // Save the updated issue back to the database
         issueService.save(issue);

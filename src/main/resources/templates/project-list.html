@@ -61,6 +61,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css"/>
 
+    <style>
+        #user-table td,
+        #user-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -106,13 +114,6 @@
                                         <div class="invalid-feedback">Please enter a project name.</div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="projectName" class="form-label">Project Key</label>
-                                        <input type="text" class="form-control" id="projectKey"
-                                               th:field="*{projectKey}" placeholder="Enter Project Key" required>
-                                        <div class="invalid-feedback">Please enter a project name.</div>
-                                    </div>
-
                                     <div class="deadline-form">
                                         <div class="row g-3 mb-3">
                                             <div class="col">
@@ -138,22 +139,23 @@
                                                        th:value="${loggedInUser.id}">
 
                                                 <label class="form-label">Task Assign Person</label>
-                                                <select name="countries" id="countries" multiple="multiple" required>
-                                                    <!-- Loop through projectManagersAndMembers -->
-                                                    <option
-                                                            th:each="user : ${projectManagersAndMembers}"
-                                                            th:value="${user.id}"
-                                                            th:text="${user.username} + ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'Manager' : 'Member'}) + '</span>'">
+                                                <select id="selectOne" class="form-select" th:if="${not #authorization.expression('hasAuthority(''ROLE_PROJECT_MANAGER'')')}" required>
+                                                    <!-- Loop through projectManagers -->
+                                                    <option th:each="user : ${projectManager}" th:value="${user.id}"
+                                                            th:text="${user.username}">
                                                     </option>
+                                                </select>
+
+
+                                                <select name="countries" id="countries" multiple="multiple" required th:if="${not #authorization.expression('hasAuthority(''ROLE_SYSTEM_ADMIN'')')}">
                                                     <!-- Loop through members -->
-                                                    <option
-                                                            th:each="user : ${members}"
-                                                            th:value="${user.id}"
+                                                    <option th:each="user : ${members}" th:value="${user.id}"
                                                             th:text="${user.username}+ ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'Manager' : 'Member'}) + '</span>'">
                                                     </option>
                                                 </select>
-                                                <div class="invalid-feedback">Please select at least one person.</div>
 
+
+                                                <div class="invalid-feedback">Please select at least one person.</div>
 
                                                 <script>
                                                     new MultiSelectTag('countries', {
@@ -226,7 +228,6 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Project Name</th>
-                                        <th>Project Key</th>
                                         <th>Members</th>
                                         <th style="display: none;">MemberList</th>
                                         <th>Start Date</th>
@@ -238,11 +239,21 @@
                                     </thead>
 
                                     <tbody>
-                                    <tr th:each="project, iterStat : ${projectList}">
+                                    <tr th:each="project, iterStat : ${projects}">
                                         <td th:text="${project.id}"></td>
                                         <td th:text="${project.projectName}"></td>
-                                        <td th:text="${project.projectKey}"></td>
-                                        <td></td>
+                                        <td>
+
+                                                <!-- Iterate over team members -->
+                                                <div class="avatar-group" id="tooltips-container">
+                                                    <div th:each="user : ${project.users}">
+                                                        <a th:href="@{'/userDetail/' + ${user.id}}" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${user.username}" class="avatar-group-item">
+                                                            <img th:src="${user.photosImagePath}" class="rounded-circle avatar-xs" alt="User Avatar">
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                        </td>
                                         <td style="display: none;">
                                             <span th:each="user, iterStat : ${project.users}">
                                                 <span th:text="${user.username + (iterStat.last ? '' : ', ')}"></span>
@@ -532,11 +543,18 @@
         formData.append('loggedInUserId', loggedInUserId);
 
         // Check if at least one assignee is selected
-        const selectedUsers = document.getElementById('countries').selectedOptions;
-        // Add selected user IDs to form data
-        // const selectedUsers = document.getElementById('countries').selectedOptions;
-        const userIds = Array.from(selectedUsers).map(option => option.value);
-        formData.append('userIds', userIds.join(','));
+        const selectOne = document.getElementById('selectOne');
+        const countries = document.getElementById('countries');
+
+        if (selectOne) {
+            const selectedUsers = selectOne.selectedOptions;
+            const userIds = Array.from(selectedUsers).map(option => option.value);
+            formData.append('userIds', userIds.join(','));
+        } else if (countries) {
+            const selectedUsers = countries.selectedOptions;
+            const userIds = Array.from(selectedUsers).map(option => option.value);
+            formData.append('userIds', userIds.join(','));
+        }
 
         // Make POST request using Fetch API
         fetch('/project/create', {
@@ -718,23 +736,23 @@
                 buttons: [
                     {
                         extend: 'copy',
-                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
+                        exportOptions: {columns: [0, 1, 3, 4, 5, 6]}
                     },
                     {
                         extend: 'csv',
-                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
+                        exportOptions: {columns: [0, 1, 3, 4, 5, 6]}
                     },
                     {
                         extend: 'excel',
-                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
+                        exportOptions: {columns: [0, 1, 3, 4, 5, 6]}
                     },
                     {
                         extend: 'pdf',
-                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
+                        exportOptions: {columns: [0, 1, 3, 4, 5, 6]}
                     },
                     {
                         extend: 'print',
-                        exportOptions: {columns: [0, 1, 2, 3, 5, 6]}
+                        exportOptions: {columns: [0, 1, 3, 4, 5, 6]}
                     }
                 ]
             }

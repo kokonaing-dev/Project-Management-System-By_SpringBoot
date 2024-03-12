@@ -2,6 +2,7 @@ package com.demo.project_management_system.controller;
 
 import com.demo.project_management_system.File.FileUploadUtil;
 import com.demo.project_management_system.dto.UserIssueRequest;
+import com.demo.project_management_system.dto.UserRoleUpdateRequest;
 import com.demo.project_management_system.entity.*;
 import com.demo.project_management_system.repository.RoleRepository;
 import com.demo.project_management_system.service.IssueService;
@@ -228,6 +229,41 @@ public class UserController {
         return "redirect:/pages-profile";
     }
 
+    @PostMapping("/user/roleUpdate/")
+    public ResponseEntity<String> updateUserRole(@RequestBody UserRoleUpdateRequest request) {
+        Long userId = request.getUserId();
+
+        // Retrieve the user from the database based on the userId
+        Optional<User> optionalUser = userService.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String selectedRoleName = request.getSelectedRole();
+
+            // Retrieve the role from the database based on the role name
+            Optional<Role> optionalRole = roleService.findByAuthority(selectedRoleName);
+
+            if (optionalRole.isPresent()) {
+                Role selectedRole = optionalRole.get();
+                System.out.println("SELECTED USER ROLE........."+selectedRole);
+
+                // Set the user's authorities to contain only the selected role
+                user.setAuthorities(Set.of(selectedRole));
+                System.out.println("PMMMMMMMMMMMMMMMMMMMMMM"+user.getAuthorities());
+
+                // Save the updated user object back to the database
+                userService.save(user);
+
+                return ResponseEntity.ok("Role updated successfully!");
+            } else {
+                // Handle case where role with given name does not exist
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role with name " + selectedRoleName + " not found.");
+            }
+        } else {
+            // Handle case where user with given userId does not exist
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with ID " + userId + " not found.");
+        }
+    }
     @GetMapping("/user/fetch_users")
     @ResponseBody
     public List<User> fetchUsersByProjectId(@RequestParam int projectId) {

@@ -72,6 +72,10 @@ public class Issue {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
+    @CreationTimestamp
+    @Column(name = "updated_at")
+    private LocalDate updatedAt;
+
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "issue_type_id") // This is the foreign key column in the issues table for IssueType

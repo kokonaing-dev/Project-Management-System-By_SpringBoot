@@ -158,17 +158,14 @@
                             <div  th:each="project : ${projectList}" class="col-lg-4">
                                 <div class="card project-box p-1">
                                     <div class="card-body">
-<!--                                        <div class="dropdown float-end">-->
-<!--                                            <a href="#" class="dropdown-toggle card-drop arrow-none" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                                                <i class="ri-more-fill m-0 text-muted h3"></i>-->
-<!--                                            </a>-->
-<!--                                            <div class="dropdown-menu dropdown-menu-end">-->
-<!--                                                <a class="dropdown-item" href="#">Edit</a>-->
-<!--                                                <a class="dropdown-item" href="#">Delete</a>-->
-<!--                                                <a class="dropdown-item" href="#">Add Members</a>-->
-<!--                                                <a class="dropdown-item" href="#">Add Due Date</a>-->
-<!--                                            </div>-->
-<!--                                        </div> -->
+                                        <div class="dropdown float-end">
+                                            <a href="#" class="dropdown-toggle card-drop arrow-none" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="ri-more-fill m-0 text-muted h3"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="#">Add Members</a>
+                                            </div>
+                                        </div>
                                         <!-- end dropdown -->
                                         <!-- Title-->
                                         <h4 class="project-name mt-0 text-dark" th:text="${project.projectName}"
@@ -201,22 +198,6 @@
                                                     </a>
                                                 </div>
                                             </div>
-
-<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
-<!--                                                    <img src="assets/images/users/user-2.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Michael Zenaty" />-->
-<!--                                                </a>-->
-
-<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
-<!--                                                    <img src="assets/images/users/user-3.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="James Anderson" />-->
-<!--                                                </a>-->
-
-<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
-<!--                                                    <img src="assets/images/users/user-4.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mat Helme" />-->
-<!--                                                </a>-->
-
-<!--                                                <a href="javascript: void(0);" class="avatar-group-item">-->
-<!--                                                    <img src="assets/images/users/user-5.jpg" class="rounded-circle avatar-sm" alt="friend" data-bs-container="#tooltips-container" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Username" />-->
-<!--                                                </a>-->
                                         </div>
                                         <!-- Progress-->
                                         <p class="mb-2 fw-semibold">Task completed: <span class="float-end">28/78</span></p>
@@ -230,7 +211,6 @@
                                 </div> <!-- end card box-->
                             </div><!-- end col-->
                         </div>
-
                     </div> <!-- end col-->
 
                     <script>
@@ -349,10 +329,9 @@
                                         <label for="projectName" class="form-label">Project Name</label>
                                         <input type="text" class="form-control" id="projectName"
                                                th:field="*{projectName}" placeholder="Enter Project Name" required>
-<!--                                        <div id="projectNameError" class="text-danger"></div>-->
                                         <div class="invalid-feedback">Please enter a project name.</div>
-                                        <!-- Error message for project name -->
                                     </div>
+
 
                                     <div class="deadline-form">
                                         <div class="row g-3 mb-3">
@@ -361,7 +340,6 @@
                                                     Date</label>
                                                 <input type="date" class="form-control" id="projectStartDate"
                                                        th:field="*{projectStartDate}" required>
-<!--                                                <div id="projectStartDateError" class="text-danger"></div>-->
                                                 <div class="invalid-feedback">Please select a start date.</div>
                                                 <!-- Error message for project start date -->
                                             </div>
@@ -373,7 +351,6 @@
                                                 <div class="invalid-feedback">Please select due date.</div>
                                                 <!-- Error message for project end date -->
                                             </div>
-<!--                                            <div id="projectDateError" class="text-danger"></div>-->
                                         </div>
                                         <div class="row g-3 mb-3">
 
@@ -383,7 +360,6 @@
 
                                                 <label class="form-label">Task Assign Person</label>
                                                 <select name="countries" id="countries" multiple="multiple" required>
-                                                    <!--                                                                <option selected disabled>Choose Person</option>-->
                                                     <!-- Loop through projectManagersAndMembers -->
                                                     <option
                                                             th:each="user : ${projectManagersAndMembers}"
@@ -878,42 +854,6 @@
     });
 
 
-    // Assuming you have a data-project-id attribute in your HTML to identify each project
-    $(".btn-delete-project").click(function () {
-        var projectId = $(this).closest(".project-row").data("project-id");
-
-        // Show SweetAlert2 confirmation dialog
-        Swal.fire({
-            title: "Are you sure?",
-            text: "This will delete the project along with its related entities!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // User confirmed deletion, send AJAX request
-                $.ajax({
-                    type: "DELETE",
-                    url: "/deleteProject/" + projectId,
-                    success: function () {
-                        // Remove the corresponding row from the table
-                        $(".project-row[data-project-id='" + projectId + "']").remove();
-                        // Show success message
-                        Swal.fire("Deleted!", "The project has been deleted.", "success");
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error deleting project:", error);
-                        // Show error message
-                        Swal.fire("Error", "Failed to delete the project. Please try again later.", "error");
-                    },
-                });
-            }
-        });
-    });
-
-
 </script>
 
 
@@ -966,24 +906,6 @@
 <script src="/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
-
-<!-- Datatables js -->
-<script src="/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
-<script src="/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
-<script src="/libs/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
-<script src="/libs/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-<script src="/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
-<script src="/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-<script src="/libs/datatables.net-buttons/js/buttons.flash.min.js"></script>
-<script src="/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-<script src="/libs/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-<script src="/libs/datatables.net-select/js/dataTables.select.min.js"></script>
-
-<!-- Datatable Demo Aapp js -->
-<script src="/js/pages/demo.datatable-init.js"></script>
 
 <script>
     $(document).ready(function () {
