@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.*;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -240,7 +241,7 @@ public class UserController {
     @PostMapping("/user/roleUpdate/")
     public ResponseEntity<String> updateUserRole(@RequestBody UserRoleUpdateRequest request) {
         Long userId = request.getUserId();
-
+        System.out.println("UserId:"+userId);
         // Retrieve the user from the database based on the userId
         Optional<User> optionalUser = userService.findById(userId);
 
@@ -255,12 +256,19 @@ public class UserController {
                 Role selectedRole = optionalRole.get();
                 System.out.println("SELECTED USER ROLE........."+selectedRole);
 
-                // Set the user's authorities to contain only the selected role
-                user.setAuthorities(Set.of(selectedRole));
-                System.out.println("PMMMMMMMMMMMMMMMMMMMMMM"+user.getAuthorities());
+
+                // Update user's authorities
+                Set<Role> authorities = user.getAuthorities().stream()
+                        .filter(authority -> authority instanceof Role)
+                        .map(authority -> (Role) authority)
+                        .collect(Collectors.toSet());
+
+                authorities.clear(); // Clear existing roles
+                authorities.add(selectedRole); // Add selected role
+                user.setAuthorities(authorities);
 
                 // Save the updated user object back to the database
-                userService.save(user);
+                userService.saveUser(user);
 
                 return ResponseEntity.ok("Role updated successfully!");
             } else {

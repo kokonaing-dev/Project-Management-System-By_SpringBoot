@@ -155,10 +155,10 @@
                         <!-- end row-->
 
                         <div class="row">
-                            <div  th:each="project : ${projectList}" class="col-lg-4">
+                            <div  th:each="project : ${projects}" class="col-lg-4 project-row">
                                 <div class="card project-box p-1">
                                     <div class="card-body" >
-                                        <div class="dropdown float-end">
+                                        <div class="dropdown float-end" th:if="${#authorization.expression('hasRole(''ROLE_SYSTEM_ADMIN'') or hasRole(''ROLE_PROJECT_MANAGER'')')}">
                                             <a href="#" class="dropdown-toggle card-drop arrow-none" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="ri-more-fill m-0 text-muted h3"></i>
                                             </a>
@@ -170,23 +170,40 @@
                                         </div>
                                         <!-- end dropdown -->
                                         <!-- Title-->
-                                        <div th:attr="data-project-id=${project.id}" onclick="redirectToHomePage(this)">
+                                        <div th:attr="data-project-id=${project.id}"
+                                             onclick="redirectToHomePage(this)">
                                             <h4 class="project-name mt-0 text-dark" th:text="${project.projectName}">
                                                 <a href="#">
                                                 </a>
                                             </h4>
-                                            <div class="mb-4">
-                                                <span th:if="${project.status == 'Working in Progress'}" class="badge bg-info-subtle text-info">Working in Progress</span>
-                                                <span th:if="${project.status == 'Done'}" class="badge bg-success-subtle text-success">Done</span>
-                                                <span th:if="${project.status == 'Pending'}" class="badge bg-warning-subtle text-warning">Pending</span>
-                                                <span th:if="${project.status == 'Coming Soon'}" class="badge bg-secondary-subtle text-secondary">Coming Soon</span>
+                                            <div class="row mb-1">
+                                                <div class="col-lg-6">
+                                                    <div class="mb-1">
+                                                        <span th:if="${project.status == 'Working in Progress'}" class="badge bg-info-subtle text-info">Working in Progress</span>
+                                                        <span th:if="${project.status == 'Done'}" class="badge bg-success-subtle text-success">Done</span>
+                                                        <span th:if="${project.status == 'Pending'}" class="badge bg-warning-subtle text-warning">Pending</span>
+                                                        <span th:if="${project.status == 'Coming Soon'}" class="badge bg-secondary-subtle text-secondary">Coming Soon</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <!-- Project Due Date -->
+                                                    <div class="mb-1" style="font-size: 14px;">
+                                                        <span class="fw-semibold">Due Date:</span>
+                                                        <span th:text="${#temporals.format(project.projectDueDate, 'yyyy-MM-dd')}"></span>
+                                                        <!-- Fire icon if due date is too close to today -->
+                                                        <span th:if="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.projectDueDate) <= 7}">
+                                                        <i class="ri-fire-fill text-danger"></i>
+                                                    </span>
+                                                    </div>
+                                                </div>
                                             </div>
+
                                             <!-- Task info-->
                                             <p class="mb-1">
-                                                <span class="pe-2 text-nowrap mb-2 d-inline-block">
-                                                    <i class="mdi mdi-format-list-bulleted-type text-muted"></i>
-                                                    <b th:text="${project.numberOfIssues}"></b> Issues
-                                                </span>
+                                            <span class="pe-2 text-nowrap mb-2 d-inline-block">
+                                                <i class="mdi mdi-format-list-bulleted-type text-muted"></i>
+                                                <b th:text="${project.numberOfIssues}"></b> Issues
+                                            </span>
                                             </p>
                                             <!-- Team-->
                                             <h5>Team Members:</h5>
@@ -409,6 +426,26 @@
                             projectRows.forEach(function (row) {
                                 const projectName = row.querySelector('.project-name').textContent.trim().toLowerCase();
                                 if (projectName.includes(searchTerm)) {
+                                    row.style.display = ''; // Show the project card if it matches the search term
+                                } else {
+                                    row.style.display = 'none'; // Hide the project card if it doesn't match
+                                }
+                            });
+                        });
+                    });
+                </script>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const searchInput = document.getElementById('projectSearchInput');
+                        const projectRows = document.querySelectorAll('.project-row');
+
+                        searchInput.addEventListener('input', function () {
+                            const searchTerm = searchInput.value.trim().toLowerCase();
+
+                            projectRows.forEach(function (row) {
+                                const projectName = row.querySelector('.project-name').textContent.trim().toLowerCase();
+                                if (projectName.includes(searchTerm)) {
                                     row.style.display = '';
                                 } else {
                                     row.style.display = 'none';
@@ -421,7 +458,7 @@
 
                 <!-- Create Project-->
                 <div class="modal fade" id="createproject" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog" style="max-width: 700px;">
                         <div class="modal-content">
                             <div class="modal-header bg-success text-light py-3 px-4 border-bottom-0">
                                 <h4 class="modal-title  fw-bold" id="createprojectlLabel"> Create Project</h4>
@@ -473,17 +510,18 @@
                                                 <input type="hidden" name="loggedInUserId" th:value="${loggedInUser.id}">
 
                                                 <label class="form-label">Task Assign Person</label>
-                                                <select name="countries" id="countries" multiple="multiple" required>
-                                                    <!-- Loop through projectManagersAndMembers -->
-                                                    <option
-                                                            th:each="user : ${projectManagersAndMembers}"
-                                                            th:value="${user.id}"
-                                                            th:text="${user.username} + ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'Manager' : 'Member'}) + '</span>'">
+                                                <select id="selectOne" class="form-select" th:if="${not #authorization.expression('hasAuthority(''ROLE_PROJECT_MANAGER'')')}" required>
+                                                    <!-- Loop through projectManagers -->
+                                                    <option value="" id="defaultOption">Select Assign Manager</option>
+                                                    <option th:each="user : ${projectManager}" th:value="${user.id}"
+                                                            th:text="${user.username}">
                                                     </option>
+                                                </select>
+
+
+                                                <select name="countries" id="countries" multiple="multiple" required th:if="${not #authorization.expression('hasAuthority(''ROLE_SYSTEM_ADMIN'')')}">
                                                     <!-- Loop through members -->
-                                                    <option
-                                                            th:each="user : ${members}"
-                                                            th:value="${user.id}"
+                                                    <option th:each="user : ${members}" th:value="${user.id}"
                                                             th:text="${user.username}+ ' - ' + '<span class=&quot;badge&quot; style=&quot;background-color: ' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'blue' : 'green'}) + '; color: white;&quot;>' + (${#strings.contains(user.getAuthorities(), 'ROLE_PROJECT_MANAGER') ? 'Manager' : 'Member'}) + '</span>'">
                                                     </option>
                                                 </select>
@@ -801,12 +839,52 @@
         // Append to formData
         formData.append('loggedInUserId', loggedInUserId);
 
+        // Get the project start and due dates from the form
+        const projectStartDate = new Date(formData.get('projectStartDate'));
+        const projectDueDate = new Date(formData.get('projectDueDate'));
+
+
+        // Get today's date
+        const today = new Date();
+
+        // Check if the project start date is later than the current date
+        if (projectStartDate < today) {
+            // Show error message
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Project start date cannot be in the past',
+                showConfirmButton: true,
+            });
+            return; // Stop form submission
+        }
+
+        // Check if the due date is after the start date
+        if (projectDueDate <= projectStartDate) {
+            // Show error message
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Project due date must be after the start date',
+                showConfirmButton: true,
+            });
+            return; // Stop form submission
+        }
+
+
         // Check if at least one assignee is selected
-        const selectedUsers = document.getElementById('countries').selectedOptions;
-        // Add selected user IDs to form data
-        // const selectedUsers = document.getElementById('countries').selectedOptions;
-        const userIds = Array.from(selectedUsers).map(option => option.value);
-        formData.append('userIds', userIds.join(','));
+        const selectOne = document.getElementById('selectOne');
+        const countries = document.getElementById('countries');
+
+        if (selectOne) {
+            const selectedUsers = selectOne.selectedOptions;
+            const userIds = Array.from(selectedUsers).map(option => option.value);
+            formData.append('userIds', userIds.join(','));
+        } else if (countries) {
+            const selectedUsers = countries.selectedOptions;
+            const userIds = Array.from(selectedUsers).map(option => option.value);
+            formData.append('userIds', userIds.join(','));
+        }
 
         // Make POST request using Fetch API
         fetch('/project/create', {

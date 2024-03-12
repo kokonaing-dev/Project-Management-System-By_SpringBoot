@@ -353,8 +353,6 @@ function playChatAudio() {
     audio.play();
 }
 
-// Function to format the timestamp as h:m:s
-// Function to format the timestamp as h:m:s
 function formatTime(timestampString) {
     const timestamp = new Date(timestampString);
     const hours = timestamp.getHours();
