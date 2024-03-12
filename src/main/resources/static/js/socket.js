@@ -79,6 +79,7 @@ async function onMessageReceived(payload) {
     chatMessageList.forEach((chatMessage) => {
         const stringifiedPayload = JSON.stringify(chatMessage);
         if (!receivedPayloads.has(stringifiedPayload)) {
+            playChatAudio();
             // If the payload is not a duplicate, process it
             displayChatMessages(chatMessage);
 
@@ -112,13 +113,13 @@ function displayChatMessages(chatMessage) {
 
         // Create the image element inside chat-avatar div
         const avatarImage = document.createElement('img');
-        avatarImage.src = '/images/users/avatar-5.jpg';
+        avatarImage.src = `/user-photos/${chatMessage.user.username}`;
         avatarImage.classList.add('rounded');
         avatarImage.alt = chatMessage.user.name;
 
         // Create the i element inside chat-avatar div
         const timeIcon = document.createElement('i');
-        timeIcon.textContent = chatMessage.timestamp;
+        timeIcon.textContent = formatTime(chatMessage.timestamp);
 
         // Append image and i elements to the chat-avatar div
         chatAvatarDiv.appendChild(avatarImage);
@@ -165,7 +166,8 @@ async function onNotificationReceived(payload) {
         const notificationData = JSON.parse(payload.body);
 
         if (notificationData) {
-            // Optionally, you can display the notification immediately
+            console.log("notification data " + notificationData)
+            playNotiAudio();            // Optionally, you can display the notification immediately
             displayNotification(notificationData);
         } else {
             console.log("Empty or invalid notification data received.");
@@ -191,6 +193,24 @@ function createNotificationElement(notificationData) {
 }
 
 function constructNotificationHTML(notificationData) {
+    // Function to format the timestamp as yyyy-mm-dd hh:mm
+    function formatTime(timestampString) {
+        const timestamp = new Date(timestampString);
+
+        const year = timestamp.getFullYear();
+        const month = (timestamp.getMonth() + 1).toString().padStart(2, '0');
+        const day = timestamp.getDate().toString().padStart(2, '0');
+
+        const hours = timestamp.getHours().toString().padStart(2, '0');
+        const minutes = timestamp.getMinutes().toString().padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+    }
+
+    // Format the timestamp using the formatTime function
+    const formattedTimestamp = formatTime(notificationData.timestamp);
+
+    // Construct the HTML with the formatted timestamp
     return `
         <div class="card mb-3">
             <div class="card-body">
@@ -203,7 +223,7 @@ function constructNotificationHTML(notificationData) {
                     <div class="flex-grow-1 ms-3">
                         <div class="fw-bold">${notificationData.content}</div>
                         <small class="text-muted">
-                            ${notificationData.timestamp}
+                            ${formattedTimestamp}
                         </small>
                     </div>
                 </div>
@@ -211,6 +231,7 @@ function constructNotificationHTML(notificationData) {
         </div>
     `;
 }
+
 
 function appendNotificationToContainer(notificationElement) {
     const notificationContainer = document.getElementById('notificationContainer');
@@ -242,7 +263,7 @@ async function fetchNotifications(userId) {
         }
 
         const notificationList = await response.json();
-        console.log("noti liser " + notificationList);
+        console.log("noti list " + notificationList);
 
         // Call the displayNotifications function to display the notifications
         displayNotifications(notificationList);
@@ -270,8 +291,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 // Check if fetchNotifications was successful
                 if (notifications) {
-                    playAudio();
-
                     // Set toControlFetchData to false after successful fetch
                     toControlFetchData = false;
                 } else {
@@ -298,25 +317,26 @@ function getProjectIdFromUrl() {
 
 // Example function to construct the notification URL
 function getNotificationURL(notificationData) {
+
     // Assuming notificationData has properties like projectLink and issueLink
-    const projectLink = notificationData.projectId;
-    const issueLink = notificationData.issueId;
+    const projectLink = notificationData.projectId || 'N/A';
+    const issueLink = notificationData.issueId || 'N/A';
 
     if (projectLink) {
         // If it's a project notification, construct the project URL
         return `/projectDetail/${projectLink}`; // Adjust this based on your project URL structure
     } else if (issueLink) {
         // If it's an issue notification, construct the issue URL
-        return `/issues/${issueLink}`; // Adjust this based on your issue URL structure
+        return `/board/${issueLink}`; // Adjust this based on your issue URL structure
     } else {
         // Default fallback URL (e.g., go to a generic notification page)
-        return '/notifications'; // Adjust this based on your desired fallback URL
+        return '/dashboard'; // Adjust this based on your desired fallback URL
     }
 }
 
-function playAudio() {
+function playNotiAudio() {
     // Replace 'path/to/audio.mp3' with the actual path to your audio file
-    const audioPath = 'audio/pop-noti.mp3';
+    const audioPath = 'audio/correct-answer-tone.wav';
 
     const audio = new Audio(audioPath);
 
@@ -324,5 +344,27 @@ function playAudio() {
     audio.play();
 }
 
+function playChatAudio() {
+    // Replace 'path/to/audio.mp3' with the actual path to your audio file
+    const audioPath = 'audio/pop-noti.mp3';
+    const audio = new Audio(audioPath);
+    // Play the audio
+    audio.play();
+}
+
+// Function to format the timestamp as h:m:s
+// Function to format the timestamp as h:m:s
+function formatTime(timestampString) {
+    const timestamp = new Date(timestampString);
+    const hours = timestamp.getHours();
+    const minutes = timestamp.getMinutes();
+    const seconds = timestamp.getSeconds();
+
+    const formattedHours = hours > 9 ? hours : '0' + hours;
+    const formattedMinutes = minutes > 9 ? minutes : '0' + minutes;
+    const formattedSeconds = seconds > 9 ? seconds : '0' + seconds;
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
 
 

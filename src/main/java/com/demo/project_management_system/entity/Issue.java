@@ -98,4 +98,8 @@ public class Issue {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "issue")
+    private Set<Notification> notifications;
+
 }

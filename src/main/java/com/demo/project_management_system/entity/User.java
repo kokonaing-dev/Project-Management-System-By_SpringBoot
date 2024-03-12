@@ -32,19 +32,15 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
     @NotEmpty
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotNull
     @NotEmpty
     @Email
     @Column(nullable = false, unique = true, length = 45)
     private String email;
 
-
-    @NotNull
     @NotEmpty
     @Column(nullable = false, length = 64)
     private String password;
@@ -77,6 +73,10 @@ public class User implements UserDetails {
     @JsonIgnore
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Issue> issues;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications;
 
     @Override
     public String toString() {

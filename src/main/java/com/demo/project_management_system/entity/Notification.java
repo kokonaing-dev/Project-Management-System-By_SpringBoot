@@ -4,11 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -26,11 +25,12 @@ public class Notification {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Transient
-    private Long projectId;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    @Transient
-    private Long issueId;
-
+    @ManyToOne
+    @JoinColumn(name = "issue_id")
+    private Issue issue;
 
 }
