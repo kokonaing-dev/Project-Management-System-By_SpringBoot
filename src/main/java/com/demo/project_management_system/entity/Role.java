@@ -1,11 +1,15 @@
 package com.demo.project_management_system.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Data
@@ -20,12 +24,12 @@ public class  Role {
     private Long roleId;
 
     private String authority;
-//    // Custom Argument Constructor
-//    // Lombok generates an all-argument constructor by default if no constructor is provided
-//    // Here, a custom constructor is provided to initialize 'authority'
+
     public Role(String authority) {
         this.authority = authority;
     }
 
-    // Additional methods or overrides can be added here
+    @JsonIgnore
+    @ManyToMany(mappedBy = "authorities")
+    private Set<User> users = new HashSet<>();
 }

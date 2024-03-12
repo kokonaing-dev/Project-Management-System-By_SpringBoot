@@ -23,15 +23,6 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final IssueRepository issueRepository;
 
-    public Set<Project> getAllActiveProjects() {
-        List<Project> projectList = projectRepository.findAll();
-
-        // Filter projects with status "ACTIVE"
-        return projectList.stream()
-                .filter(project -> project.getStatus().equals("ACTIVE"))
-                .collect(Collectors.toSet());
-    }
-
     public Set<Project> getAllProjects() {
         List<Project> projectList = projectRepository.findAll();
         return new HashSet<>(projectList);

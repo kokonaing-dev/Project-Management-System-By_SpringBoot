@@ -25,9 +25,6 @@ public class Project {
     @Column(unique = true)
     private String projectName;
 
-    @Column(unique = true)
-    private String projectKey;
-
     @JsonIgnore
     private LocalDate projectStartDate;
 
