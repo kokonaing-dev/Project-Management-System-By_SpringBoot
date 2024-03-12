@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public class PageController {
         model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
         model.addAttribute("categories", categoryService.getAllCategories());
 
-        Set<Project> projectList = projectService.getAllActiveProjects();
+        Set<Project> projectList = projectService.getAllProjects();
         model.addAttribute("projectList", projectList);
 
         // Calculate project status for each project
@@ -165,16 +166,8 @@ public class PageController {
         model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
         model.addAttribute("categories", categoryService.getAllCategories());
 
-        Set<Project> projectList = projectService.getAllProjects();
-        model.addAttribute("projectList", projectList);
-
-        // Calculate project status for each project
-        for(Project project: projectList){
-            int totalIssues = project.getIssues().size();
-            project.setNumberOfIssues(totalIssues);
-            String projectStatus = project.calculateProjectStatus();
-            project.setStatus(projectStatus);
-        }
+//        Set<Project> projectList = projectService.getAllProjects();
+//        model.addAttribute("projectList", projectList);
 
 
         // Get the Authentication object from SecurityContextHolder
@@ -191,47 +184,35 @@ public class PageController {
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER"));
 
         // Check if the logged-in user has ROLE_PROJECT_MANAGER or ROLE_MEMBER authority
-        boolean isProjectManagerOrMember = authorities.stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER") || auth.getAuthority().equals("ROLE_MEMBER"));
-
-        List<Issue> issues;
-        if (isSystemAdmin){
-            // Convert the Set to a List for the admin user
-            issues = new ArrayList<>(issueService.getAllIssues());
-        } else if (isProjectManagerOrMember) {
-            // Fetch issues by userId for non-admin users
-            issues = issueService.getIssuesByUserId(user.getId());
-        }else {
-            // Default to an empty list of issues for other users
-            issues = new ArrayList<>();
-        }
-        model.addAttribute("issues", issues);
+//        boolean isProjectManagerOrMember = authorities.stream()
+//                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PROJECT_MANAGER") || auth.getAuthority().equals("ROLE_MEMBER"));
 
 
-        if (isSystemAdmin) {
-            // Get all projects
-            List<Project> projects = projectService.getAllProjectsWithCounts();
-            model.addAttribute("projects", projects);
-        } else if (isProjectManagerOrMember) {
-            // Get projects by user ID
-            Set<Project> projects = projectService.getProjectsByUserId(user.getId());
-            model.addAttribute("projects", projects);
-        }
+
         if(isSystemAdmin){
             // Get users with authorities POLE_PROJECT_MANGER and role member
-            List<User> projectManagerAndMembers = userService.getUsersByAuthorities("ROLE_PROJECT_MANAGER","ROLE_MEMBER");
-            session.setAttribute("projectManagersAndMembers", projectManagerAndMembers);
-            model.addAttribute("projectManagersAndMembers", projectManagerAndMembers);
+            List<User> projectManager = userService.getUsersByAuthority("ROLE_PROJECT_MANAGER");
+            Set<Project> projects = projectService.getAllProjects();
+
+            session.setAttribute("projectManager", projectManager);
+            session.setAttribute("projects", projects);
+
+            model.addAttribute("projectManager", projectManager);
+            model.addAttribute("projects", projects);
             return "project-list";
         }
         if (isProjectManager) {
             // Get users with authority ROLE_MEMBER
             List<User> members = userService.getUsersByAuthority("ROLE_MEMBER");
-            session.setAttribute("members", members);
-            model.addAttribute("members", members);
+            Set<Project> projects = projectService.getProjectsByUserId(user.getId());
 
-//            System.out.println("MMMMMMMMMMMMMMM " + members);
-//            return "project-list";
+            session.setAttribute("members", members);
+            session.setAttribute("projects", projects);
+
+            model.addAttribute("members", members);
+            model.addAttribute("projects", projects);
+
+
         }
 
         return "project-list";
@@ -619,6 +600,70 @@ public class PageController {
         // Pass the user object to the view
         model.addAttribute("loggedInUser", loggedInUser);
         return "apps-chat";
+    }
+
+    @GetMapping("/projects/{projectId}")
+    public String getProjectDetails(@PathVariable Long projectId, Model model, HttpSession session) {
+        // Retrieve the user object from the session
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        // Pass the user object to the view
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        Set<Project> projectList = projectService.getProjectsByUserId(loggedInUser.getId());
+        model.addAttribute("projectList", projectList);
+
+        System.out.println("WOOOOOOOOOOOOO "+projectId);
+        // Assuming you have a service to fetch project details
+        Project project = projectService.getProjectById(projectId);
+
+        if (project != null) {
+            Set<Issue> issueList = issueService.getIssuesByProjectId(project.getId());
+            System.out.println("ISSSSSSSSSSSSLIST " + issueList);
+
+            // Filter issues by status
+            List<Issue> todoIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.OPEN && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> inProgressIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.IN_PROGRESS && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> solvedIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.SOLVED && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> pendingIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.PENDING && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+            List<Issue> closedIssues = issueList.stream()
+                    .filter(issue -> issue.getIssueStatus() == IssueStatus.CLOSED && issue.getStatus() == 1)
+                    .collect(Collectors.toList());
+
+
+            // Add filtered lists to the model
+            model.addAttribute("todoIssues", todoIssues);
+            model.addAttribute("inProgressIssues", inProgressIssues);
+            model.addAttribute("solvedIssues", solvedIssues);
+            model.addAttribute("pendingIssues", pendingIssues);
+            model.addAttribute("closedIssues", closedIssues);
+
+
+            model.addAttribute("issue", new Issue());
+            model.addAttribute("project", new Project());
+
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("issueStatuses", IssueStatus.values()); // Add statuses enum
+            model.addAttribute("priorities", Priority.values()); // Add priorities enum
+            model.addAttribute("issueTypes", issueTypeService.getAllIssueTypes());
+            model.addAttribute("categories", categoryService.getAllCategories());
+
+            return "apps-kanban";
+        } else {
+            // Handle case where project is not found
+            return "projectNotFound"; // Assuming you have a Thymeleaf template named projectNotFound.html
+        }
     }
 
 
