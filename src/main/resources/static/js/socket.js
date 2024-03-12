@@ -73,13 +73,14 @@ let receivedPayloads = new Set();
 
 async function onMessageReceived(payload) {
     const chatMessageList = JSON.parse(payload.body);
-
+    if (chatMessageList){
+        playChatAudio();
+    }
     console.log("This is chatmessage " + chatMessageList);
 
     chatMessageList.forEach((chatMessage) => {
         const stringifiedPayload = JSON.stringify(chatMessage);
         if (!receivedPayloads.has(stringifiedPayload)) {
-            playChatAudio();
             // If the payload is not a duplicate, process it
             displayChatMessages(chatMessage);
 
