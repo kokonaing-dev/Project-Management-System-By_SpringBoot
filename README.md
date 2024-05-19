@@ -25,12 +25,14 @@ With these features, users can seamlessly manage projects, collaborate effective
 - **Data Table**: For displaying data in a tabular format with advanced features.
 - **JavaScript**: For adding interactivity and dynamic behavior to web pages.
 
+
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request. Feel free to reach out to the project maintainers if you have any questions or suggestions.
 
 Special thanks to the following contributors for their valuable contributions:
-KhaingShweLin
-KhuKhu
-Sayar Phone
-Rinn33
+
+- [KhaingShweLin](https://github.com/KhaingShweLin)
+- [KhuKhu](https://github.com/KhuKhu)
+- [Sayar Phone](https://github.com/SayarPhone)
+- [Rinn33](https://github.com/Rinn33)
